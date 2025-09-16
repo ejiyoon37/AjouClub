@@ -40,15 +40,16 @@ const ClubPreviewCarousel = () => {
 
       {/* 캐러셀 */}
       <div className="flex overflow-x-auto gap-3 scrollbar-hide">
-        {clubs.map((club) => (
-            <ClubCard
-                key={club.clubId}
-                profileImageUrl={club.profileImageUrl}
-                clubType={club.clubType}
-                clubName={club.clubName}
-            />
-        ))}
-      </div>
+      {clubs.map((club) => (
+        <ClubCard
+          key={club.clubId}
+          clubId={club.clubId}
+          imageUrl={club.profileImageUrl}
+          category={club.clubType}
+          name={club.clubName}
+        />
+      ))}
+    </div>
     </section>
   );
 };

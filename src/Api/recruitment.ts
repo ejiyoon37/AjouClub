@@ -41,7 +41,7 @@
 //   }
 // };
 
-// recruitment.ts
+//recruitment.ts
 import type { Recruitment } from '../types/recruit';
 import { mockRecruitments } from '../mocks/mockRecruitments';
 import type { RecruitmentPost } from '../Hooks/useRecruitments';

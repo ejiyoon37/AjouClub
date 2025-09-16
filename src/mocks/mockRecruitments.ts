@@ -25,7 +25,7 @@ export const mockRecruitments: RecruitmentPost[] = [
     id: 3,
     imageUrl: 'src/assets/img/AKO.jpg',
     title: '기독교 동아리 [JOY] 24-2학기 모집',
-    recruitmentStatus: 'end',
+    recruitmentStatus: 'regular',
     dDay: 0,
     viewCount: 40,
     saveCount: 5,

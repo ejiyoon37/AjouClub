@@ -1,7 +1,8 @@
 // src/pages/Homepage/ExploreClubSection.tsx
 
 import { useEffect, useState } from 'react';
-import { fetchAllClubs } from '../../Api/club';
+//import { fetchAllClubs } from '../../Api/club';
+import { fetchAllClubs } from '../../Api/useMockClubs';
 import type { Club } from '../../types/club';
 import ClubCard from '../common/Card/Card_Club';
 import SeeAllButton from '../common/SeeAllBtn';
@@ -30,24 +31,25 @@ const ExploreClubSection = () => {
   }, []);
 
   return (
-    <section className="px-4 mt-8">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold text-gray-900">동아리 둘러보기</h2>
-        <SeeAllButton navigateTo="/clubs" />
-      </div>
+  <section className="px-4 mt-8">
+    <div className="flex justify-between items-center mb-4">
+      <h2 className="text-lg font-semibold text-gray-900">동아리 둘러보기</h2>
+      <SeeAllButton navigateTo="/clubs" />
+    </div>
 
-      <div className="grid grid-cols-3 gap-x-4 gap-y-6">
-        {randomClubs.map((club) => (
-          <ClubCard
-            key={club.clubId}
-            profileImageUrl={club.profileImageUrl}
-            clubType={club.clubType}
-            clubName={club.clubName}
-          />
-        ))}
-      </div>
-    </section>
-  );
+    <div className="grid grid-cols-3 gap-x-4 gap-y-6">
+      {randomClubs.map((club) => (
+        <ClubCard
+          key={club.clubId}
+          clubId={club.clubId}
+          imageUrl={club.profileImageUrl}
+          name={club.clubName}
+          category={club.clubType}
+        />
+      ))}
+    </div>
+  </section>
+);
 };
 
 export default ExploreClubSection;

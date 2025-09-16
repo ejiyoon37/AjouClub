@@ -6,7 +6,7 @@ import LogoIcon from '../../assets/logo_typo.svg?react';
 import ProfileIcon from '../../assets/icon/icn_person_gray_24.svg?react';
 import SearchIcon from '../../assets/icon/icn_search_24-2.svg?react';
 
-
+import { useAuthStore } from '../../stores/useAuthStore';
 
 interface HeaderProps {
   variant: 'home' | 'page';
@@ -15,9 +15,16 @@ interface HeaderProps {
 
 const Header = ({ variant }: HeaderProps) => {
   const navigate = useNavigate();
-
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const goToHome = () => navigate('/');
-  const goToMyPage = () => navigate('/mypage');
+  const handleMyPageClick = () => {
+    if (!isLoggedIn) {
+      navigate('/login');
+    } else {
+      navigate('/mypage');
+    }
+  };
+
   const goToSearch = () => navigate('/search');
 
   return (
@@ -34,7 +41,7 @@ const Header = ({ variant }: HeaderProps) => {
             <SearchIcon className="w-6 h-6" />
           </button>
         )}
-        <button onClick={goToMyPage} aria-label="마이페이지로 가기">
+        <button onClick={handleMyPageClick} aria-label="마이페이지로 가기">
           <ProfileIcon className="w-6 h-6" />
         </button>
       </div>

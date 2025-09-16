@@ -12,7 +12,7 @@
 //   id: number;
 //   imageUrl: string;
 //   title: string;
-//   recruitmentStatus: 'regular' | 'd-day' | 'end';
+//   recruitmentStatus: 'regular' | 'd-day' ;
 //   dDay?: number;
 //   viewCount: number;
 //   saveCount: number;
@@ -21,7 +21,7 @@
 
 // // 홈 화면에 표시될 메인 공고
 // const getMainRecruitmentPosts = async (): Promise<RecruitmentPost[]> => {
-//   const response = await fetch('/api/recruitments/main');
+//   const response = await fetch('/api/recruitments');
 //   if (!response.ok) throw new Error('서버 응답 실패');
   
 //   const result: ApiResponse<RecruitmentPost[]> = await response.json();
