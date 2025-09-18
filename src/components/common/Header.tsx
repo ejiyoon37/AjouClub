@@ -28,7 +28,7 @@ const Header = ({ variant }: HeaderProps) => {
   const goToSearch = () => navigate('/search');
 
   return (
-    <header className="flex items-center justify-between w-full h-12 px-4 bg-white border-b border-gray-100">
+    <header className="flex items-center justify-between w-full h-12 px-4 bg-white">
       {/* 왼쪽 로고 */}
       <button onClick={goToHome} aria-label="홈으로 가기">
         <LogoIcon />

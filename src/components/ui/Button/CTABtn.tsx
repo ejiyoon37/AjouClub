@@ -2,13 +2,13 @@ import React from 'react';
 
 interface CTABtnProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   isActive: boolean;
-  children?: React.ReactNode; 
+  children: React.ReactNode;  // 이제 children은 필수
 }
 
 export const CTABtn = ({ 
   isActive, 
   children, 
-  className, 
+  className = '', 
   ...props 
 }: CTABtnProps) => {
   const baseStyle = `
@@ -18,13 +18,8 @@ export const CTABtn = ({
   `;
 
   const activeStyle = isActive
-    ? 'bg-blue-400 text-white'  // Activated
-    : 'bg-gray-400 text-white'; // Default
-
- 
-  const buttonText = children 
-    ? children 
-    : isActive ? '신청하기' : '신청마감';
+    ? 'bg-blue-400 text-white'  // 활성화
+    : 'bg-gray-400 text-white'; // 비활성화
 
   return (
     <button
@@ -32,10 +27,9 @@ export const CTABtn = ({
       disabled={!isActive}
       {...props}
     >
-      {buttonText}
+      {children}
     </button>
   );
 };
 
 export default CTABtn;
-

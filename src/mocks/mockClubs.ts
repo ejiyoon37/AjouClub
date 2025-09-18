@@ -42,6 +42,6 @@ export const mockClubs: Club[] = [
     clubId: 7,
     clubName: '오븐 속 이야기',
     clubType: '소학회',
-    profileImageUrl: MockProfile,
+    profileImageUrl: '/assets/clubPic/AKO.jpg',
   },
 ];

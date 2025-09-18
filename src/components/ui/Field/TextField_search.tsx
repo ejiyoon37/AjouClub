@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 
 import SearchIcon from '../../../assets/icon/icn_search_24-2.svg?react';
 
@@ -8,7 +8,7 @@ interface SearchFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 const SearchField = ({ className, value, ...props }: SearchFieldProps) => {
   const [isActivated, setIsActivated] = useState(false);
-
+  const navigate = useNavigate();
   const hasValue = value && String(value).length > 0;
 
 
@@ -34,7 +34,10 @@ const SearchField = ({ className, value, ...props }: SearchFieldProps) => {
       <SearchIcon className={`w-6 h-6 ${iconColorClass}`} />
       <input
         value={value}
-        onFocus={() => setIsActivated(true)}
+        onFocus={(e) => {
+          setIsActivated(true);
+          navigate('/search'); 
+        }}
         onBlur={() => setIsActivated(false)}
         placeholder="동아리를 검색해 보세요!"
         className={`

@@ -27,7 +27,7 @@ const RecruitingSection = () => {
       {/* Section Title + 전체보기 */}
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-gray-900">지금 모집중인 공고</h2>
-        <SeeAllButton navigateTo="/recruitments" />
+        <SeeAllButton navigateTo="/recruitment" />
       </div>
 
       {/* 카드 그리드 */}

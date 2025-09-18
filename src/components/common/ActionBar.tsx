@@ -29,10 +29,12 @@ export const ActionBar = ({
       
       {/* 오른쪽 신청하기 버튼 */}
       <div className="flex-grow">
-        <CTABtn 
-          isActive={isActive}
-          onClick={onApplyClick}
-        />
+      <CTABtn 
+        isActive={isActive}
+        onClick={onApplyClick}
+        >
+        신청하기
+      </CTABtn>
       </div>
 
     </div>

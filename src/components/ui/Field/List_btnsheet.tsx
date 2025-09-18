@@ -1,7 +1,5 @@
 import React from 'react';
-
-
-import CheckIcon from '../../../assets/icon/icn_check_24.svg?react';
+import CheckIcon from '../../../assets/icon/icn_check_24-2.svg?react';
 
 
 interface BottomSheetListItemProps {

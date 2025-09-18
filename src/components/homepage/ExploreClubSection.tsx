@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 //import { fetchAllClubs } from '../../Api/club';
-import { fetchAllClubs } from '../../Api/useMockClubs';
+import { fetchAllClubs } from '../../api/useMockClubs';
 import type { Club } from '../../types/club';
 import ClubCard from '../common/Card/Card_Club';
 import SeeAllButton from '../common/SeeAllBtn';
@@ -40,12 +40,9 @@ const ExploreClubSection = () => {
     <div className="grid grid-cols-3 gap-x-4 gap-y-6">
       {randomClubs.map((club) => (
         <ClubCard
-          key={club.clubId}
-          clubId={club.clubId}
-          imageUrl={club.profileImageUrl}
-          name={club.clubName}
-          category={club.clubType}
-        />
+            key={club.clubId}
+            club={club} 
+          />
       ))}
     </div>
   </section>

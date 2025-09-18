@@ -13,9 +13,9 @@ interface AuthState {
   user: UserInfo | null;
   setAuth: (auth: { isLoggedIn: boolean; accessToken: string | null; user: UserInfo | null }) => void;
   logout: () => void;
+  rehydrateAuth: () => void; 
 }
 
-// localStorage 키
 const STORAGE_KEY = 'auth';
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -24,10 +24,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   user: null,
 
   setAuth: ({ isLoggedIn, accessToken, user }) => {
-    // 상태 설정
     set({ isLoggedIn, accessToken, user });
 
-    // localStorage 저장
     if (accessToken && user) {
       localStorage.setItem(
         STORAGE_KEY,
@@ -39,5 +37,23 @@ export const useAuthStore = create<AuthState>((set) => ({
   logout: () => {
     localStorage.removeItem(STORAGE_KEY);
     set({ isLoggedIn: false, accessToken: null, user: null });
+  },
+
+  rehydrateAuth: () => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (!stored) return;
+
+      const parsed = JSON.parse(stored);
+      if (parsed.accessToken && parsed.user) {
+        set({
+          isLoggedIn: true,
+          accessToken: parsed.accessToken,
+          user: parsed.user,
+        });
+      }
+    } catch (e) {
+      console.error('Auth hydration failed:', e);
+    }
   },
 }));

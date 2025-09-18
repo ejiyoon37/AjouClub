@@ -1,10 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import BackIcon from '../../assets/icon/icn_arrow_left.svg?react';
+import BackIcon from '../../assets/icon/ic_arrow_left_24.svg?react';
 
+interface TopNavProps {
+  title: string;
 
-const TopNav = () => {
+}
+
+const TopNav = ({ title}: TopNavProps) => {
   const navigate = useNavigate();
 
   const goToHome = () => navigate('/'); // 홈으로 이동
@@ -20,8 +24,9 @@ const TopNav = () => {
 
       {/* 중앙 제목 */}
       <h1 className="text-base font-semibold text-gray-700 leading-[1.35] tracking-[-0.03em]">
-        필터
+        {title}
       </h1>
+  
     </nav>
   );
 };
