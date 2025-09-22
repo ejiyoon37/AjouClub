@@ -89,8 +89,8 @@
 // export default RecruitmentCard;
 
 // RecruitmentCard.tsx
-
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import PeriodChip from '../../ui/Chip/Chip_period';
 
 import ScrapIconDefault from '../../../assets/icon/ScrapBtn_default-2.svg?react';
@@ -121,9 +121,10 @@ const RecruitmentCard = ({
 }: RecruitmentCardProps) => {
   const [isScrapped, setIsScrapped] = useState(isScrappedInitially);
   const [saveCount, setSaveCount] = useState(initialSaveCount);
+  const navigate = useNavigate();
 
   const handleScrapClick = async (e: React.MouseEvent) => {
-    e.stopPropagation();
+    e.stopPropagation(); // 카드 클릭과 이벤트 겹치지 않도록 방지
     try {
       if (!isScrapped) {
         await addToFavorites(recruitmentId);
@@ -139,8 +140,17 @@ const RecruitmentCard = ({
     }
   };
 
+  const handleCardClick = () => {
+    navigate(`/recruitments/${recruitmentId}`);
+  };
+
   return (
-    <div className="flex flex-col w-[109px] min-h-[202px] gap-2 bg-white">
+    <div
+      className="flex flex-col w-[109px] min-h-[202px] gap-2 bg-white cursor-pointer"
+      onClick={handleCardClick}
+      role="button"
+      tabIndex={0}
+    >
       {/* 모집공고 이미지 + 스크랩 */}
       <div className="relative">
         <img

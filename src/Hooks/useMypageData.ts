@@ -1,27 +1,37 @@
-// src/hooks/useMyPageData.ts
-
 import { useEffect, useState } from 'react';
 import { getMyInfo, getFavoriteRecruitments } from '../api/user';
+import { mockUser } from '../mocks/mockUsers';
+
+interface Favorite {
+  recruitmentId: number;
+  title: string;
+  thumbnailUrl: string;
+}
+
+interface User {
+  name: string;
+  email: string;
+  profilePic?: string;
+  favorites: Favorite[]; 
+}
 
 export const useMyPageData = () => {
-  const [user, setUser] = useState<{ name: string; email: string; profilePic: string } | null>(null);
-  const [favorites, setFavorites] = useState<
-    { recruitmentId: number; title: string; thumbnailUrl: string }[]
-  >([]);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const userRes = await getMyInfo();
         const favRes = await getFavoriteRecruitments();
-        setUser(userRes);
-        setFavorites(favRes);
+        setUser({ ...userRes, favorites: favRes });
       } catch (e) {
-        console.error('마이페이지 데이터 오류:', e);
+        console.warn('⚠️ 실제 API 호출 실패. mock 데이터로 대체합니다.');
+        setUser(mockUser); 
       }
     };
-    fetchData();
+
+    fetchData(); 
   }, []);
 
-  return { user, favorites };
+  return { user, favorites: user?.favorites ?? [] };
 };

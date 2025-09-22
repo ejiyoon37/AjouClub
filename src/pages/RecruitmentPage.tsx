@@ -6,7 +6,6 @@ import BottomSheetListItem from '../components/ui/Field/List_btnsheet';
 import BottomSheet from '../components/explore/BottomSheet';
 import RecruitmentCard from '../components/common/Card/Card_recruitment';
 import useRecruitments from '../Hooks/useRecruitments';
-import image1 from '../assets/img/AKO.jpg'
 
 // 아이콘 import
 import SortIcon from '../assets/icon/ic-arrow-down-gray-24.svg?react';
@@ -16,7 +15,7 @@ type SortOption = '최근 게시순' | '저장순' | '마감 임박순';
 
 const RecruitmentPage = () => {
   const navigate = useNavigate();
-  // const { posts, isLoading, error } = useRecruitments(); // API 연동
+  const { posts, isLoading, error } = useRecruitments(); // ✅ mock 사용 중
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [sortOption, setSortOption] = useState<SortOption>('최근 게시순');
 
@@ -44,30 +43,29 @@ const RecruitmentPage = () => {
           <SortIcon className="w-4 h-4 -rotate-90 text-gray-700" />
         </button>
         <button 
-        className="flex items-center gap-1"
-        onClick={() => navigate('/recruitment/filter')}
+          className="flex items-center gap-1"
+          onClick={() => navigate('/recruitment/filter')}
         >
-        <FilterIcon className="w-4 h-4" />
-        <span className="text-sm text-gray-300 font-medium">필터</span>
+          <FilterIcon className="w-4 h-4" />
+          <span className="text-sm text-gray-300 font-medium">필터</span>
         </button>
       </div>
 
-      {/* 모집 공고 그리드 (무한 스크롤 적용 필요) */}
+      {/* 모집 공고 그리드 */}
       <main className="flex-grow px-4">
         <div className="grid grid-cols-3 gap-3">
-          {/* API 연동 시 posts.map(...)으로 변경 */}
-          {Array.from({ length: 12 }).map((_, index) => (
-             <RecruitmentCard
-                key={index}
-                recruitmentId={index}
-                imageUrl={image1}
-                title={`모집공고 ${index + 1}`}
-                recruitmentStatus="regular"
-                viewCount={123}
-                saveCount={45}
-                dDay={7}
-                isScrappedInitially={false}
-                />
+          {posts.map((post) => (
+            <RecruitmentCard
+              key={post.id}
+              recruitmentId={post.id}
+              imageUrl={post.imageUrl}
+              title={post.title}
+              recruitmentStatus={post.recruitmentStatus}
+              viewCount={post.viewCount}
+              saveCount={post.saveCount}
+              dDay={post.dDay}
+              isScrappedInitially={post.isScrappedInitially ?? false}
+            />
           ))}
         </div>
       </main>

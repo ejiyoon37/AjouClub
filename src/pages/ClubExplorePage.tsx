@@ -17,19 +17,30 @@ const ClubExplorePage = () => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [sortOption, setSortOption] = useState<ClubSortOption>('최근 등록순');
 
-  // TODO: 필터 조건 상태 관리 필요 (type, category, isRecruiting, department 등)
-  // const [filters, setFilters] = useState({ ... });
+  const sortOptions: ClubSortOption[] = ['최근 등록순', '가나다 순'];
 
-const sortOptions: ClubSortOption[] = ['최근 등록순', '가나다 순'];
+  const sortOptionMap: Record<ClubSortOption, 'recent' | 'alphabetical'> = {
+    '최근 등록순': 'recent',
+    '가나다 순': 'alphabetical',
+  };
 
-const sortOptionMap: Record<ClubSortOption, 'recent' | 'alphabetical'> = {
-  '최근 등록순': 'recent',
-  '가나다 순': 'alphabetical',
-};
+  // ✅ MOCK 용으로 훅 연결 (필요 시 page, size도 전달 가능)
+  const { clubs, isLoading, error } = useClubs({
+    sort: sortOptionMap[sortOption],
+    // page: 1,
+    // size: 6,
+  });
 
-const { clubs, isLoading, error } = useClubs({
-  sort: sortOptionMap[sortOption],
-});
+  // --- 🔽 실 API용 주석 보존 ---
+  /*
+  const { clubs, isLoading, error } = useClubs({
+    sort: sortOptionMap[sortOption],
+    type: filters.type,
+    category: filters.category,
+    isRecruiting: filters.isRecruiting,
+    department: filters.department,
+  });
+  */
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -48,20 +59,20 @@ const { clubs, isLoading, error } = useClubs({
           <SortIcon className="w-4 h-4 -rotate-90 text-gray-700" />
         </button>
         <button 
-        className="flex items-center gap-1"
-        onClick={() => navigate('/clubs/filter')}
+          className="flex items-center gap-1"
+          onClick={() => navigate('/clubs/filter')}
         >
-        <FilterIcon className="w-4 h-4" />
-        <span className="text-sm text-gray-300 font-medium">필터</span>
+          <FilterIcon className="w-4 h-4" />
+          <span className="text-sm text-gray-300 font-medium">필터</span>
         </button>
       </div>
 
       {/* 클럽 카드 리스트 */}
       <main className="flex-grow px-4">
-        <div className="grid grid-cols-3 gap-3">
-          {clubs.map((club) => (
-            <ClubCard club={club} />
-          ))}
+        <div className="grid grid-cols-3 gap-x-6 gap-y-5 w-fit mx-auto">
+            {clubs.map((club) => (
+            <ClubCard key={club.clubId} club={club} variant="explore" />
+            ))}
         </div>
       </main>
 
@@ -73,8 +84,8 @@ const { clubs, isLoading, error } = useClubs({
               <BottomSheetListItem
                 isActive={sortOption === option}
                 onClick={() => {
-                setSortOption(option);
-                setIsBottomSheetOpen(false);
+                  setSortOption(option);
+                  setIsBottomSheetOpen(false);
                 }}
               >
                 {option}

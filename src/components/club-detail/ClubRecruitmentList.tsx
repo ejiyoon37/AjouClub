@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState  } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from '../../lib/axios'; // interceptor 적용된 axios 인스턴스
 import RecruitmentListItem from '../common/Card/Card_recruitment _listitem';
 import type { Recruitment } from '../../types/recruit';
+import { useNavigate } from 'react-router-dom';
 
 interface ApiResponse<T> {
   status: number;
@@ -14,6 +15,7 @@ const ClubRecruitmentList = () => {
   const { clubId } = useParams<{ clubId: string }>();
   const [recruitments, setRecruitments] = useState<Recruitment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     if (!clubId) return;
@@ -42,16 +44,21 @@ const ClubRecruitmentList = () => {
         </div>
       ) : (
         recruitments.map((recruitment) => (
-          <RecruitmentListItem
+          <div
             key={recruitment.recruitmentId}
-            imageUrl={recruitment.thumbnailUrl}
-            recruitmentStatus={recruitment.status}
-            dDay={recruitment.dDay}
-            title={recruitment.title}
-            viewCount={recruitment.viewCount}
-            saveCount={recruitment.saveCount}
-            postedDate={recruitment.postedDate}
-          />
+            onClick={() => navigate(`/recruitment/${recruitment.recruitmentId}`)}
+            className="cursor-pointer"
+          >
+            <RecruitmentListItem
+              imageUrl={recruitment.thumbnailUrl}
+              recruitmentStatus={recruitment.status}
+              dDay={recruitment.dDay}
+              title={recruitment.title}
+              viewCount={recruitment.viewCount}
+              saveCount={recruitment.saveCount}
+              postedDate={recruitment.postedDate}
+            />
+          </div>
         ))
       )}
     </div>

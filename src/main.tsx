@@ -8,7 +8,6 @@ import './index.css';
 import { useAuthStore } from './stores/useAuthStore';
 import { setAccessToken } from './utils/axios.ts';
 
-// 로그인 상태 복원
 const restoreAuthState = () => {
   const raw = localStorage.getItem('auth');
   if (!raw) return;
@@ -21,8 +20,7 @@ const restoreAuthState = () => {
         accessToken: parsed.accessToken,
         user: parsed.user,
       });
-
-      setAccessToken(parsed.accessToken); // axios 기본 헤더 등록
+      setAccessToken(parsed.accessToken);
     }
   } catch (e) {
     console.error('auth 복원 실패:', e);
@@ -30,10 +28,8 @@ const restoreAuthState = () => {
   }
 };
 
-// 실행 시 즉시 복원
 restoreAuthState();
 
-// 앱 렌더링
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <GoogleOAuthProvider clientId="975990232206-j0fe83p1205hcnl2e6r983aq94ib0q3n.apps.googleusercontent.com">

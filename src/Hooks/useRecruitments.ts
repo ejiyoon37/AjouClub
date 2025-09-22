@@ -59,6 +59,7 @@
 import { useState, useEffect } from 'react';
 import { mockRecruitments } from '../mocks/mockRecruitments';
 
+// ✅ 타입 정의
 export interface RecruitmentPost {
   id: number;
   imageUrl: string;
@@ -67,15 +68,16 @@ export interface RecruitmentPost {
   dDay?: number;
   viewCount: number;
   saveCount: number;
+  createdAt: string; // 추가됨
   isScrappedInitially?: boolean;
 }
 
-// 👇 실제 API 대신 mock 데이터 반환
+// ✅ 실제 API 대신 mock 데이터 반환
 const getMainRecruitmentPosts = async (): Promise<RecruitmentPost[]> => {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(mockRecruitments);
-    }, 300); // 300ms 지연으로 비동기 느낌
+    }, 300);
   });
 };
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
-import type { Club, ClubType } from '../types/club';
+import type { Club } from '../types/club';
+import { mockClubs } from '../mocks/mockClubs'; // ✅ mock 데이터 import
 
 interface ClubFilterParams {
   type?: string;
@@ -8,30 +8,39 @@ interface ClubFilterParams {
   isRecruiting?: boolean;
   department?: string;
   sort?: 'recent' | 'alphabetical';
-  useAllEndpoint?: boolean; // 추가: 전체 조회 여부
+  useAllEndpoint?: boolean;
+  page?: number; // ✅ 페이징을 위한 page, size 추가
+  size?: number;
 }
 
-interface ClubApiResponse {
-  id: number;
-  name: string;
-  clubType: string;
-  logoUrl: string;
-  description?: string;
-  instagram?: string;
-  homepage?: string;
-}
-
-const convertToClubType = (type: string): ClubType => {
-  if (type === '중앙동아리' || type === '소학회') return type;
-  throw new Error(`Invalid clubType: ${type}`);
-};
-
-const useClubs = (filters: ClubFilterParams) => {
+const useClubs = (filters: ClubFilterParams = {}) => {
   const [clubs, setClubs] = useState<Club[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
+    const fetchMockClubs = async () => {
+      setIsLoading(true);
+      try {
+        // ✅ 페이징 처리
+        const { page = 1, size = 6 } = filters;
+        const startIdx = (page - 1) * size;
+        const endIdx = startIdx + size;
+
+        // ✅ 일부러 300ms 지연 (비동기 흉내)
+        await new Promise((res) => setTimeout(res, 300));
+        setClubs(mockClubs.slice(startIdx, endIdx));
+      } catch (err) {
+        setError(err as Error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMockClubs();
+
+    // --- 🔽 실 API용 코드 (필요 시 복구) ---
+    /*
     const fetchClubs = async () => {
       setIsLoading(true);
       try {
@@ -65,8 +74,8 @@ const useClubs = (filters: ClubFilterParams) => {
         setIsLoading(false);
       }
     };
-
     fetchClubs();
+    */
   }, [filters]);
 
   return { clubs, isLoading, error };
