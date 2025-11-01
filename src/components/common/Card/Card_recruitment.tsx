@@ -1,139 +1,51 @@
-// RecruitmentCard.tsx
-// import React, { useState } from 'react';
-// import PeriodChip from '../../ui/Chip/Chip_period';
+// src/components/common/Card/Card_recruitment.tsx
 
-// import ScrapIconDefault from '../../../assets/icon/ScrapBtn_default-2.svg?react';
-// import ScrapIconActive from '../../../assets/icon/ScrapBtn_activated.svg?react';
-
-// import { addToFavorites } from '../../../Api/recruitment';
-// import { removeFromFavorites } from '../../../Api/recruitment';
-
-// interface RecruitmentCardProps {
-//   recruitmentId: number;
-//   imageUrl: string;
-//   title: string;
-//   recruitmentStatus: 'regular' | 'd-day' | 'end';
-//   dDay?: number;
-//   viewCount: number;
-//   saveCount: number;
-//   isScrappedInitially?: boolean;
-// }
-
-// const RecruitmentCard = ({
-//   recruitmentId,
-//   imageUrl,
-//   title,
-//   recruitmentStatus,
-//   dDay,
-//   viewCount,
-//   saveCount: initialSaveCount,
-//   isScrappedInitially = false,
-// }: RecruitmentCardProps) => {
-//   const [isScrapped, setIsScrapped] = useState(isScrappedInitially);
-//   const [saveCount, setSaveCount] = useState(initialSaveCount);
-
-//   const handleScrapClick = async (e: React.MouseEvent) => {
-//     e.stopPropagation();
-//     try {
-//       if (!isScrapped) {
-//         await addToFavorites(recruitmentId);
-//         setIsScrapped(true);
-//         setSaveCount((prev) => prev + 1);
-//       } else {
-//         await removeFromFavorites(recruitmentId);
-//         setIsScrapped(false);
-//         setSaveCount((prev) => prev - 1);
-//       }
-//     } catch (error) {
-//       console.error('스크랩 처리 중 오류:', error);
-//     }
-//   };
-
-//   return (
-//     <div className="w-full cursor-pointer group">
-//       <div className="relative mb-2">
-//         <img
-//           className="w-full aspect-square object-cover rounded-lg border border-gray-100"
-//           src={imageUrl}
-//           alt={`${title} thumbnail`}
-//         />
-//         <button
-//           onClick={handleScrapClick}
-//           className="absolute top-2 right-2 p-1.5 rounded-full bg-black/30 backdrop-blur-sm"
-//           aria-label="스크랩"
-//         >
-//           {isScrapped ? (
-//             <ScrapIconActive className="w-5 h-5" />
-//           ) : (
-//             <ScrapIconDefault className="w-5 h-5" />
-//           )}
-//         </button>
-//       </div>
-
-//       <div>
-//         <h3 className="font-medium text-gray-800 line-clamp-2 leading-[1.35] h-[38px] group-hover:underline">
-//           {title}
-//         </h3>
-//         <div className="mt-1">
-//           <PeriodChip status={recruitmentStatus} dDay={dDay} size="small" />
-//         </div>
-//         <div className="mt-2 text-xs font-normal text-gray-300 leading-[1.4] tracking-[-0.02em]">
-//           <span>조회 {viewCount}</span>
-//           <span className="ml-2">저장 {saveCount}</span>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default RecruitmentCard;
-
-// RecruitmentCard.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PeriodChip from '../../ui/Chip/Chip_period';
-
 import ScrapIconDefault from '../../../assets/icon/ScrapBtn_default-2.svg?react';
 import ScrapIconActive from '../../../assets/icon/ScrapBtn_activated.svg?react';
-
 import { addToFavorites, removeFromFavorites } from '../../../api/recruitment';
+import DefaultImage from '../../../assets/img/R_image.png'; // (새로 추가)
 
+// (수정) Props를 Recruitment 타입과 일치시킴
 interface RecruitmentCardProps {
   recruitmentId: number;
-  imageUrl: string;
+  images: string[]; // (수정) imageUrl -> images
   title: string;
-  recruitmentStatus: 'regular' | 'd-day' | 'end';
+  status: 'regular' | 'd-day' | 'end'; // (수정) recruitmentStatus -> status
   dDay?: number;
-  viewCount: number;
-  saveCount: number;
+  viewCount?: number; // (수정) optional
+  scrapCount: number; // (수정) saveCount -> scrapCount
   isScrappedInitially?: boolean;
 }
 
 const RecruitmentCard = ({
   recruitmentId,
-  imageUrl,
+  images, // (수정)
   title,
-  recruitmentStatus,
+  status, // (수정)
   dDay,
   viewCount,
-  saveCount: initialSaveCount,
+  scrapCount: initialScrapCount, // (수정)
   isScrappedInitially = false,
 }: RecruitmentCardProps) => {
   const [isScrapped, setIsScrapped] = useState(isScrappedInitially);
-  const [saveCount, setSaveCount] = useState(initialSaveCount);
+  // (수정) saveCount -> scrapCount
+  const [scrapCount, setScrapCount] = useState(initialScrapCount);
   const navigate = useNavigate();
 
   const handleScrapClick = async (e: React.MouseEvent) => {
-    e.stopPropagation(); // 카드 클릭과 이벤트 겹치지 않도록 방지
+    e.stopPropagation(); 
     try {
       if (!isScrapped) {
         await addToFavorites(recruitmentId);
         setIsScrapped(true);
-        setSaveCount((prev) => prev + 1);
+        setScrapCount((prev) => prev + 1);
       } else {
         await removeFromFavorites(recruitmentId);
         setIsScrapped(false);
-        setSaveCount((prev) => prev - 1);
+        setScrapCount((prev) => prev - 1);
       }
     } catch (error) {
       console.error('스크랩 처리 중 오류:', error);
@@ -143,6 +55,9 @@ const RecruitmentCard = ({
   const handleCardClick = () => {
     navigate(`/recruitments/${recruitmentId}`);
   };
+
+  // (새로 추가) 썸네일 이미지 결정
+  const thumbnailUrl = images[0] || DefaultImage;
 
   return (
     <div
@@ -155,7 +70,7 @@ const RecruitmentCard = ({
       <div className="relative">
         <img
           className="w-[109px] h-[109px] object-cover rounded-[8px] border border-gray-100"
-          src={imageUrl}
+          src={thumbnailUrl} // (수정)
           alt={`${title} thumbnail`}
         />
         <button
@@ -178,13 +93,14 @@ const RecruitmentCard = ({
 
       {/* 모집 상태 뱃지 */}
       <div className="mt-1 flex justify-start">
-        <PeriodChip status={recruitmentStatus} dDay={dDay} size="small" />
+        <PeriodChip status={status} dDay={dDay} size="small" /> {/* (수정) */}
       </div>
 
       {/* 조회수 & 저장수 */}
       <div className="text-xs text-gray-300 font-normal leading-[1.4] tracking-[-0.02em]">
-        <span>조회 {viewCount}</span>
-        <span className="ml-2">저장 {saveCount}</span>
+        {/* (수정) viewCount가 있을 때만 표시 */}
+        {viewCount !== undefined && <span>조회 {viewCount}</span>}
+        <span className="ml-2">저장 {scrapCount}</span> {/* (수정) */}
       </div>
     </div>
   );

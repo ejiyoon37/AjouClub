@@ -44,7 +44,7 @@ export interface Recruitment {
   images: string[]; 
   status: RecruitmentStatus;
   dDay: number;
-
+  viewCount?: number; // (새로 추가)
 
   isScrapped: boolean;
   scrapCount: number; 

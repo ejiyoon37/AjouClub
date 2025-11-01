@@ -1,3 +1,5 @@
+// src/components/homepage/RecruitingSection.tsx
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -24,30 +26,30 @@ const RecruitingSection = () => {
 
   return (
     <section className="space-y-4">
-      {/* Section Title + 전체보기 */}
+      {/* ... (Section Title 동일) ... */}
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-gray-900">지금 모집중인 공고</h2>
         <SeeAllButton navigateTo="/recruitment" />
       </div>
 
-      {/* 카드 그리드 */}
+      {/* 카드 그리드 (수정) */}
       <div className="grid grid-cols-3 gap-4">
         {paginatedPosts.map((post) => (
           <RecruitmentCard
-            key={post.id}
-            recruitmentId={post.id}
-            imageUrl={post.imageUrl}
+            key={post.recruitmentId} // (수정)
+            recruitmentId={post.recruitmentId} // (수정)
+            images={post.images} // (수정)
             title={post.title}
-            recruitmentStatus={post.recruitmentStatus}
+            status={post.status} // (수정)
             dDay={post.dDay}
-            viewCount={post.viewCount}
-            saveCount={post.saveCount}
-            isScrappedInitially={post.isScrappedInitially}
+            viewCount={post.viewCount} // (수정)
+            scrapCount={post.scrapCount} // (수정)
+            isScrappedInitially={post.isScrapped} // (수정)
             />
         ))}
       </div>
 
-      {/* 페이지네이션 */}
+      {/* ... (Pagination 동일) ... */}
       {totalPages > 1 && (
         <Pagination
           currentPage={currentPage}
