@@ -5,26 +5,32 @@ export type ClubType = '중앙동아리' | '소학회';
 export interface Club {
   clubId: number;
   clubName: string;
+  description: string | null;
+  mainActivities: string | null; 
+  location: string | null; 
+  contactPhoneNumber: string | null; 
+  instagramUrl: string | null; 
+  youtubeUrl: string | null;
+  linktreeUrl: string | null; 
+  clubUrl: string | null; 
+  contactEmail: string | null;
+  createdAt: string;
+  updatedAt: string;
   clubType: ClubType;
-  profileImageUrl: string | null; // API의 logoUrl. null일 수 있음
-  description?: string | null;
-  category: string; 
-  isRecruiting: boolean; 
+  profileImageUrl: string | null; 
+  category: string;
+  details: string | null; 
+  isRecruiting: boolean;
 
-
-  contact?: {
-    instagramUrl?: string;
-    homepageUrl?: string;
-  };
 }
-
-export interface ClubPreview {
-  id: number; // = clubId
+export interface ApiClubData {
+  id: number;
   name: string;
-  type: ClubType;
-  description: string;
-  imageUrl: string;
-  isScrappedInitially?: boolean;
+  description: string | null;
+  clubType: ClubType;
+  logoUrl: string | null;
+  category: string;
+  recruiting: boolean;
 }
 
 
@@ -34,12 +40,11 @@ export interface ApiResponse<T> {
   data: T;
 }
 
-export interface ApiClubData {
+export interface ClubPreview {
   id: number;
   name: string;
-  description: string | null;
-  clubType: ClubType;
-  logoUrl: string | null;
-  category: string;
-  recruiting: boolean;
+  type: ClubType;
+  description: string;
+  imageUrl: string;
+  isScrappedInitially?: boolean;
 }
