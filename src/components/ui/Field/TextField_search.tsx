@@ -3,24 +3,26 @@ import { useNavigate } from 'react-router-dom';
 
 import SearchIcon from '../../../assets/icon/icn_search_24-2.svg?react';
 
+interface SearchFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  disableFocusNavigate?: boolean; // (새로 추가)
+}
 
-interface SearchFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {}
-
-const SearchField = ({ className, value, ...props }: SearchFieldProps) => {
+const SearchField = ({
+  className,
+  value,
+  disableFocusNavigate = false, // (새로 추가)
+  ...props
+}: SearchFieldProps) => {
   const [isActivated, setIsActivated] = useState(false);
   const navigate = useNavigate();
   const hasValue = value && String(value).length > 0;
 
-
   const getContainerStyle = () => {
     if (isActivated) {
-      // activated: 파란색 테두리
       return 'bg-gray-50 border-2 border-blue-400';
     }
-    // default & entered: 회색 배경, 테두리 없음
     return 'bg-gray-50 border-2 border-transparent';
   };
-
 
   const iconColorClass = isActivated ? 'text-blue-400' : 'text-gray-500';
 
@@ -36,7 +38,10 @@ const SearchField = ({ className, value, ...props }: SearchFieldProps) => {
         value={value}
         onFocus={(e) => {
           setIsActivated(true);
-          navigate('/search'); 
+          // (수정) disableFocusNavigate가 false일 때만 navigate 실행
+          if (!disableFocusNavigate) {
+            navigate('/search');
+          }
         }}
         onBlur={() => setIsActivated(false)}
         placeholder="동아리를 검색해 보세요!"
@@ -50,4 +55,4 @@ const SearchField = ({ className, value, ...props }: SearchFieldProps) => {
     </div>
   );
 };
-export default SearchField
+export default SearchField;

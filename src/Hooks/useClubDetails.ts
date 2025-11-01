@@ -1,38 +1,52 @@
 // src/Hooks/useClubDetails.ts
 
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
-import axios from '../utils/axios'; // lib/axios 대신 utils/axios 사용
-import type { Club, ApiResponse } from '../types/club';
+import axios from '../utils/axios'; 
+import type { Club, ApiResponse, ApiClubData } from '../types/club'; // (수정) ApiClubData 임포트
 
-// API 응답 데이터를 Club 타입으로 매핑 (필드 이름 맞추기)
-const mapApiDataToClub = (data: any): Club => {
+// (수정) API 응답 데이터를 Club 타입으로 매핑 (JSON 응답 본문[1] 기반)
+const mapApiDataToClub = (data: ApiClubData): Club => {
   return {
-    ...data,
     clubId: data.id,
     clubName: data.name,
-    profileImageUrl: data.logoUrl, // logoUrl -> profileImageUrl
+    description: data.description,
+    mainActivities: data.mainActivities || null,
+    location: data.location || null,
+    contactPhoneNumber: data.contactPhoneNumber || null,
+    instagramUrl: data.instagramUrl || null,
+    youtubeUrl: data.youtubeUrl || null,
+    linktreeUrl: data.linktreeUrl || null,
+    clubUrl: data.clubUrl || null,
+    contactEmail: data.contactEmail || null,
+    createdAt: data.createdAt || '',
+    updatedAt: data.updatedAt || '',
+    clubType: data.clubType,
+    profileImageUrl: data.logoUrl,
+    category: data.category,
+    details: data.details || null, // '분과'
     isRecruiting: data.recruiting,
+    recruitmentTarget: data.recruitmentTarget || null, // '모집 대상'
   };
 };
 
 const fetchClubDetail = async (clubId: number): Promise<Club> => {
   try {
-    // 1. 중앙동아리 API(/api/club/central/{clubId}) [user-provided-json] 먼저 시도
-    const res = await axios.get<ApiResponse<any>>(`/api/club/central/${clubId}`);
+    // 1. 중앙동아리 API(/api/club/central/{clubId})
+    const res = await axios.get<ApiResponse<ApiClubData>>(`/api/club/central/${clubId}`);
     if (res.data.status === 200) {
       return mapApiDataToClub(res.data.data);
     }
   } catch (error: any) {
-    // 2. 404 에러가 발생하면 소학회 API(/api/club/academic/{clubId}) [user-provided-json] 시도
+    // 2. 404 에러가 발생하면 소학회 API(/api/club/academic/{clubId}) 시도
     if (error.response && error.response.status === 404) {
       try {
-        const res = await axios.get<ApiResponse<any>>(`/api/club/academic/${clubId}`);
+        const res = await axios.get<ApiResponse<ApiClubData>>(`/api/club/academic/${clubId}`);
         if (res.data.status === 200) {
           return mapApiDataToClub(res.data.data);
         }
       } catch (academicError) {
         console.error('Academic club fetch failed:', academicError);
-        throw academicError; // 소학회도 실패하면 에러
+        throw academicError; 
       }
     }
     // 404가 아닌 다른 에러
@@ -48,6 +62,6 @@ export const useClubDetail = (clubId: number): UseQueryResult<Club, Error> => {
     queryKey: ['clubDetail', clubId],
     queryFn: () => fetchClubDetail(clubId),
     enabled: !!clubId,
-    retry: false, // 훅 내부에서 이미 재시도(central -> academic) 로직이 있으므로 React Query 재시도 비활성화
+    retry: false, 
   });
 };

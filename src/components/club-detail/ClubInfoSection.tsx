@@ -1,5 +1,5 @@
 // src/components/club-detail/ClubInfoSection.tsx
-import React from 'react'; // (수정) useEffect, useState, axios 제거
+import React from 'react'; 
 import TypeChip from '../ui/Chip/Chip_type';
 import LocationIcon from '../../assets/icon/icn_location_16.svg?react';
 import PersonIcon from '../../assets/icon/icn_person_16.svg?react';
@@ -8,11 +8,10 @@ import InstaIcon from '../../assets/icon/icn_sns_insta.svg?react';
 import type { Club } from '../../types/club';
 
 interface ClubInfoSectionProps {
-  club: Club; // (수정) clubId 대신 Club 객체 전체를 props로 받음
+  club: Club; 
 }
 
 const ClubInfoSection = ({ club }: ClubInfoSectionProps) => {
-  // (삭제) useState, useEffect, fetchClub
 
   if (!club) return null;
 
@@ -21,11 +20,11 @@ const ClubInfoSection = ({ club }: ClubInfoSectionProps) => {
       {/* 프로필 이미지 + 정보 */}
       <div className="flex items-center gap-3">
         <img
-          src={club.profileImageUrl || '/OnlyLogo.svg'} // (수정) API 필드(logoUrl)와 null 처리
+          src={club.profileImageUrl || '/OnlyLogo.svg'} 
           alt="club logo"
           className="w-[64px] h-[64px] rounded-full border border-gray-100 object-cover"
         />
-        <div className="flex flex-col gap-1"> {/* (수정) 칩과 이름 수직 정렬 */}
+        <div className="flex flex-col gap-1"> 
           <TypeChip size="medium">{club.clubType}</TypeChip>
           <p className="text-[18px] font-semibold text-gray-900 leading-[135%] tracking-[-0.03em]">
             {club.clubName}
@@ -35,12 +34,12 @@ const ClubInfoSection = ({ club }: ClubInfoSectionProps) => {
 
       {/* 상세 정보 (수정) */}
       <div className="mt-4 space-y-2">
-        {/* (수정) API 데이터 [user-provided-json-with-id-19]와 연결 */}
         {club.location && (
           <InfoRow icon={<LocationIcon />} label="동아리 방" value={club.location} />
         )}
-        {club.details && (
-          <InfoRow icon={<PersonIcon />} label="분과" value={club.details} />
+        {/* (수정) '분과'(details) 대신 '모집 대상'(recruitmentTarget) 표시 */}
+        {club.recruitmentTarget && (
+          <InfoRow icon={<PersonIcon />} label="모집 대상" value={club.recruitmentTarget} />
         )}
         
         {/* (수정) SNS 링크 연결 */}
