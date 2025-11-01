@@ -37,15 +37,15 @@ const ClubInfoSection = ({ club }: ClubInfoSectionProps) => {
         {club.location && (
           <InfoRow icon={<LocationIcon />} label="동아리 방" value={club.location} />
         )}
-        {/* (수정) '분과'(details) 대신 '모집 대상'(recruitmentTarget) 표시 */}
-        {club.recruitmentTarget && (
-          <InfoRow icon={<PersonIcon />} label="모집 대상" value={club.recruitmentTarget} />
+        
+        {/* (수정) '모집 대상' 레이블에 API의 'details' 필드(분과)를 연결 */}
+        {club.details && (
+          <InfoRow icon={<PersonIcon />} label="모집 대상" value={club.details} />
         )}
         
-        {/* (수정) SNS 링크 연결 */}
+        {/* SNS 링크 연결 */}
         <div className="flex items-center gap-2 pt-1">
           <span className="text-[14px] font-medium leading-[135%] tracking-[-0.03em] text-gray-600">SNS</span>
-          {/* (수정) API의 clubUrl을 홈페이지로 사용 */}
           {club.clubUrl && (
             <a href={club.clubUrl} target="_blank" rel="noopener noreferrer">
               <WebIcon />

@@ -38,17 +38,17 @@ const mapApiClubToClub = (apiClub: ApiClubData): Club => {
   };
 };
 
-// (새로 추가) API 호출 함수
+// (수정) API 호출 함수 (sort 파라미터 제외)
 const fetchClubs = async (filters: ClubFilterParams): Promise<Club[]> => {
-  // 'sort'를 제외한 실제 필터가 있는지 확인
+  // (수정) 'sort'를 제외한 실제 필터만 사용
   const { sort, ...realFilters } = filters;
   const hasFilters = Object.values(realFilters).some(val => val !== undefined);
 
   let response;
   if (hasFilters) {
-    // 필터가 있으면 /api/club/filter [user-provided-json] 호출
+    // (수정) params: realFilters (sort 제외)
     response = await axios.get<ApiResponse<ApiClubData[]>>('/api/club/filter', {
-      params: filters, // sort 파라미터 포함하여 전송 (서버에서 무시하더라도)
+      params: realFilters, 
     });
   } else {
     // 필터가 없으면 /api/club/all [user-provided-json, user-provided-json-with-data] 호출
@@ -64,15 +64,18 @@ const fetchClubs = async (filters: ClubFilterParams): Promise<Club[]> => {
 
 
 const useClubs = (filters: ClubFilterParams = {}) => {
-  // (수정) useState/useEffect 훅을 React Query의 useQuery로 교체
+  // (수정) queryKey에서 sort 분리
+  const { sort, ...realFilters } = filters;
+  
   const { 
     data: clubs = [], 
     isLoading, 
     error 
   } = useQuery<Club[], Error>({
-    // queryKey에 filters를 포함시켜 필터가 변경될 때마다 데이터를 다시 불러옵니다.
-    queryKey: ['clubs', filters], 
-    queryFn: () => fetchClubs(filters),
+    // (수정) queryKey에 realFilters만 포함
+    queryKey: ['clubs', realFilters], 
+    // (수정) queryFn에 realFilters만 전달
+    queryFn: () => fetchClubs(realFilters),
   });
 
   return { clubs, isLoading, error };

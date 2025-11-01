@@ -27,6 +27,15 @@ const RecruitmentDetailPage = () => {
   const [isScrapped, setIsScrapped] = useState(false);
   const [scrapCount, setScrapCount] = useState(0); 
 
+  // (새로 추가) 훅에서 데이터를 불러오면, 로컬 스크랩 상태를 초기화합니다.
+  useEffect(() => {
+    if (recruitment) {
+      // (참고) 현재 useRecruitmentDetail 훅은 isScrapped=false, scrapCount=0을 반환합니다.
+      // 향후 API에서 실제 값을 제공하도록 훅이 수정되면, 이 코드가 실제 초기값을 설정합니다.
+      setIsScrapped(recruitment.isScrapped);
+      setScrapCount(recruitment.scrapCount);
+    }
+  }, [recruitment]); // recruitment 데이터가 로드될 때 실행
 
   const handleToggleScrap = async () => {
     if (!isLoggedIn) {

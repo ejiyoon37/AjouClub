@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+// src/pages/ClubExplorePage.tsx
+
+import React, { useState, useMemo } from 'react'; // (수정) useMemo 추가
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/common/Header';
 import TextBtn from '../components/ui/Button/TextBtn';
@@ -8,6 +10,8 @@ import ClubCard from '../components/common/Card/Card_Club';
 import useClubs from '../Hooks/useClubs';
 import SortIcon from '../assets/icon/ic-arrow-down-gray-24.svg?react';
 import FilterIcon from '../assets/icon/icn_filter_16.svg?react';
+// (새로 추가)
+import type { Club } from '../types/club'; 
 
 // 정렬 옵션 타입
 type ClubSortOption = '최근 등록순' | '가나다 순';
@@ -24,12 +28,29 @@ const ClubExplorePage = () => {
     '가나다 순': 'alphabetical',
   };
 
-  // ✅ MOCK 용으로 훅 연결 (필요 시 page, size도 전달 가능)
+  // (수정) useClubs 훅 호출 (sort 파라미터는 훅 내부에서 무시됨)
   const { clubs, isLoading, error } = useClubs({
     sort: sortOptionMap[sortOption],
-    // page: 1,
-    // size: 6,
+    // (참고) 필터링이 있다면 여기에 전달
   });
+
+  // (새로 추가) useMemo를 사용한 클라이언트 측 정렬
+  const sortedClubs = useMemo(() => {
+    const clubsCopy = [...clubs];
+    
+    switch (sortOption) {
+      case '가나다 순':
+        // clubName (문자열) 기준 오름차순
+        return clubsCopy.sort((a, b) => a.clubName.localeCompare(b.clubName));
+      
+      case '최근 등록순':
+        // API가 createdAt을 안주므로 clubId 역순으로 대체 (ID가 높을수록 최신이라 가정)
+        return clubsCopy.sort((a, b) => b.clubId - a.clubId); 
+      
+      default:
+        return clubsCopy;
+    }
+  }, [clubs, sortOption]); // clubs나 sortOption이 바뀔 때만 재정렬
 
   // --- 🔽 실 API용 주석 보존 ---
   /*
@@ -67,10 +88,10 @@ const ClubExplorePage = () => {
         </button>
       </div>
 
-      {/* 클럽 카드 리스트 */}
+      {/* (수정) clubs.map -> sortedClubs.map */}
       <main className="flex-grow px-4">
         <div className="grid grid-cols-3 gap-x-6 gap-y-5 w-fit mx-auto">
-            {clubs.map((club) => (
+            {sortedClubs.map((club) => (
             <ClubCard key={club.clubId} club={club} variant="explore" />
             ))}
         </div>

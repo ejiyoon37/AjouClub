@@ -1,6 +1,6 @@
 // src/pages/RecruitmentPage.tsx
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react'; // (수정) useMemo 추가
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/common/Header';
 import TextBtn from '../components/ui/Button/TextBtn';
@@ -8,6 +8,7 @@ import BottomSheetListItem from '../components/ui/Field/List_btnsheet';
 import BottomSheet from '../components/explore/BottomSheet';
 import RecruitmentCard from '../components/common/Card/Card_recruitment';
 import useRecruitments from '../Hooks/useRecruitments';
+import type { Recruitment } from '../types/recruit'; // (새로 추가)
 
 // 아이콘 import
 import SortIcon from '../assets/icon/ic-arrow-down-gray-24.svg?react';
@@ -28,6 +29,32 @@ const RecruitmentPage = () => {
     setSortOption(option);
     setIsBottomSheetOpen(false);
   };
+
+  // (새로 추가) useMemo를 사용한 클라이언트 측 정렬
+  const sortedPosts = useMemo(() => {
+    const postsCopy = [...posts];
+
+    // '마감 임박순' 정렬을 위한 우선순위 함수
+    const getSortPriority = (post: Recruitment) => {
+      if (post.status === 'end') return Infinity; // 마감된 공고는 최하단
+      if (post.status === 'regular') return 1000; // 상시모집은 d-day 다음
+      return post.dDay; // dDay가 낮은 순 (가장 임박)
+    };
+
+    switch (sortOption) {
+      case '최근 게시순':
+        // createdAt (날짜 문자열) 기준 내림차순
+        return postsCopy.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      case '저장순':
+        // scrapCount (숫자) 기준 내림차순
+        return postsCopy.sort((a, b) => b.scrapCount - a.scrapCount);
+      case '마감 임박순':
+        // 우선순위 함수 기준 오름차순
+        return postsCopy.sort((a, b) => getSortPriority(a) - getSortPriority(b));
+      default:
+        return postsCopy;
+    }
+  }, [posts, sortOption]); // posts나 sortOption이 바뀔 때만 재정렬
 
   // (새로 추가) 로딩/에러 처리
   if (isLoading) {
@@ -62,10 +89,10 @@ const RecruitmentPage = () => {
         </button>
       </div>
 
-      {/* 모집 공고 그리드 (수정) */}
+      {/* (수정) posts -> sortedPosts */}
       <main className="flex-grow px-4">
         <div className="grid grid-cols-3 gap-3">
-          {posts.map((post) => (
+          {sortedPosts.map((post) => (
             <RecruitmentCard
               key={post.recruitmentId} // (수정)
               recruitmentId={post.recruitmentId} // (수정)

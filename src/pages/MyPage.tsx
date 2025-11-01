@@ -3,20 +3,21 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../stores/useAuthStore';
-import { useMyPageData } from '../Hooks/useMypageData'; // (수정)
+import { useMyPageData } from '../Hooks/useMypageData'; 
 
 import UserProfileSection from '../components/mypage/UserProfileSection';
 import FavoriteRecruitmentList from '../components/mypage/FavoriteRecruitmentList';
-import LogoIcon from '../assets/logo_typo.svg?react';
-
-// (삭제) mockUser import
+// (수정) Header 임포트
+import Header from '../components/common/Header'; 
+// (삭제) LogoIcon
+import { logout as requestLogout } from '../api/auth'; // (새로 추가)
 
 const MyPage = () => {
-  const { isLoggedIn } = useAuthStore();
+  // (수정) logout 상태 가져오기
+  const { isLoggedIn, logout } = useAuthStore(); 
   const navigate = useNavigate();
   const location = useLocation();
 
-  // (수정) mock 데이터 대신 useMyPageData 훅 사용
   const { user, favorites, isLoading, error } = useMyPageData();
 
   useEffect(() => {
@@ -25,12 +26,19 @@ const MyPage = () => {
     }
   }, [isLoggedIn, navigate, location]);
 
-  // (삭제) if (!isLoggedIn) return null;
-  // (삭제) mockUser 직접 사용 부분
+  // (삭제) goToHome
   
-  const goToHome = () => navigate('/');
+  // (새로 추가) 로그아웃 핸들러
+  const handleLogout = async () => {
+    try {
+      await requestLogout(); // API 호출
+    } catch (error) {
+      console.error('서버 로그아웃 실패:', error);
+    }
+    logout(); // Zustand 상태 초기화
+    window.location.href = '/'; // 홈으로 이동
+  };
 
-  // (새로 추가) 로딩 및 에러 처리
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -48,15 +56,11 @@ const MyPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="flex items-center justify-between w-full h-12 px-4 border-b border-gray-100 bg-white">
-        <button onClick={goToHome} aria-label="홈으로 가기">
-          <LogoIcon />
-        </button>
-      </header>
+    // (수정) pb-20 (로그아웃 버튼 공간)
+    <div className="min-h-screen bg-gray-50 pb-20"> 
+      {/* (수정) 공통 헤더 사용 */}
+      <Header variant="page" />
 
-      {/* (수정) 훅에서 받아온 user 객체 전달 */}
       <UserProfileSection user={user} />
 
       {/* 구분선 */}
@@ -69,20 +73,29 @@ const MyPage = () => {
         </p>
 
         {favorites.length === 0 ? (
+          // (수정) Figma(image_de22c9.png)에 맞게 텍스트 수정
           <div className="flex flex-col items-center justify-center py-16">
             <p className="text-[16px] font-medium text-gray-300 leading-[135%] tracking-[-0.03em] text-center">
-              저장된 공고가 없습니다<br />
-              관심있는 모집공고를 저장해 보세요!
+              저장한 공고가 없습니다
             </p>
           </div>
         ) : (
-          // (수정) 훅에서 받아온 favorites 맵핑
           favorites.map((item) => (
             <div key={item.recruitmentId}>
               <FavoriteRecruitmentList item={item} />
             </div>
           ))
         )}
+      </div>
+
+      {/* (새로 추가) 로그아웃 버튼 (페이지 최하단) */}
+      <div className="px-6 mt-10">
+        <button
+          className="text-[12px] font-medium underline text-gray-600 leading-[140%] tracking-[-0.03em]"
+          onClick={handleLogout}
+        >
+          로그아웃하기
+        </button>
       </div>
     </div>
   );

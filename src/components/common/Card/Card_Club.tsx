@@ -43,13 +43,8 @@ const ClubCard = ({ club, variant = 'home' }: ClubCardProps) => {
         `}
       />
 
-      {/* 분류 Chip 및 모집중 뱃지 */}
-      {/* isRecruiting이 true일 때만 '모집중' 뱃지 표시 */}
-      {isRecruiting ? (
-        <PeriodChip status="regular" size="small" />
-      ) : (
-        <TypeChip size="regular">{clubType}</TypeChip>
-      )}
+      {/* (수정) variant와 관계없이 항상 동아리 분류(TypeChip)만 표시 */}
+      <TypeChip size="regular">{clubType}</TypeChip>
 
       {/* 동아리명 */}
       <p
