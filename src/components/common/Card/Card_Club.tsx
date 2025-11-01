@@ -1,5 +1,8 @@
+// src/components/common/Card/Card_Club.tsx
+
 import React from 'react';
 import TypeChip from '../../ui/Chip/Chip_type';
+import PeriodChip from '../../ui/Chip/Chip_period'; 
 import type { Club } from '../../../types/club';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,11 +12,13 @@ interface ClubCardProps {
 }
 
 const ClubCard = ({ club, variant = 'home' }: ClubCardProps) => {
-  const { profileImageUrl, clubType, clubName } = club;
+  // API의 logoUrl을 profileImageUrl로 매핑했으므로 그대로 사용
+  // clubId, clubName, isRecruiting 사용
+  const { clubId, profileImageUrl, clubType, clubName, isRecruiting } = club;
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/clubs/${club.clubId}`);
+    navigate(`/clubs/${clubId}`); 
   };
 
   const isExplore = variant === 'explore';
@@ -30,16 +35,21 @@ const ClubCard = ({ club, variant = 'home' }: ClubCardProps) => {
     >
       {/* 프로필 이미지 */}
       <img
-        src={profileImageUrl}
-        alt={`${clubName} profile`}
+        src={profileImageUrl || '/OnlyLogo.svg'} // 로고가 null일 때 대비
+        alt={`${clubName} profile`} 
         className={`
           ${isExplore ? 'w-[72px] h-[72px]' : 'w-[80px] h-[80px]'}
           rounded-full border border-gray-100 object-cover
         `}
       />
 
-      {/* 분류 Chip */}
-      <TypeChip size="regular">{clubType}</TypeChip>
+      {/* 분류 Chip 및 모집중 뱃지 */}
+      {/* isRecruiting이 true일 때만 '모집중' 뱃지 표시 */}
+      {isRecruiting ? (
+        <PeriodChip status="regular" size="small" />
+      ) : (
+        <TypeChip size="regular">{clubType}</TypeChip>
+      )}
 
       {/* 동아리명 */}
       <p
@@ -48,7 +58,7 @@ const ClubCard = ({ club, variant = 'home' }: ClubCardProps) => {
             'w-[104px] h-[18px] text-center truncate text-[14px] font-medium text-gray-900 leading-[135%] tracking-[-0.03em]'}
         `}
       >
-        {clubName}
+        {clubName} 
       </p>
     </div>
   );

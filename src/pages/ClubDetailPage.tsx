@@ -25,7 +25,7 @@ const ClubDetailPage = () => {
   return (
     <div className="min-h-screen bg-white">
       <Header variant="page" />
-      <ClubInfoSection clubId={club.clubId} />
+      <ClubInfoSection club={club} />
       <ClubDetailTab onTabChange={setSelectedTab} />
       {selectedTab === '모집공고' ? (
         <ClubRecruitmentList />

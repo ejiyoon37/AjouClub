@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react';
-import type { Club } from '../types/club';
-import { mockClubs } from '../mocks/mockClubs'; // ✅ mock 데이터 import
+// src/Hooks/useClubs.ts
+
+import { useQuery } from '@tanstack/react-query';
+import type { Club, ApiResponse, ApiClubData, ClubType } from '../types/club';
+import axios from '../utils/axios'; 
 
 interface ClubFilterParams {
   type?: string;
@@ -8,75 +10,58 @@ interface ClubFilterParams {
   isRecruiting?: boolean;
   department?: string;
   sort?: 'recent' | 'alphabetical';
-  useAllEndpoint?: boolean;
-  page?: number; // ✅ 페이징을 위한 page, size 추가
-  size?: number;
+
 }
 
+
+const mapApiClubToClub = (apiClub: ApiClubData): Club => {
+  return {
+    clubId: apiClub.id,
+    clubName: apiClub.name,
+    clubType: apiClub.clubType,
+    profileImageUrl: apiClub.logoUrl,
+    description: apiClub.description,
+    category: apiClub.category,
+    isRecruiting: apiClub.recruiting,
+
+  };
+};
+
+
+const fetchClubs = async (filters: ClubFilterParams): Promise<Club[]> => {
+  const useAllEndpoint = Object.keys(filters).length === 0;
+  
+  // 1. /api/club/all 호출 (필터가 없을 때)
+  if (useAllEndpoint) {
+    const res = await axios.get<ApiResponse<ApiClubData[]>>('/api/club/all');
+    if (res.data.status !== 200) throw new Error(res.data.message);
+    return res.data.data.map(mapApiClubToClub);
+  }
+
+  // 2. /api/club/filter 호출 (필터가 있을 때)
+  const res = await axios.get<ApiResponse<ApiClubData[]>>('/api/club/filter', {
+    params: {
+      type: filters.type,
+      category: filters.category,
+      isRecruiting: filters.isRecruiting,
+      department: filters.department,
+      sort: filters.sort,
+    },
+  });
+  if (res.data.status !== 200) throw new Error(res.data.message);
+  return res.data.data.map(mapApiClubToClub);
+};
+
+
 const useClubs = (filters: ClubFilterParams = {}) => {
-  const [clubs, setClubs] = useState<Club[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  useEffect(() => {
-    const fetchMockClubs = async () => {
-      setIsLoading(true);
-      try {
-        // ✅ 페이징 처리
-        const { page = 1, size = 6 } = filters;
-        const startIdx = (page - 1) * size;
-        const endIdx = startIdx + size;
-
-        // ✅ 일부러 300ms 지연 (비동기 흉내)
-        await new Promise((res) => setTimeout(res, 300));
-        setClubs(mockClubs.slice(startIdx, endIdx));
-      } catch (err) {
-        setError(err as Error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchMockClubs();
-
-    // --- 🔽 실 API용 코드 (필요 시 복구) ---
-    /*
-    const fetchClubs = async () => {
-      setIsLoading(true);
-      try {
-        const url = filters.useAllEndpoint ? '/api/club/all' : '/api/club/filter';
-        const { data } = await axios.get<{ status: number; message: string; data: ClubApiResponse[] }>(url, {
-          params: filters.useAllEndpoint ? undefined : {
-            type: filters.type,
-            category: filters.category,
-            isRecruiting: filters.isRecruiting,
-            department: filters.department,
-            sort: filters.sort,
-          },
-        });
-
-        const mappedClubs: Club[] = data.data.map((club) => ({
-          clubId: club.id,
-          clubName: club.name,
-          clubType: convertToClubType(club.clubType),
-          profileImageUrl: club.logoUrl,
-          description: club.description,
-          contact: {
-            instagramUrl: club.instagram,
-            homepageUrl: club.homepage,
-          },
-        }));
-
-        setClubs(mappedClubs);
-      } catch (err) {
-        setError(err as Error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchClubs();
-    */
-  }, [filters]);
+  const { 
+    data: clubs = [], // data가 undefined일 때 빈 배열([])을 기본값으로 사용
+    isLoading, 
+    error 
+  } = useQuery<Club[], Error>({
+    queryKey: ['clubs', filters], 
+    queryFn: () => fetchClubs(filters),
+  });
 
   return { clubs, isLoading, error };
 };

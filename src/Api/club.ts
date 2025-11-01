@@ -1,23 +1,32 @@
-// import axios from "axios";
-// import type { Club } from "../types/club";
-// const res = await axios.get('/api/club/all'); 
+// src/Api/club.ts
 
-// // export interface Club {
-// //   clubId: number;
-// //   clubName: string;
-// //   clubType: string;
-// //   profileImageUrl: string;
-// // }
-// // export const fetchAllClubs = async (): Promise<Club[]> => {
-// //   const res = await axios.get('/api/club/all');
-// //   return res.data.data; 
-// // };
+import type { Club, ApiResponse, ApiClubData } from '../types/club';
+import axios from '../utils/axios'; 
 
-import type { Club } from '../types/club';
-import { mockClubs } from '../mocks/mockClubs';
+
+const mapApiClubToClub = (apiClub: ApiClubData): Club => {
+  return {
+    clubId: apiClub.id,
+    clubName: apiClub.name,
+    clubType: apiClub.clubType,
+    profileImageUrl: apiClub.logoUrl,
+    description: apiClub.description,
+    category: apiClub.category,
+    isRecruiting: apiClub.recruiting,
+  };
+};
+
 
 export const fetchAllClubs = async (): Promise<Club[]> => {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(mockClubs), 300);
-  });
+  try {
+    const res = await axios.get<ApiResponse<ApiClubData[]>>('/api/club/all');
+    if (res.data.status !== 200) {
+      console.error('Error fetching all clubs:', res.data.message);
+      return []; // 에러 시 빈 배열 반환
+    }
+    return res.data.data.map(mapApiClubToClub);
+  } catch (error) {
+    console.error('Network error fetching all clubs:', error);
+    return []; // 에러 시 빈 배열 반환
+  }
 };

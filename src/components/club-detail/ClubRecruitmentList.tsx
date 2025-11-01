@@ -1,66 +1,49 @@
-import React, { useEffect, useState  } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from '../../lib/axios'; // interceptor 적용된 axios 인스턴스
+// src/components/club-detail/ClubRecruitmentList.tsx
+import React from 'react';
 import RecruitmentListItem from '../common/Card/Card_recruitment _listitem';
+import { mockRecruitments } from '../../mocks/mockRecruitments';
 import type { Recruitment } from '../../types/recruit';
-import { useNavigate } from 'react-router-dom';
 
-interface ApiResponse<T> {
-  status: number;
-  message: string;
-  data: T;
+interface ClubRecruitmentListProps {
+  clubId: number;
 }
 
-const ClubRecruitmentList = () => {
-  const { clubId } = useParams<{ clubId: string }>();
-  const [recruitments, setRecruitments] = useState<Recruitment[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate(); 
+const ClubRecruitmentList = ({ clubId }: ClubRecruitmentListProps) => {
+  // 1. RecruitmentPost → Recruitment 변환
+  const recruitments: Recruitment[] = mockRecruitments
+    .filter((r) => r.id % 3 === clubId % 3) // 💡 임의로 clubId 매칭 (개발용)
+    .map((r) => ({
+      recruitmentId: r.id,
+      clubId: clubId,
+      title: r.title,
+      description: '',
+      type: '정기모집',
+      status: r.recruitmentStatus === 'end' ? '마감' : '모집중',
+      dDay: r.dDay,
+      postedDate: r.createdAt,
+      viewCount: r.viewCount,
+      saveCount: r.saveCount,
+      thumbnailUrl: r.imageUrl,
+      phoneNumber: '',
+      email: '',
+      startDate: '',
+      endDate: '',
+      url: '',
+    }));
 
-  useEffect(() => {
-    if (!clubId) return;
-
-    const fetchRecruitments = async () => {
-      try {
-        const response = await axios.get<ApiResponse<Recruitment[]>>(`/api/recruitments/${clubId}`);
-        setRecruitments(response.data.data);
-      } catch (error) {
-        console.error('Error fetching recruitments:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchRecruitments();
-  }, [clubId]);
-
-  if (isLoading) return <p>로딩 중...</p>;
+  if (recruitments.length === 0) {
+    return (
+      <div className="p-4 text-center text-gray-400 text-[14px] leading-[135%] tracking-[-0.03em]">
+        등록된 모집공고가 없습니다.
+      </div>
+    );
+  }
 
   return (
-    <div className="flex flex-col divide-y divide-gray-100">
-      {recruitments.length === 0 ? (
-        <div className="py-10 text-center text-gray-300 text-base font-medium leading-[1.35] tracking-[-0.03em]">
-          저장된 공고가 없습니다<br />관심있는 모집공고를 저장해 보세요!
-        </div>
-      ) : (
-        recruitments.map((recruitment) => (
-          <div
-            key={recruitment.recruitmentId}
-            onClick={() => navigate(`/recruitment/${recruitment.recruitmentId}`)}
-            className="cursor-pointer"
-          >
-            <RecruitmentListItem
-              imageUrl={recruitment.thumbnailUrl}
-              recruitmentStatus={recruitment.status}
-              dDay={recruitment.dDay}
-              title={recruitment.title}
-              viewCount={recruitment.viewCount}
-              saveCount={recruitment.saveCount}
-              postedDate={recruitment.postedDate}
-            />
-          </div>
-        ))
-      )}
+    <div className="px-4 pt-3 pb-6 space-y-4">
+      {recruitments.map((recruit) => (
+        <RecruitmentListItem key={recruit.recruitmentId} recruitment={recruit} />
+      ))}
     </div>
   );
 };

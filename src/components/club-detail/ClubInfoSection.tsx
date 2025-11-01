@@ -1,37 +1,17 @@
 // src/components/club-detail/ClubInfoSection.tsx
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import TypeChip from '../ui/Chip/Chip_type';
-import axios from '../../lib/axios';
 import LocationIcon from '../../assets/icon/icn_location_16.svg?react';
 import PersonIcon from '../../assets/icon/icn_person_16.svg?react';
 import WebIcon from '../../assets/icon/icn_sns_web.svg?react';
 import InstaIcon from '../../assets/icon/icn_sns_insta.svg?react';
-import ScrapIconActive from '../../assets/icon/ScrapBtn_activated.svg?react';
 import type { Club } from '../../types/club';
+
 interface ClubInfoSectionProps {
-  clubId: number;
+  club: Club;
 }
 
-const ClubInfoSection = ({ clubId }: ClubInfoSectionProps) => {
-  const [club, setClub] = useState<Club | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchClub = async () => {
-      try {
-        const res = await axios.get(`/api/club/${clubId}`);
-        setClub(res.data.data);
-      } catch (err) {
-        console.error('Error fetching club detail:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchClub();
-  }, [clubId]);
-
-  if (isLoading || !club) return null;
-
+const ClubInfoSection = ({ club }: ClubInfoSectionProps) => {
   return (
     <section className="px-4 pt-6 pb-4 bg-white">
       {/* 프로필 이미지 + 정보 */}

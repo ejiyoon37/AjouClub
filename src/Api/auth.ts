@@ -20,29 +20,9 @@ export const logout = async () => {
   try {
     await axios.post('/api/auth/logout'); // RT-쿠키
 
-    useAuthStore.getState().logout();
-    delete axios.defaults.headers.common['Authorization'];
+    useAuthStore.getState().logout(); 
   } catch (err) {
     console.error('Logout 실패:', err);
   }
 };
 
-export const rehydrateAuth = () => {
-  try {
-    const raw = localStorage.getItem('auth');
-    if (!raw) return;
-
-    const parsed = JSON.parse(raw);
-    const { accessToken, user } = parsed;
-
-    if (accessToken && user) {
-      useAuthStore.getState().setAuth({
-        isLoggedIn: true,
-        accessToken,
-        user,
-      });
-    }
-  } catch (e) {
-    console.error('로그인 정보 복구 실패:', e);
-  }
-};

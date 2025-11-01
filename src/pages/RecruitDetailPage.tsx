@@ -1,70 +1,107 @@
-import React from 'react';
+// src/pages/RecruitDetailPage.tsx
+
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom'; 
 import Header from '../components/common/Header';
 import RecruitmentMetaSection from '../components/recruit-detail/RecruitmentMeta';
 import RecruitmentImage from '../components/recruit-detail/RecruitmentImage';
 import RecruitmentDescription from '../components/recruit-detail/RecruitmentDescription';
 import RecruitmentApplyBar from '../components/recruit-detail/RecruitmentApplyBar';
-// import { useParams } from 'react-router-dom';
-// import { useRecruitmentDetail } from '../Hooks/useRecruitmentDetail';
 
-const mockRecruitment = {
-  id: 1,
-  title: '💙 2025-2 SWeat 신입 부원 모집 💙',
-  status: 'd-day' as 'd-day' | 'end' | 'regular',
-  dDay: 2,
-  description: `SWeat는 아주대학교 소프트웨어학과 중앙 동아리입니다. 
-신입 부원을 상시 모집 중이며, 다양한 프로젝트와 커뮤니티 활동을 진행하고 있습니다.
 
-- 모집 대상: 아주대 재학생
-- 활동 장소: 소프트웨어학과 동아리방
-- 지원 방법: 구글 폼 링크 클릭`,
-  imageUrl: '/assets/clubPic/sweat.jpg',
-  isScrapped: false,
-  scrapCount: 36,
-};
+import { useRecruitmentDetail } from '../Hooks/useRecruitmentDetail';
+import { addToFavorites, removeFromFavorites  } from '../api/recruitment';
+import { useAuthStore } from '../stores/useAuthStore'; 
+
+// (삭제) mockRecruitment
 
 const RecruitmentDetailPage = () => {
-  // ✅ 나중에 실제 API로 교체
-  // const { id } = useParams();
-  // const { data: recruitment, isLoading, isError } = useRecruitmentDetail(Number(id));
+  const navigate = useNavigate();
+  const { recruitmentId } = useParams<{ recruitmentId: string }>();
+  const numericId = recruitmentId ? Number(recruitmentId) : null;
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn); 
 
-  const {
-    title,
-    status,
-    dDay,
-    description,
-    imageUrl,
-    isScrapped,
-    scrapCount,
-  } = mockRecruitment;
+  const { data: recruitment, isLoading, isError, error } = useRecruitmentDetail(numericId);
 
-  const handleToggleScrap = () => {
-    console.log('스크랩 토글');
+
+  const [isScrapped, setIsScrapped] = useState(false);
+  const [scrapCount, setScrapCount] = useState(0); 
+
+
+  const handleToggleScrap = async () => {
+    if (!isLoggedIn) {
+      alert('로그인이 필요합니다.');
+      navigate(`/login?redirect=${location.pathname}`);
+      return;
+    }
+    if (!recruitment) return;
+
+    try {
+      if (isScrapped) {
+        await removeFromFavorites(recruitment.recruitmentId);
+        setIsScrapped(false);
+        setScrapCount((prev) => (prev > 0 ? prev - 1 : 0));
+      } else {
+        await addToFavorites(recruitment.recruitmentId);
+        setIsScrapped(true);
+        setScrapCount((prev) => prev + 1);
+      }
+    } catch (err) {
+      console.error('Scrap toggle failed:', err);
+      alert('요청에 실패했습니다.');
+    }
   };
 
   const handleApplyClick = () => {
-    console.log('신청하기 클릭됨');
+    if (!recruitment?.url) {
+      alert('신청 링크가 없습니다.');
+      return;
+    }
+    
+
+    let url = recruitment.url;
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      url = 'https://' + url;
+    }
+    
+
+    window.open(url, '_blank', 'noopener,noreferrer');
   };
 
+  // --- 로딩 및 에러 처리 ---
+  if (isLoading) {
+    return <div className="p-4 text-center">로딩 중...</div>;
+  }
+
+  if (isError || !recruitment) {
+    return (
+      <div className="p-4 text-center text-red-500">
+        오류가 발생했습니다: {error?.message || '공고를 찾을 수 없습니다.'}
+      </div>
+    );
+  }
+  
+  // --- 성공 시 렌더링 ---
   return (
     <div className="bg-white min-h-screen pb-[80px]">
       <Header variant="page" />
 
       <RecruitmentMetaSection
-        title={title}
-        status={status}
-        dDay={dDay}
-        createdAt="2025-09-20"
+        title={recruitment.title}
+        status={recruitment.status}
+        dDay={recruitment.dDay}
+        createdAt={recruitment.createdAt} // "YYYY-MM-DDTHH..."
       />
 
-      <RecruitmentImage imageUrl={imageUrl} />
 
-      <RecruitmentDescription description={description} />
+      <RecruitmentImage imageUrl={recruitment.images[0] || undefined} />
+
+      <RecruitmentDescription description={recruitment.description} />
 
       <RecruitmentApplyBar
-        status={status}
-        isScrapped={isScrapped}
-        scrapCount={scrapCount}
+        status={recruitment.status}
+        isScrapped={isScrapped} // 로컬 state 사용
+        scrapCount={scrapCount} // 로컬 state 사용
         onToggleScrap={handleToggleScrap}
         onApplyClick={handleApplyClick}
       />

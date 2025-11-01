@@ -1,8 +1,8 @@
 // src/Hooks/useRecruitmentDetail.ts
 
-import { useQuery, useQueries } from '@tanstack/react-query';
+import { useQueries } from '@tanstack/react-query';
 import axios from '../utils/axios';
-import type { ApiResponse } from '../types/club'; // (club.ts에 정의되어 있다고 가정)
+import type { ApiResponse } from '../types/club'; 
 import type { 
   ApiRecruitmentDetail, 
   ApiRecruitmentImages,
@@ -15,6 +15,8 @@ import type {
 
 // 1. 공고 상세 정보 (텍스트)
 const fetchRecruitmentDetail = async (id: number): Promise<ApiRecruitmentDetail> => {
+  // Swagger 스크린샷 [image_d34208.jpg]을 기반으로, 
+  // 파라미터 {clubId}가 실제로는 {recruitmentId}라고 판단하여 호출합니다.
   const res = await axios.get<ApiResponse<ApiRecruitmentDetail>>(`/api/recruitments/${id}`);
   if (res.data.status !== 200) throw new Error(res.data.message);
   return res.data.data;
@@ -22,6 +24,7 @@ const fetchRecruitmentDetail = async (id: number): Promise<ApiRecruitmentDetail>
 
 // 2. 공고 이미지 (URL 배열)
 const fetchRecruitmentImages = async (id: number): Promise<ApiRecruitmentImages> => {
+  // [image_d3456b.jpg] 참고
   const res = await axios.get<ApiRecruitmentImages>(`/api/recruitments/${id}/images`);
   return res.data;
 };
@@ -105,7 +108,10 @@ export const useRecruitmentDetail = (recruitmentId: number | null) => {
     dDay: calculateDDay(detailData.endDate),
 
     // 4. API에 없는 필드 (기본값)
+    // (참고) 즐겨찾기(isScrapped) 상태는 별도 API로 확인해야 하나,
+    // 현재는 API가 없으므로 기본값 false를 사용하고, 로컬에서만 관리합니다.
     isScrapped: false, 
+    // (참고) scrapCount는 현재 API로 알 수 없습니다.
     scrapCount: 0,
   } : null;
 
