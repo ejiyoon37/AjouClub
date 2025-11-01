@@ -1,8 +1,8 @@
 // src/Hooks/useClubs.ts
 
-import { useQuery } from '@tanstack/react-query'; // (수정)
-import type { Club, ApiResponse, ApiClubData } from '../types/club'; // (수D)
-import axios from '../utils/axios'; // (수정)
+import { useQuery } from '@tanstack/react-query'; 
+import type { Club, ApiResponse, ApiClubData } from '../types/club'; 
+import axios from '../utils/axios'; 
 
 interface ClubFilterParams {
   type?: string;
@@ -12,7 +12,7 @@ interface ClubFilterParams {
   sort?: 'recent' | 'alphabetical';
 }
 
-// (새로 추가) API 응답 [user-provided-json-with-data]을 프론트엔드 Club 타입으로 변환
+// (유지) mapApiClubToClub 함수...
 const mapApiClubToClub = (apiClub: ApiClubData): Club => {
   return {
     clubId: apiClub.id,
@@ -22,8 +22,6 @@ const mapApiClubToClub = (apiClub: ApiClubData): Club => {
     description: apiClub.description,
     category: apiClub.category,
     isRecruiting: apiClub.recruiting,
-    
-    // (참고) 상세 정보 필드들은 /all, /filter API에 없으므로 null/undefined로 둡니다.
     mainActivities: null,
     location: null,
     contactPhoneNumber: null,
@@ -32,26 +30,32 @@ const mapApiClubToClub = (apiClub: ApiClubData): Club => {
     linktreeUrl: null,
     clubUrl: null,
     contactEmail: null,
-    createdAt: '', // createdAt 등은 /all API에 없으므로 기본값 처리
+    createdAt: '', 
     updatedAt: '',
     details: null,
+    recruitmentTarget: apiClub.recruitmentTarget || null,
   };
 };
 
-// (수정) API 호출 함수 (sort 파라미터 제외)
+// (수정) API 호출 함수 (모든 필터 파라미터 적용)
 const fetchClubs = async (filters: ClubFilterParams): Promise<Club[]> => {
-  // (수정) 'sort'를 제외한 실제 필터만 사용
-  const { sort, ...realFilters } = filters;
-  const hasFilters = Object.values(realFilters).some(val => val !== undefined);
+  // (수정) 'sort'를 제외하고 API 파라미터 매핑
+  const { sort, isRecruiting, department, category, type } = filters;
+  
+  const apiParams: Record<string, any> = {};
+  if (type) apiParams.type = type;
+  if (category) apiParams.category = category;
+  if (department && department !== '전체') apiParams.department = department;
+  if (isRecruiting) apiParams.recruiting = true; // API 스펙(image_df65bf.jpg)
+
+  const hasFilters = Object.values(apiParams).some(val => val !== undefined);
 
   let response;
   if (hasFilters) {
-    // (수정) params: realFilters (sort 제외)
     response = await axios.get<ApiResponse<ApiClubData[]>>('/api/club/filter', {
-      params: realFilters, 
+      params: apiParams, 
     });
   } else {
-    // 필터가 없으면 /api/club/all [user-provided-json, user-provided-json-with-data] 호출
     response = await axios.get<ApiResponse<ApiClubData[]>>('/api/club/all');
   }
 
