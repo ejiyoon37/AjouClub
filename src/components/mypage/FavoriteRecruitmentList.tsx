@@ -2,22 +2,19 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import type { FavoriteRecruitment } from '../../types/user'; // (새로 추가)
 
-interface FavoriteRecruitmentItem {
-  recruitmentId: number;
-  title: string;
-  thumbnailUrl: string;
-}
+
 
 interface Props {
-  item: FavoriteRecruitmentItem;
+  item: FavoriteRecruitment; // (수정) API 타입과 일치
 }
 
 const FavoriteRecruitmentList = ({ item }: Props) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/recruitment/${item.recruitmentId}`);
+    navigate(`/recruitments/${item.recruitmentId}`);
   };
 
   return (

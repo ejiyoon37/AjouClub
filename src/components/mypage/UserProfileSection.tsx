@@ -1,14 +1,12 @@
-// src/components/MyPage/UserProfileSection.tsx
+// src/components/mypage/UserProfileSection.tsx
 
 import { useAuthStore } from '../../stores/useAuthStore';
 import { logout as requestLogout } from '../../api/auth';
+import type { UserInfo } from '../../types/user'; // (새로 추가)
+import DefaultUserImage from '../../assets/img/user.png'; // (새로 추가) 기본 이미지
 
 interface UserProfileSectionProps {
-  user: {
-    name: string;
-    email: string;
-    profilePic?: string; // optional 처리
-  };
+  user: UserInfo; // (수정) API 타입과 일치
 }
 
 const UserProfileSection = ({ user }: UserProfileSectionProps) => {
@@ -32,7 +30,7 @@ const UserProfileSection = ({ user }: UserProfileSectionProps) => {
       className="flex flex-col items-center py-8 px-6 bg-white"
     >
       <img
-        src={user.profilePic}
+        src={user.profilePic || DefaultUserImage} // (수정) profilePic, null일 경우 기본 이미지
         alt={`${user.name}의 프로필 사진`}
         className="w-[72px] h-[72px] rounded-full border border-gray-100 object-cover"
         />

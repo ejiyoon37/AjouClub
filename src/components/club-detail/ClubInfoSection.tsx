@@ -1,5 +1,5 @@
 // src/components/club-detail/ClubInfoSection.tsx
-import React from 'react';
+import React from 'react'; // (수정) useEffect, useState, axios 제거
 import TypeChip from '../ui/Chip/Chip_type';
 import LocationIcon from '../../assets/icon/icn_location_16.svg?react';
 import PersonIcon from '../../assets/icon/icn_person_16.svg?react';
@@ -8,40 +8,52 @@ import InstaIcon from '../../assets/icon/icn_sns_insta.svg?react';
 import type { Club } from '../../types/club';
 
 interface ClubInfoSectionProps {
-  club: Club;
+  club: Club; // (수정) clubId 대신 Club 객체 전체를 props로 받음
 }
 
 const ClubInfoSection = ({ club }: ClubInfoSectionProps) => {
+  // (삭제) useState, useEffect, fetchClub
+
+  if (!club) return null;
+
   return (
     <section className="px-4 pt-6 pb-4 bg-white">
       {/* 프로필 이미지 + 정보 */}
       <div className="flex items-center gap-3">
         <img
-          src={club.profileImageUrl}
+          src={club.profileImageUrl || '/OnlyLogo.svg'} // (수정) API 필드(logoUrl)와 null 처리
           alt="club logo"
           className="w-[64px] h-[64px] rounded-full border border-gray-100 object-cover"
         />
-        <div className="mb-[6px]">
+        <div className="flex flex-col gap-1"> {/* (수정) 칩과 이름 수직 정렬 */}
           <TypeChip size="medium">{club.clubType}</TypeChip>
+          <p className="text-[18px] font-semibold text-gray-900 leading-[135%] tracking-[-0.03em]">
+            {club.clubName}
+          </p>
         </div>
-        <p className="text-[18px] font-semibold text-gray-900 leading-[135%] tracking-[-0.03em]">
-          {club.clubName}
-        </p>
       </div>
 
-      {/* 상세 정보 */}
+      {/* 상세 정보 (수정) */}
       <div className="mt-4 space-y-2">
-        {/* <InfoRow icon={<LocationIcon />} label="동아리 방" value={club.room || '정보 없음'} />
-        <InfoRow icon={<PersonIcon />} label="모집 대상" value={club.target || '정보 없음'} /> */}
-        <div className="flex items-center gap-2">
+        {/* (수정) API 데이터 [user-provided-json-with-id-19]와 연결 */}
+        {club.location && (
+          <InfoRow icon={<LocationIcon />} label="동아리 방" value={club.location} />
+        )}
+        {club.details && (
+          <InfoRow icon={<PersonIcon />} label="분과" value={club.details} />
+        )}
+        
+        {/* (수정) SNS 링크 연결 */}
+        <div className="flex items-center gap-2 pt-1">
           <span className="text-[14px] font-medium leading-[135%] tracking-[-0.03em] text-gray-600">SNS</span>
-          {club.contact?.homepageUrl && (
-            <a href={club.contact.homepageUrl} target="_blank" rel="noopener noreferrer">
+          {/* (수정) API의 clubUrl을 홈페이지로 사용 */}
+          {club.clubUrl && (
+            <a href={club.clubUrl} target="_blank" rel="noopener noreferrer">
               <WebIcon />
             </a>
           )}
-          {club.contact?.instagramUrl && (
-            <a href={club.contact.instagramUrl} target="_blank" rel="noopener noreferrer">
+          {club.instagramUrl && (
+            <a href={club.instagramUrl} target="_blank" rel="noopener noreferrer">
               <InstaIcon />
             </a>
           )}
@@ -53,6 +65,7 @@ const ClubInfoSection = ({ club }: ClubInfoSectionProps) => {
 
 export default ClubInfoSection;
 
+// (유지) InfoRow 컴포넌트
 interface InfoRowProps {
   icon: React.ReactNode;
   label: string;

@@ -1,13 +1,15 @@
+// src/components/common/Card/Card_recruitment _listitem.tsx
+
 import React from 'react';
 import PeriodChip from '../../ui/Chip/Chip_period';
-
+import DefaultImage from '../../../assets/img/R_image.png'; // (새로 추가)
 
 interface RecruitmentListItemProps {
-  imageUrl: string;
+  imageUrl: string | null | undefined; // (수정) null 또는 undefined 허용
   recruitmentStatus: 'regular' | 'd-day' | 'end';
   dDay?: number;
   title: string;
-  viewCount: number;
+  viewCount?: number; // (수정) 선택적(optional) props로 변경
   saveCount: number;
   postedDate: string; // "YYYY. MM. DD" 
 }
@@ -18,15 +20,15 @@ const RecruitmentListItem = ({
   recruitmentStatus,
   dDay,
   title,
-  viewCount,
+  viewCount, // (수정)
   saveCount,
   postedDate,
 }: RecruitmentListItemProps) => {
   return (
     <div className="flex w-full bg-white p-4 gap-3 border-b border-gray-100">
-      {/* 썸네일 이미지 */}
+      {/* 썸네일 이미지 (수정) */}
       <img
-        src={imageUrl}
+        src={imageUrl || DefaultImage} // (수정) 이미지가 없으면 기본 이미지
         alt={`${title} thumbnail`}
         className="w-[100px] h-[100px] object-cover rounded-[10px] border border-gray-100 flex-shrink-0"
       />
@@ -43,10 +45,11 @@ const RecruitmentListItem = ({
           </p>
         </div>
 
-        {/* 조회/저장, 게시 날짜 */}
+        {/* 조회/저장, 게시 날짜 (수정) */}
         <div className="flex justify-between items-center text-xs font-normal text-gray-300 leading-[1.4] tracking-[-0.02em]">
           <div className="flex gap-2">
-            <span>조회 {viewCount}</span>
+            {/* (수정) viewCount가 있을 때만 표시 */}
+            {viewCount !== undefined && <span>조회 {viewCount}</span>}
             <span>저장 {saveCount}</span>
           </div>
           <span>{postedDate}</span>
