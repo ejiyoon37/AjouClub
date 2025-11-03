@@ -1,6 +1,6 @@
 // src/pages/SearchResultPage.tsx
 
-import React, { useState, useMemo } from 'react';
+import  { useState, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 import SearchField from '../components/ui/Field/TextField_search';
@@ -10,7 +10,6 @@ import ClubCard from '../components/common/Card/Card_Club';
 
 import useClubs from '../Hooks/useClubs';
 
-import type { Club } from '../types/club';
 
 
 const SearchResultPage = () => {

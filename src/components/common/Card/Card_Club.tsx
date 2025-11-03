@@ -1,8 +1,6 @@
 // src/components/common/Card/Card_Club.tsx
 
-import React from 'react';
 import TypeChip from '../../ui/Chip/Chip_type';
-import PeriodChip from '../../ui/Chip/Chip_period'; 
 import type { Club } from '../../../types/club';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,7 +10,7 @@ interface ClubCardProps {
 }
 
 const ClubCard = ({ club, variant = 'home' }: ClubCardProps) => {
-  const { clubId, profileImageUrl, clubType, clubName, isRecruiting } = club;
+  const { clubId, profileImageUrl, clubType, clubName } = club;
   const navigate = useNavigate();
 
   const handleClick = () => {

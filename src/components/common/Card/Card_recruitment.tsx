@@ -36,7 +36,6 @@ const fetchThumbnail = async (recruitmentId: number): Promise<string[]> => {
 const RecruitmentCard = ({
   recruitmentId,
   clubId, 
-  images, 
   title,
   status,
   dDay,

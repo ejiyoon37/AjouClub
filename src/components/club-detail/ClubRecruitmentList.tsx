@@ -1,6 +1,5 @@
 // src/components/club-detail/ClubRecruitmentList.tsx
 
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import RecruitmentListItem from '../common/Card/Card_recruitment _listitem';
 import { formatDate } from '../../utils/date';

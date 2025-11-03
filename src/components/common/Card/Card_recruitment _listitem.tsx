@@ -1,6 +1,6 @@
 // src/components/common/Card/Card_recruitment _listitem.tsx
 
-import React from 'react';
+
 import PeriodChip from '../../ui/Chip/Chip_period';
 import DefaultImage from '../../../assets/img/Default_images.png'; // (새로 추가)
 

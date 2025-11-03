@@ -1,6 +1,5 @@
 // src/components/mypage/FavoriteRecruitmentList.tsx
 
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { FavoriteRecruitment } from '../../types/user'; 
 import DefaultImage from '../../assets/img/Default_images.png'; 
