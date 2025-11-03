@@ -1,6 +1,6 @@
 // src/Hooks/useRecruitmentDetail.ts
 
-import { useQueries } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query'; // (수정) useQueries -> useQuery
 import axios from '../utils/axios';
 import type { ApiResponse } from '../types/club'; 
 import type { 
@@ -13,20 +13,18 @@ import type {
 
 // --- API 호출 함수 ---
 const fetchRecruitmentDetail = async (clubId: number): Promise<ApiRecruitmentDetail> => {
-
   const res = await axios.get<ApiResponse<ApiRecruitmentDetail>>(`/api/recruitments/${clubId}`);
   if (res.data.status !== 200) throw new Error(res.data.message);
   return res.data.data;
 };
 
 
-const fetchRecruitmentImages = async (clubId: number): Promise<ApiRecruitmentImages> => {
-
-  const res = await axios.get<ApiRecruitmentImages>(`/api/recruitments/${clubId}/images`);
+const fetchRecruitmentImages = async (recruitmentId: number): Promise<ApiRecruitmentImages> => {
+  const res = await axios.get<ApiRecruitmentImages>(`/api/recruitments/${recruitmentId}/images`);
   return res.data;
 };
 
-// --- 데이터 계산 헬퍼 ---
+// --- 데이터 계산 헬퍼 (유지) ---
 
 // D-day 계산
 const calculateDDay = (endDate: string | null): number => {
@@ -57,59 +55,55 @@ const calculateStatus = (
   return 'regular'; // 그 외에는 모집중 (regular)
 };
 
-// --- 메인 훅 ---
+// --- 메인 훅 (수정) ---
 
 export const useRecruitmentDetail = (clubId: number | null) => {
-  
-  const results = useQueries({
-    queries: [
-      {
-        queryKey: ['recruitmentDetail', clubId],
-        queryFn: () => fetchRecruitmentDetail(clubId!), 
-        enabled: !!clubId,
-      },
-      {
-        queryKey: ['recruitmentImages', clubId], 
-        queryFn: () => fetchRecruitmentImages(clubId!), 
-        enabled: !!clubId, 
-      },
-    ],
+
+  const { 
+    data, 
+    isLoading, 
+    isError, 
+    error 
+  } = useQuery<Recruitment | null, Error>({
+    queryKey: ['recruitmentDetail', clubId], // clubId를 기본 키로 사용
+    queryFn: async (): Promise<Recruitment | null> => {
+      if (!clubId) return null;
+
+      // 1. clubId로 상세 정보(텍스트)
+      const detailData = await fetchRecruitmentDetail(clubId);
+      
+      // 2. 응답받은 상세 정보에서 recruitmentId (detailData.id)를 추출
+      const recruitmentId = detailData.id; 
+
+      // 3. 이미지
+      const imagesData = await fetchRecruitmentImages(recruitmentId);
+
+      // 4. 최종 Recruitment 객체
+      return {
+        recruitmentId: detailData.id,
+        clubId: detailData.clubId,
+        clubName: detailData.clubName,
+        title: detailData.title,
+        description: detailData.description,
+        type: detailData.type,
+        phoneNumber: detailData.phoneNumber,
+        email: detailData.email,
+        startDate: detailData.startDate,
+        endDate: detailData.endDate,
+        createdAt: detailData.createdAt,
+        url: detailData.url,
+
+        images: imagesData, // 이미지 API 결과
+        
+        status: calculateStatus(detailData.type, detailData.endDate), // 계산된 값
+        dDay: calculateDDay(detailData.endDate), // 계산된 값
+
+        isScrapped: false, // API에 없는 필드 (기본값)
+        scrapCount: 0, // API에 없는 필드 (기본값)
+      };
+    },
+    enabled: !!clubId, // clubId가 있을 때만 실행
   });
-
-  const isLoading = results.some((query) => query.isLoading);
-  const isError = results.some((query) => query.isError);
-  const error = results.find((query) => query.error)?.error;
-
-  const detailData = results[0].data as ApiRecruitmentDetail | undefined;
-  const imagesData = results[1].data as ApiRecruitmentImages | undefined;
-
-  // 두 API가 모두 성공적으로 로드되었을 때 데이터 조합
-  const data: Recruitment | null = (detailData && imagesData) ? {
-    recruitmentId: detailData.id,
-    clubId: detailData.clubId,
-    clubName: detailData.clubName,
-    title: detailData.title,
-    description: detailData.description,
-    type: detailData.type,
-    phoneNumber: detailData.phoneNumber,
-    email: detailData.email,
-    startDate: detailData.startDate,
-    endDate: detailData.endDate,
-    createdAt: detailData.createdAt,
-    url: detailData.url,
-
-    // 2. 이미지 API 결과
-    images: imagesData,
-    
-    // 3. 계산된 필드
-    status: calculateStatus(detailData.type, detailData.endDate),
-    dDay: calculateDDay(detailData.endDate),
-
-    // 4. API에 없는 필드 (기본값)
-    
-    isScrapped: false, 
-    scrapCount: 0,
-  } : null;
 
   return { data, isLoading, isError, error };
 };

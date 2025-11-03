@@ -48,7 +48,6 @@ const ClubRecruitmentList = ({ clubId }: ClubRecruitmentListProps) => {
     const fetchRecruitments = async () => {
       setIsLoading(true); // (추가)
       try {
-        // API가 객체를 반환하므로 <ApiResponse<ApiRecruitmentDetail>>로 타입 지정
         const response = await axios.get<ApiResponse<ApiRecruitmentDetail>>(`/api/recruitments/${clubId}`);
         const apiData = response.data.data;
 
@@ -70,7 +69,7 @@ const ClubRecruitmentList = ({ clubId }: ClubRecruitmentListProps) => {
           status: calculateStatus(apiData.type, apiData.endDate),
           dDay: calculateDDay(apiData.endDate),
           isScrapped: false,
-          scrapCount: 0, // API에 saveCount가 없습니다.
+          scrapCount: 0, // API에 saveCount가 없음
         };
         
         setRecruitment(mappedData); // 매핑된 단일 객체 저장
@@ -104,11 +103,12 @@ const ClubRecruitmentList = ({ clubId }: ClubRecruitmentListProps) => {
         <div
           key={recruitment.recruitmentId}
     
+          
           onClick={() => navigate(`/recruitments/${recruitment.clubId}`)}
           className="cursor-pointer"
         >
           <RecruitmentListItem
-              imageUrl={recruitment.images[0]} // 썸네일 (현재는 없으므로 undefined)
+              imageUrl={recruitment.images[0]} 
             recruitmentStatus={recruitment.status}
             dDay={recruitment.dDay}
             title={recruitment.title}

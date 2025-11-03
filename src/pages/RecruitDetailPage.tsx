@@ -20,6 +20,7 @@ const RecruitmentDetailPage = () => {
 
   const { clubId } = useParams<{ clubId: string }>();
 
+
   const numericId = clubId ? Number(clubId) : null;
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn); 
 
@@ -46,11 +47,13 @@ const RecruitmentDetailPage = () => {
     if (!recruitment) return;
 
     try {
-      if (isScrapped) {
+      if (isScrapped) { // 스크랩은 recruitmentID
+       
         await removeFromFavorites(recruitment.recruitmentId);
         setIsScrapped(false);
         setScrapCount((prev) => (prev > 0 ? prev - 1 : 0));
       } else {
+ 
         await addToFavorites(recruitment.recruitmentId);
         setIsScrapped(true);
         setScrapCount((prev) => prev + 1);

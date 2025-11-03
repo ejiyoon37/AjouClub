@@ -3,87 +3,109 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from '../utils/axios';
 import type { ApiResponse } from '../types/club';
-// RecruitmentStatus 타입을 가져옵니다.
-import type { Recruitment, RecruitmentStatus } from '../types/recruit'; 
+import type { 
+  Recruitment, 
+  RecruitmentStatus, 
+  RecruitmentType, 
+  ApiRecruitmentDetail 
+} from '../types/recruit'; 
 
-//  Mock 데이터를 임포트
-import { mockRecruitments } from '../mocks/mockRecruitments';
 
-// API 응답 타입 (목록용)
-interface ApiRecruitmentPost {
-  id: number;
-  clubId: number; 
-  imageUrl: string;
-  title: string;
-  recruitmentStatus: RecruitmentStatus;
-  dDay?: number;
-  viewCount: number;
-  saveCount: number;
-  createdAt: string; 
-  isScrappedInitially?: boolean;
-}
+// D-day 계산
+const calculateDDay = (endDate: string | null): number => {
+  if (!endDate) return 0;
+  const today = new Date();
+  const end = new Date(endDate);
+  today.setHours(0, 0, 0, 0);
+  end.setHours(0, 0, 0, 0);
+  
+  const diffTime = end.getTime() - today.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays < 0 ? 0 : diffDays;
+};
 
-//  맵퍼
-const mapApiPostToRecruitment = (apiPost: ApiRecruitmentPost): Recruitment => {
+// '상시모집', 날짜를 기준으로 status 계산
+const calculateStatus = (
+  type: RecruitmentType,
+  endDate: string | null
+): RecruitmentStatus => {
+  if (type === '상시모집') return 'regular';
+
+  if (!endDate) return 'regular'; // 종료일 없으면 상시모집 취급
+
+  const dDay = calculateDDay(endDate);
+  
+  if (dDay === 0) return 'end';
+  if (dDay <= 7) return 'd-day'; // 7일 이내면 마감임박
+  return 'regular'; // 그 외에는 모집중 (regular)
+};
+// --- 헬퍼 끝 ---
+
+
+// 맵퍼 함수:
+const mapApiDetailToRecruitment = (apiPost: ApiRecruitmentDetail): Recruitment => {
+  const status = calculateStatus(apiPost.type, apiPost.endDate);
+  const dDay = calculateDDay(apiPost.endDate);
+
   return {
     recruitmentId: apiPost.id,
     clubId: apiPost.clubId,
-    clubName: '', 
+    clubName: apiPost.clubName, 
     title: apiPost.title,
-    description: '', 
-    type: '상시모집', 
-    phoneNumber: null,
-    email: null,
-    startDate: null,
-    endDate: null,
-    url: null,
+    description: apiPost.description, 
+    type: apiPost.type, 
+    phoneNumber: apiPost.phoneNumber,
+    email: apiPost.email,
+    startDate: apiPost.startDate,
+    endDate: apiPost.endDate,
+    url: apiPost.url,
     createdAt: apiPost.createdAt,
-    images: [apiPost.imageUrl], 
-    status: apiPost.recruitmentStatus,
-    dDay: apiPost.dDay || 0,
-    viewCount: apiPost.viewCount, 
-    isScrapped: apiPost.isScrappedInitially || false,
-    scrapCount: apiPost.saveCount,
+    
+  
+    images: [], // '/api/recruitments'는 목록 이미지를 제공하지 않음
+    status: status, // 계산된 값
+    dDay: dDay, // 계산된 값
+    viewCount: 0, // '/api/recruitments'는 viewCount를 제공하지 않음
+    isScrapped: false, // 이 API는 스크랩 여부를 알 수 없음
+    scrapCount: 0, // '/api/recruitments'는 scrapCount를 제공하지 않음
   };
 };
 
-//  /api/recruitments/main API 호출 함수
-const getMainRecruitmentPosts = async (): Promise<Recruitment[]> => {
+//  API 호출 함수: /api/recruitments 호출
+const getRecruitmentPosts = async (): Promise<Recruitment[]> => {
   try {
-    const res = await axios.get<ApiResponse<ApiRecruitmentPost[]>>('/api/recruitments/main');
+
+    const res = await axios.get<ApiResponse<ApiRecruitmentDetail[]>>('/api/recruitments');
     
     if (res.data.status !== 200) {
       throw new Error(res.data.message);
     }
 
-    if (Array.isArray(res.data.data) && res.data.data.length > 0) {
-      return res.data.data.map(mapApiPostToRecruitment);
+    if (Array.isArray(res.data.data)) {
+      return res.data.data.map(mapApiDetailToRecruitment);
     }
     
-    console.warn('/api/recruitments/main이 빈 데이터를 반환하여 Mock 데이터로 대체합니다.');
-   
-    return mockRecruitments.map(mapApiPostToRecruitment); 
+    return []; // 데이터가 배열이 아니면 빈 배열 반환
 
   } catch (error) {
-    console.error('Error fetching main recruitments:', error);
-    console.warn('API 호출 실패. Mock 데이터로 대체합니다.');
-    return mockRecruitments.map(mapApiPostToRecruitment); 
+    console.error('Error fetching recruitments:', error);
+    return [];
   }
 };
 
 
-// 훅 본문
+// 메인 훅 
 const useRecruitments = () => {
   const { 
     data: posts = [], 
     isLoading, 
     error 
   } = useQuery<Recruitment[], Error>({
-    queryKey: ['mainRecruitments'],
-    queryFn: getMainRecruitmentPosts,
+    queryKey: ['recruitmentsList'], 
+    queryFn: getRecruitmentPosts,   
   });
 
   return { posts, isLoading, error };
 };
 
-export default useRecruitments; 
+export default useRecruitments;

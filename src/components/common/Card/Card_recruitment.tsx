@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query'; 
+import axios from '../../../utils/axios';
 import PeriodChip from '../../ui/Chip/Chip_period';
 import ScrapIconDefault from '../../../assets/icon/ScrapBtn_default-2.svg?react';
 import ScrapIconActive from '../../../assets/icon/ScrapBtn_activated.svg?react';
@@ -20,6 +22,17 @@ interface RecruitmentCardProps {
   isScrappedInitially?: boolean;
 }
 
+//  카드 썸네일
+const fetchThumbnail = async (recruitmentId: number): Promise<string[]> => {
+  try {
+    const res = await axios.get<string[]>(`/api/recruitments/${recruitmentId}/images`);
+    return res.data;
+  } catch (error) {
+    // 404 등 에러 발생 시 빈 배열 반환
+    return [];
+  }
+};
+
 const RecruitmentCard = ({
   recruitmentId,
   clubId, 
@@ -34,6 +47,13 @@ const RecruitmentCard = ({
   const [isScrapped, setIsScrapped] = useState(isScrappedInitially);
   const [scrapCount, setScrapCount] = useState(initialScrapCount);
   const navigate = useNavigate();
+
+ // recruitmentId로 썸네일 쿼리
+  const { data: thumbnailImages } = useQuery<string[], Error>({
+    queryKey: ['recruitmentThumbnail', recruitmentId], 
+    queryFn: () => fetchThumbnail(recruitmentId),
+    staleTime: Infinity, 
+  });
 
   const handleScrapClick = async (e: React.MouseEvent) => {
     e.stopPropagation(); 
@@ -53,12 +73,11 @@ const RecruitmentCard = ({
   };
 
   const handleCardClick = () => {
-    // recruitmentId 대신 clubId로 경로 변경
     navigate(`/recruitments/${clubId}`);
   };
 
-  //  썸네일 이미지 결정
-  const thumbnailUrl = images[0] || DefaultImage;
+  // (API로 가져온 썸네일(thumbnailImages)을 사용
+  const thumbnailUrl = thumbnailImages?.[0] || DefaultImage;
 
   return (
     <div
