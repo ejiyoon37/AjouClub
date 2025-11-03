@@ -10,6 +10,8 @@ export default defineConfig({
     svgr(),
   ],
   server: {
+    port: 3000,
+    
     proxy: {
       '/api': {
         target: 'https://ajouclubserver.shop',
@@ -20,3 +22,4 @@ export default defineConfig({
     },
   },
 })
+

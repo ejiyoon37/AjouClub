@@ -8,7 +8,7 @@ import ClubDetailTab from '../components/club-detail/ClubDetailTab';
 import ClubRecruitmentList from '../components/club-detail/ClubRecruitmentList';
 import ClubDescription from '../components/club-detail/ClubDescription'; 
 import { useClubDetail } from '../Hooks/useClubDetails'; 
-import { useClubActivityImages } from '../Hooks/useClubActivityImages'; // (새로 추가)
+import { useClubActivityImages } from '../Hooks/useClubActivityImages'; 
 
 const ClubDetailPage = () => {
   const { clubId } = useParams<{ clubId: string }>(); 
@@ -20,11 +20,11 @@ const ClubDetailPage = () => {
     return <div className="p-4 text-red-500">유효하지 않은 접근입니다.</div>;
   }
 
-  // (수정) 2개의 훅 호출
-  const { data: club, isLoading: isClubLoading, isError: isClubError, error: clubError } = useClubDetail(numericClubId);
-  const { data: activityImages, isLoading: isImagesLoading } = useClubActivityImages(numericClubId); // (새로 추가)
 
-  const isLoading = isClubLoading || isImagesLoading; // (수정) 둘 다 로딩
+  const { data: club, isLoading: isClubLoading, isError: isClubError, error: clubError } = useClubDetail(numericClubId);
+  const { data: activityImages, isLoading: isImagesLoading } = useClubActivityImages(numericClubId); 
+
+  const isLoading = isClubLoading || isImagesLoading; 
 
   if (isLoading) {
     return <div className="p-4 text-center">동아리 정보를 불러오는 중...</div>;
@@ -46,7 +46,7 @@ const ClubDetailPage = () => {
       {selectedTab === '모집공고' ? (
         <ClubRecruitmentList clubId={numericClubId} />
       ) : (
-        // (수정) club과 activityImages 전달
+       
         <ClubDescription club={club} activityImages={activityImages} />
       )}
     </div>

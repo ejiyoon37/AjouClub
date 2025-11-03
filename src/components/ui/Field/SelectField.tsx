@@ -5,10 +5,10 @@ import ArrowDownIcon from '../../../assets/icon/ic_arrow_down_16.svg?react';
 
 
 interface SelectFieldProps {
-  options: string[]; // 드롭다운에 표시될 옵션 목록
-  value: string | null; // 현재 선택된 값
-  onChange: (value: string) => void; // 옵션을 선택했을 때 호출될 함수
-  placeholder?: string; // 기본으로 표시될 텍스트
+  options: string[]; 
+  value: string | null; 
+  onChange: (value: string) => void; 
+  placeholder?: string; 
 }
 
 const SelectField = ({ 
@@ -17,7 +17,7 @@ const SelectField = ({
   onChange, 
   placeholder = '전체' 
 }: SelectFieldProps) => {
-//드롭다운 열리는 여뷰
+//드롭다운 열
   const [isOpen, setIsOpen] = useState(false);
   const selectRef = useRef<HTMLDivElement>(null);
 
@@ -41,7 +41,7 @@ const SelectField = ({
 
   return (
     <div className="relative w-full" ref={selectRef}>
-      {/* 선택된 값을 보여주는 버튼 */}
+   
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`

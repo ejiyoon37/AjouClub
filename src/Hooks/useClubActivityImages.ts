@@ -4,7 +4,7 @@ import axios from '../utils/axios';
 import type { ApiResponse } from '../types/club';
 
 /**
- * clubId로 동아리 활동 사진 목록(string[])을 가져옵니다.
+ * clubId로 동아리 활동 사진 목록(string[])
  * (GET /api/club/{clubId}/activity-images)
  */
 const fetchClubActivityImages = async (clubId: number): Promise<string[]> => {

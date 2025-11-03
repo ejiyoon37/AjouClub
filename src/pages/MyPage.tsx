@@ -7,13 +7,10 @@ import { useMyPageData } from '../Hooks/useMypageData';
 
 import UserProfileSection from '../components/mypage/UserProfileSection';
 import FavoriteRecruitmentList from '../components/mypage/FavoriteRecruitmentList';
-// (수정) Header 임포트
 import Header from '../components/common/Header'; 
-// (삭제) LogoIcon
-import { logout as requestLogout } from '../api/auth'; // (새로 추가)
+import { logout as requestLogout } from '../api/auth'; 
 
 const MyPage = () => {
-  // (수정) logout 상태 가져오기
   const { isLoggedIn, logout } = useAuthStore(); 
   const navigate = useNavigate();
   const location = useLocation();
@@ -26,9 +23,6 @@ const MyPage = () => {
     }
   }, [isLoggedIn, navigate, location]);
 
-  // (삭제) goToHome
-  
-  // (새로 추가) 로그아웃 핸들러
   const handleLogout = async () => {
     try {
       await requestLogout(); // API 호출
@@ -56,9 +50,9 @@ const MyPage = () => {
   }
 
   return (
-    // (수정) pb-20 (로그아웃 버튼 공간)
+
     <div className="min-h-screen bg-gray-50 pb-20"> 
-      {/* (수정) 공통 헤더 사용 */}
+      {/* 공통 헤더 사용 */}
       <Header variant="page" />
 
       <UserProfileSection user={user} />
@@ -73,7 +67,7 @@ const MyPage = () => {
         </p>
 
         {favorites.length === 0 ? (
-          // (수정) Figma(image_de22c9.png)에 맞게 텍스트 수정
+
           <div className="flex flex-col items-center justify-center py-16">
             <p className="text-[16px] font-medium text-gray-300 leading-[135%] tracking-[-0.03em] text-center">
               저장한 공고가 없습니다
@@ -88,7 +82,7 @@ const MyPage = () => {
         )}
       </div>
 
-      {/* (새로 추가) 로그아웃 버튼 (페이지 최하단) */}
+
       <div className="px-6 mt-10">
         <button
           className="text-[12px] font-medium underline text-gray-600 leading-[140%] tracking-[-0.03em]"

@@ -17,7 +17,7 @@ import FilterIcon from '../assets/icon/icn_filter_16.svg?react';
 
 type SortOption = '최근 게시순' | '저장순' | '마감 임박순';
 
-// (유지)
+
 const reverseStatusMap: Record<string, string> = {
   'soon': '모집중',
   'regular': '상시 모집',
@@ -32,7 +32,7 @@ const RecruitmentPage = () => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [sortOption, setSortOption] = useState<SortOption>('최근 게시순');
 
-  // (수정) department 추가
+  // department 추가
   const [activeFilters, setActiveFilters] = useState(location.state?.filters || {
     categories: [],
     types: [],
@@ -47,7 +47,7 @@ const RecruitmentPage = () => {
     setIsBottomSheetOpen(false);
   };
 
-  // (수정) 필터 칩 및 개수 계산 (department 추가)
+  // 필터 칩 및 개수 계산 (department 추가)
   const filterChips = [
     ...activeFilters.categories, 
     ...activeFilters.types, 
@@ -56,7 +56,7 @@ const RecruitmentPage = () => {
   ];
   const filterCount = filterChips.length;
 
-  // (수정) 칩 삭제 핸들러 (department 추가)
+  // 칩 삭제 핸들러 (department 추가)
   const handleRemoveFilter = (chipLabel: string) => {
     setActiveFilters((prev: any) => ({
       categories: prev.categories.filter((c: string) => c !== chipLabel),
@@ -66,13 +66,13 @@ const RecruitmentPage = () => {
     }));
   };
 
-  // (수정) useMemo (필터링 로직 수정)
+ 
   const sortedAndFilteredPosts = useMemo(() => {
     const filtered = posts.filter(post => {
-      // (수정) '모집 상태' 필터링 (Figma: image_df0442.png)
+      //'모집 상태' 필터링 
       if (activeFilters.statuses.length > 0) {
         const hasMatchingStatus = activeFilters.statuses.some((statusLabel: string) => {
-          if (statusLabel === '모집중') return post.status === 'd-day'; // '모집중'은 'd-day'로 간주
+          if (statusLabel === '모집중') return post.status === 'd-day'; 
           if (statusLabel === '모집 마감') return post.status === 'end';
           if (statusLabel === '상시 모집') return post.status === 'regular';
           return false;
@@ -80,15 +80,13 @@ const RecruitmentPage = () => {
         if (!hasMatchingStatus) return false;
       }
       
-      // (참고) '학과' 필터는 recruitment 데이터에 없으므로 적용 불가
-      // if (activeFilters.department && activeFilters.department !== '전체') ...
+
 
       return true;
     });
 
     // 2. 정렬 (유지)
     const postsCopy = [...filtered];
-    // (정렬 로직 ... 유지)
     // ... (switch/case) ...
     const getSortPriority = (post: Recruitment) => {
       if (post.status === 'end') return Infinity; 
@@ -107,7 +105,7 @@ const RecruitmentPage = () => {
     }
   }, [posts, sortOption, activeFilters]); 
 
-  // ... (로딩/에러 처리 ... 유지) ...
+
   if (isLoading) {
     return <div className="p-4 text-center">로딩 중...</div>;
   }
@@ -140,7 +138,6 @@ const RecruitmentPage = () => {
         </button>
       </div>
 
-      {/* (수정) 활성 필터 칩 목록 (department 포함) */}
       {filterCount > 0 && (
         <div className="flex gap-2 px-4 pb-3 overflow-x-auto scrollbar-hide border-b border-gray-100">
           {filterChips.map((label) => (
@@ -161,6 +158,7 @@ const RecruitmentPage = () => {
               <RecruitmentCard
                 key={post.recruitmentId}
                 recruitmentId={post.recruitmentId} 
+                clubId={post.clubId} // (수정) clubId 추가
                 images={post.images} 
                 title={post.title}
                 status={post.status} 
@@ -172,7 +170,7 @@ const RecruitmentPage = () => {
             ))}
           </div>
         ) : (
-          // (수정) 필터링 결과 없음 (Figma: image_df0f8a.png)
+
           <div className="flex flex-col items-center justify-center pt-20">
             <p className="text-[16px] font-semibold text-gray-500 leading-[1.35] tracking-[-0.03em] text-center">
               해당하는 모집 공고가 없습니다.
@@ -181,7 +179,6 @@ const RecruitmentPage = () => {
         )}
       </main>
 
-      {/* ... (바텀시트 동일) ... */}
     </div>
   );
 };

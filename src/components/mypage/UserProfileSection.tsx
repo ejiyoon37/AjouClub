@@ -1,6 +1,5 @@
 // src/components/mypage/UserProfileSection.tsx
 
-// (삭제) useAuthStore, requestLogout
 import type { UserInfo } from '../../types/user'; 
 import DefaultUserImage from '../../assets/img/user.png'; 
 
@@ -9,7 +8,7 @@ interface UserProfileSectionProps {
 }
 
 const UserProfileSection = ({ user }: UserProfileSectionProps) => {
-  // (삭제) logout, handleLogout
+  
 
   return (
     <section
@@ -31,7 +30,7 @@ const UserProfileSection = ({ user }: UserProfileSectionProps) => {
         {user.email}
       </p>
 
-      {/* (삭제) 로그아웃 버튼 */}
+      
     </section>
   );
 };

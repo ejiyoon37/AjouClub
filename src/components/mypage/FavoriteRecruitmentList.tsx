@@ -2,12 +2,12 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { FavoriteRecruitment } from '../../types/user'; // (새로 추가)
+import type { FavoriteRecruitment } from '../../types/user'; 
 
 
 
 interface Props {
-  item: FavoriteRecruitment; // (수정) API 타입과 일치
+  item: FavoriteRecruitment; 
 }
 
 const FavoriteRecruitmentList = ({ item }: Props) => {

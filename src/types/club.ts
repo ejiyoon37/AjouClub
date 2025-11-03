@@ -2,7 +2,7 @@
 
 export type ClubType = '중앙동아리' | '소학회';
 
-// (수정) 상세 API 응답(JSON[1]) 기준으로 필드 상세화
+//  상세 API 응답(JSON[1]) 기준으로 필드 상세화
 export interface Club {
   clubId: number;
   clubName: string;
@@ -20,12 +20,12 @@ export interface Club {
   clubType: ClubType;
   profileImageUrl: string | null; 
   category: string;
-  details: string | null; // '분과' 필드
+  details: string | null; 
   isRecruiting: boolean;
-  recruitmentTarget: string | null; // '모집 대상' 필드
+  recruitmentTarget: string | null; 
 }
 
-// (수정) API 응답의 data 필드 타입
+// API 응답data 필드 타입
 export interface ApiClubData {
   id: number;
   name: string;
@@ -35,7 +35,7 @@ export interface ApiClubData {
   category: string;
   recruiting: boolean;
   
-  // (추가) 상세 API에서만 오는 필드들
+  // 상세 API에서만 
   mainActivities?: string | null; 
   location?: string | null; 
   contactPhoneNumber?: string | null; 

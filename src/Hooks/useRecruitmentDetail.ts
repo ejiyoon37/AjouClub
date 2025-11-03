@@ -12,20 +12,17 @@ import type {
 } from '../types/recruit';
 
 // --- API 호출 함수 ---
+const fetchRecruitmentDetail = async (clubId: number): Promise<ApiRecruitmentDetail> => {
 
-// 1. 공고 상세 정보 (텍스트)
-const fetchRecruitmentDetail = async (id: number): Promise<ApiRecruitmentDetail> => {
-  // Swagger 스크린샷 [image_d34208.jpg]을 기반으로, 
-  // 파라미터 {clubId}가 실제로는 {recruitmentId}라고 판단하여 호출합니다.
-  const res = await axios.get<ApiResponse<ApiRecruitmentDetail>>(`/api/recruitments/${id}`);
+  const res = await axios.get<ApiResponse<ApiRecruitmentDetail>>(`/api/recruitments/${clubId}`);
   if (res.data.status !== 200) throw new Error(res.data.message);
   return res.data.data;
 };
 
-// 2. 공고 이미지 (URL 배열)
-const fetchRecruitmentImages = async (id: number): Promise<ApiRecruitmentImages> => {
-  // [image_d3456b.jpg] 참고
-  const res = await axios.get<ApiRecruitmentImages>(`/api/recruitments/${id}/images`);
+
+const fetchRecruitmentImages = async (clubId: number): Promise<ApiRecruitmentImages> => {
+
+  const res = await axios.get<ApiRecruitmentImages>(`/api/recruitments/${clubId}/images`);
   return res.data;
 };
 
@@ -61,19 +58,20 @@ const calculateStatus = (
 };
 
 // --- 메인 훅 ---
-export const useRecruitmentDetail = (recruitmentId: number | null) => {
+
+export const useRecruitmentDetail = (clubId: number | null) => {
   
   const results = useQueries({
     queries: [
       {
-        queryKey: ['recruitmentDetail', recruitmentId],
-        queryFn: () => fetchRecruitmentDetail(recruitmentId!),
-        enabled: !!recruitmentId, // recruitmentId가 있을 때만 실행
+        queryKey: ['recruitmentDetail', clubId],
+        queryFn: () => fetchRecruitmentDetail(clubId!), 
+        enabled: !!clubId,
       },
       {
-        queryKey: ['recruitmentImages', recruitmentId],
-        queryFn: () => fetchRecruitmentImages(recruitmentId!),
-        enabled: !!recruitmentId,
+        queryKey: ['recruitmentImages', clubId], 
+        queryFn: () => fetchRecruitmentImages(clubId!), 
+        enabled: !!clubId, 
       },
     ],
   });
@@ -108,10 +106,8 @@ export const useRecruitmentDetail = (recruitmentId: number | null) => {
     dDay: calculateDDay(detailData.endDate),
 
     // 4. API에 없는 필드 (기본값)
-    // (참고) 즐겨찾기(isScrapped) 상태는 별도 API로 확인해야 하나,
-    // 현재는 API가 없으므로 기본값 false를 사용하고, 로컬에서만 관리합니다.
+    
     isScrapped: false, 
-    // (참고) scrapCount는 현재 API로 알 수 없습니다.
     scrapCount: 0,
   } : null;
 

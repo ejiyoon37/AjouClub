@@ -19,8 +19,8 @@ interface Props {
 // };
 
 const RequireAuth = ({ children }: { children: React.ReactNode }) => {
-  const isLoggedIn = false; // <-- 로그인 무시하고 항상 false 또는 true
-  return <>{children}</>;   // 무조건 children 렌더링
+  const isLoggedIn = false; 
+  return <>{children}</>;   
 };
 
 export default RequireAuth;

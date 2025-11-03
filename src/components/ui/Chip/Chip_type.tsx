@@ -1,5 +1,4 @@
 import React from 'react';
-//사이즈
 type TypeChipSize = 'regular' | 'medium';
 
 

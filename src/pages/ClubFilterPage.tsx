@@ -6,34 +6,34 @@ import TopNav from '../components/common/TopNav';
 import CTABtn from '../components/ui/Button/CTABtn';
 import ResetIcon from '../assets/icon/icn_reset_16.svg?react';
 import SelectField from '../components/ui/Field/SelectField';
-import PrimaryBtn from '../components/ui/Button/PrimaryBtn'; // (수정) PrimaryBtn 사용
+import PrimaryBtn from '../components/ui/Button/PrimaryBtn';
 
-// (새로 추가) 섹션 타이틀 (Figma: image_df7848.png)
+//  섹션 타이틀 
 const SectionTitle = ({ title }: { title: string }) => (
   <h2 className="text-[16px] font-semibold text-gray-900 leading-[1.35] tracking-[-0.03em]">
     {title}
   </h2>
 );
 
-// (새로 추가) 학과 선택 라벨 (Figma: image_df78a7.png)
+//  학과 선택 라벨 
 const SectionLabel = ({ label }: { label: string }) => (
   <p className="text-[14px] font-medium text-gray-400 leading-[1.35] tracking-[-0.03em] mt-1">
     {label}
   </p>
 );
 
-// (수정) 동아리 필터용 선택지 (Figma 이미지 기준)
-const clubTypes = ['중앙동아리', '소학회']; // (image_df7848.png)
-const categories = ['스포츠', '학술', '종교', '문화예술', '창업', '사교', '봉사']; // (image_df7867.png)
-const recruitingOptions = ['모집중']; // (image_df7885.png)
-const departments = ['전체', '디지털미디어학과', '소프트웨어학과', '물리학과', '불어불문학과', '건축학과']; // (image_df78a7.png)
+//  동아리 필터용 선택지
+const clubTypes = ['중앙동아리', '소학회']; 
+const categories = ['스포츠', '학술', '종교', '문화예술', '창업', '사교', '봉사'];
+const recruitingOptions = ['모집중'];
+const departments = ['전체', '디지털미디어학과', '소프트웨어학과', '물리학과', '불어불문학과', '건축학과']; 
 
 const ClubFilterPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const initialFilters = location.state?.filters || {};
 
-  // (수정) 동아리 필터 State (API: image_df65bf.jpg)
+
   const [selectedType, setSelectedType] = useState<string | null>(initialFilters.type || null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(initialFilters.category || null);
   const [selectedRecruiting, setSelectedRecruiting] = useState<boolean>(initialFilters.isRecruiting || false);
@@ -49,11 +49,11 @@ const ClubFilterPage = () => {
   const handleApplyFilters = () => {
     const filters: Record<string, any> = {};
     
-    // (수정) API(image_df65bf.jpg) 파라미터에 맞게 매핑
+   
     if (selectedType) filters.type = selectedType;
     if (selectedCategory) filters.category = selectedCategory;
     if (selectedDepartment && selectedDepartment !== '전체') filters.department = selectedDepartment;
-    if (selectedRecruiting) filters.isRecruiting = true; // useClubs에서 'recruiting: true'로 변환
+    if (selectedRecruiting) filters.isRecruiting = true;
 
     navigate('/clubs', {
       state: { filters },
@@ -75,7 +75,7 @@ const ClubFilterPage = () => {
     <div className="min-h-screen bg-white flex flex-col">
       <TopNav title="필터" />
       
-      {/* (수정) Figma(image_df74a3.jpg) 레이아웃 적용 */}
+  
       <main className="flex-grow p-4 space-y-6">
         {/* 초기화 버튼 */}
         <div className="flex justify-end">
@@ -146,7 +146,7 @@ const ClubFilterPage = () => {
         </section>
       </main>
 
-      {/* (수정) 하단 버튼 레이아웃 */}
+      {/* 하단 버튼 레이아웃 */}
       <div className="mt-auto px-4 py-3 flex items-center justify-between bg-white border-t border-gray-100">
         <button
             className="flex items-center gap-1 text-base font-medium text-gray-700 leading-[1.35] tracking-[-0.03em]"

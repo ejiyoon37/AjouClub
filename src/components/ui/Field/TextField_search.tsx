@@ -4,13 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import SearchIcon from '../../../assets/icon/icn_search_24-2.svg?react';
 
 interface SearchFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  disableFocusNavigate?: boolean; // (새로 추가)
+  disableFocusNavigate?: boolean; 
 }
 
 const SearchField = ({
   className,
   value,
-  disableFocusNavigate = false, // (새로 추가)
+  disableFocusNavigate = false, 
   ...props
 }: SearchFieldProps) => {
   const [isActivated, setIsActivated] = useState(false);
@@ -38,7 +38,7 @@ const SearchField = ({
         value={value}
         onFocus={(e) => {
           setIsActivated(true);
-          // (수정) disableFocusNavigate가 false일 때만 navigate 실행
+          
           if (!disableFocusNavigate) {
             navigate('/search');
           }

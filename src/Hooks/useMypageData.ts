@@ -1,8 +1,8 @@
 // src/Hooks/useMypageData.ts
 
-import { useQuery } from '@tanstack/react-query'; // (수정)
+import { useQuery } from '@tanstack/react-query'; 
 import { getMyInfo, getFavoriteRecruitments } from '../api/user';
-import type { UserInfo, FavoriteRecruitment } from '../types/user'; // (수정)
+import type { UserInfo, FavoriteRecruitment } from '../types/user'; 
 
 
 export const useMyPageData = () => {
@@ -13,16 +13,16 @@ export const useMyPageData = () => {
     error: userError 
   } = useQuery<UserInfo, Error>({
     queryKey: ['myInfo'],
-    queryFn: getMyInfo, // Api/user.ts의 getMyInfo 사용
+    queryFn: getMyInfo, 
   });
 
   const { 
-    data: favorites = [], // 기본값 빈 배열
+    data: favorites = [], 
     isLoading: isFavoritesLoading,
     error: favoritesError
   } = useQuery<FavoriteRecruitment[], Error>({
     queryKey: ['myFavorites'],
-    queryFn: getFavoriteRecruitments, // Api/user.ts의 getFavoriteRecruitments 사용
+    queryFn: getFavoriteRecruitments,
     enabled: !!user, 
   });
 

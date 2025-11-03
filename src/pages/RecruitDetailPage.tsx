@@ -13,12 +13,14 @@ import { useRecruitmentDetail } from '../Hooks/useRecruitmentDetail';
 import { addToFavorites, removeFromFavorites  } from '../api/recruitment';
 import { useAuthStore } from '../stores/useAuthStore'; 
 
-// (삭제) mockRecruitment
+
 
 const RecruitmentDetailPage = () => {
   const navigate = useNavigate();
-  const { recruitmentId } = useParams<{ recruitmentId: string }>();
-  const numericId = recruitmentId ? Number(recruitmentId) : null;
+
+  const { clubId } = useParams<{ clubId: string }>();
+
+  const numericId = clubId ? Number(clubId) : null;
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn); 
 
   const { data: recruitment, isLoading, isError, error } = useRecruitmentDetail(numericId);
@@ -27,16 +29,14 @@ const RecruitmentDetailPage = () => {
   const [isScrapped, setIsScrapped] = useState(false);
   const [scrapCount, setScrapCount] = useState(0); 
 
-  // (새로 추가) 훅에서 데이터를 불러오면, 로컬 스크랩 상태를 초기화합니다.
+  
   useEffect(() => {
     if (recruitment) {
-      // (참고) 현재 useRecruitmentDetail 훅은 isScrapped=false, scrapCount=0을 반환합니다.
-      // 향후 API에서 실제 값을 제공하도록 훅이 수정되면, 이 코드가 실제 초기값을 설정합니다.
+      
       setIsScrapped(recruitment.isScrapped);
       setScrapCount(recruitment.scrapCount);
     }
-  }, [recruitment]); // recruitment 데이터가 로드될 때 실행
-
+  }, [recruitment]); 
   const handleToggleScrap = async () => {
     if (!isLoggedIn) {
       alert('로그인이 필요합니다.');

@@ -1,7 +1,5 @@
 import React from 'react';
 
-
-// 'regular', 'd-day', 'end' 중 하나의 상태를 받습니다.
 type ChipStatus = 'regular' | 'd-day' | 'end';
 type ChipSize = 'small' | 'medium' | 'large';
 

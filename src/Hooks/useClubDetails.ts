@@ -2,9 +2,9 @@
 
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import axios from '../utils/axios'; 
-import type { Club, ApiResponse, ApiClubData } from '../types/club'; // (수정) ApiClubData 임포트
+import type { Club, ApiResponse, ApiClubData } from '../types/club'; 
 
-// (수정) API 응답 데이터를 Club 타입으로 매핑 (JSON 응답 본문[1] 기반)
+
 const mapApiDataToClub = (data: ApiClubData): Club => {
   return {
     clubId: data.id,
@@ -23,9 +23,9 @@ const mapApiDataToClub = (data: ApiClubData): Club => {
     clubType: data.clubType,
     profileImageUrl: data.logoUrl,
     category: data.category,
-    details: data.details || null, // '분과'
+    details: data.details || null, 
     isRecruiting: data.recruiting,
-    recruitmentTarget: data.recruitmentTarget || null, // '모집 대상'
+    recruitmentTarget: data.recruitmentTarget || null, 
   };
 };
 

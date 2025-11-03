@@ -3,17 +3,17 @@ import type { Club } from '../../types/club';
 
 interface ClubDescriptionProps {
   club: Club;
-  activityImages?: string[]; // (수정)
+  activityImages?: string[]; 
 }
 
-// (새로 추가) 섹션 타이틀 (Figma[image_dd97e4.png] 스타일)
+
 const SectionTitle = ({ title }: { title: string }) => (
   <h3 className="text-[14px] font-semibold text-gray-800 leading-[1.35] tracking-[-0.03em] mb-3">
     {title}
   </h3>
 );
 
-// (새로 추가) 섹션 내용 (Figma[image_dd9808.png] 스타일)
+
 const SectionContent = ({ content }: { content: string | null | undefined }) => {
   if (!content) {
     return (
@@ -29,7 +29,7 @@ const SectionContent = ({ content }: { content: string | null | undefined }) => 
   );
 };
 
-// (수정)
+
 const ClubDescription = ({ club, activityImages = [] }: ClubDescriptionProps) => {
 
   return (
@@ -49,7 +49,7 @@ const ClubDescription = ({ club, activityImages = [] }: ClubDescriptionProps) =>
       {/* 3. 활동 사진 */}
       <section>
         <SectionTitle title="활동 사진" />
-        {/* (수정) activityImages 프롭스 사용 */}
+        
         {activityImages && activityImages.length > 0 ? (
           <div className="space-y-4">
             {activityImages.map((imgUrl, index) => (

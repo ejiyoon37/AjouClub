@@ -41,7 +41,8 @@ function App() {
     <Route path="/recruitment/filter" element={<RecruitmentFilterPage />} />
     <Route path="/clubs" element={<ClubExplorePage />} />
     <Route path="/clubs/filter" element={<ClubFilterPage />} />
-    <Route path="/recruitments/:recruitmentId" element={<RecruitmentDetailPage />} />
+    <Route path="/recruitments/:clubId" element={<RecruitmentDetailPage />} />
+    <Route path="/clubs/:clubId" element={<ClubDetailPage />} />
     <Route path="/clubs/:clubId" element={<ClubDetailPage />} />
     {/* <Route
       path="/clubs/:clubId"

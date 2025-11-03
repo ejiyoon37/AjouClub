@@ -7,7 +7,7 @@ const customAxios = axios.create({
   withCredentials: true, 
 });
 
-// ✅ 요청마다 accessToken 붙이기
+// 요청마다 accessToken 붙이기
 customAxios.interceptors.request.use((config) => {
   const accessToken = useAuthStore.getState().accessToken;
   if (accessToken) {
@@ -16,7 +16,7 @@ customAxios.interceptors.request.use((config) => {
   return config;
 });
 
-// ✅ 401 응답 시 refresh 토큰으로 재시도
+// 401 응답 시 refresh 토큰으로 재시도
 customAxios.interceptors.response.use(
   (response) => response,
   async (error) => {

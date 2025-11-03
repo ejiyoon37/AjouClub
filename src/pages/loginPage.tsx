@@ -63,12 +63,15 @@ const LoginPage = () => {
         </div>
 
         {/* 구글 로그인 버튼 */}
-        <div className="w-[343px] h-[56px]">
+        <div className="w-[343px] h-[56px] flex items-center justify-center">
           <GoogleLogin
             onSuccess={handleSuccess}
             onError={() => alert('로그인 실패')}
-            useOneTap
-            auto_select={import.meta.env.MODE === 'production'} // 개발 중엔 false
+            type="standard"
+            theme="outline"
+            size="large"
+            shape="rectangular"
+            width="343px" 
           />
         </div>
       </div>

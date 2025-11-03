@@ -36,15 +36,16 @@ const RecruitingSection = () => {
       <div className="grid grid-cols-3 gap-4">
         {paginatedPosts.map((post) => (
           <RecruitmentCard
-            key={post.recruitmentId} // (수정)
-            recruitmentId={post.recruitmentId} // (수정)
-            images={post.images} // (수정)
+            key={post.recruitmentId} 
+            recruitmentId={post.recruitmentId} 
+            clubId={post.clubId} // (수정) 이 부분이 누락되었습니다.
+            images={post.images} 
             title={post.title}
-            status={post.status} // (수정)
+            status={post.status} 
             dDay={post.dDay}
-            viewCount={post.viewCount} // (수정)
-            scrapCount={post.scrapCount} // (수정)
-            isScrappedInitially={post.isScrapped} // (수정)
+            viewCount={post.viewCount} 
+            scrapCount={post.scrapCount} 
+            isScrappedInitially={post.isScrapped} 
             />
         ))}
       </div>

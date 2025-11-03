@@ -23,7 +23,7 @@ const FilterChip = ({ children, onDelete }: FilterChipProps) => {
       <button 
         onClick={onDelete} 
         className="p-1 rounded-full hover:bg-gray-200 transition-colors"
-        aria-label="Remove filter" // 스크린 리더를 위한 접근성 속성
+        aria-label="Remove filter" 
       >
         <CloseIcon className="w-3.5 h-3.5 text-gray-500" />
       </button>

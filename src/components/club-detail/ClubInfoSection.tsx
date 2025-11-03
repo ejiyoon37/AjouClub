@@ -38,7 +38,7 @@ const ClubInfoSection = ({ club }: ClubInfoSectionProps) => {
           <InfoRow icon={<LocationIcon />} label="동아리 방" value={club.location} />
         )}
         
-        {/* (수정) '모집 대상' 레이블에 API의 'details' 필드(분과)를 연결 */}
+        {/* '모집 대상' 레이블에 API의 'details' 필드(분과) 연결 */}
         {club.details && (
           <InfoRow icon={<PersonIcon />} label="모집 대상" value={club.details} />
         )}

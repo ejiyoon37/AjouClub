@@ -12,7 +12,7 @@ interface ClubFilterParams {
   sort?: 'recent' | 'alphabetical';
 }
 
-// (유지) mapApiClubToClub 함수...
+
 const mapApiClubToClub = (apiClub: ApiClubData): Club => {
   return {
     clubId: apiClub.id,
@@ -37,16 +37,16 @@ const mapApiClubToClub = (apiClub: ApiClubData): Club => {
   };
 };
 
-// (수정) API 호출 함수 (모든 필터 파라미터 적용)
+
 const fetchClubs = async (filters: ClubFilterParams): Promise<Club[]> => {
-  // (수정) 'sort'를 제외하고 API 파라미터 매핑
+  
   const { sort, isRecruiting, department, category, type } = filters;
   
   const apiParams: Record<string, any> = {};
   if (type) apiParams.type = type;
   if (category) apiParams.category = category;
   if (department && department !== '전체') apiParams.department = department;
-  if (isRecruiting) apiParams.recruiting = true; // API 스펙(image_df65bf.jpg)
+  if (isRecruiting) apiParams.recruiting = true; 
 
   const hasFilters = Object.values(apiParams).some(val => val !== undefined);
 
@@ -68,7 +68,7 @@ const fetchClubs = async (filters: ClubFilterParams): Promise<Club[]> => {
 
 
 const useClubs = (filters: ClubFilterParams = {}) => {
-  // (수정) queryKey에서 sort 분리
+  
   const { sort, ...realFilters } = filters;
   
   const { 
@@ -76,9 +76,9 @@ const useClubs = (filters: ClubFilterParams = {}) => {
     isLoading, 
     error 
   } = useQuery<Club[], Error>({
-    // (수정) queryKey에 realFilters만 포함
+    
     queryKey: ['clubs', realFilters], 
-    // (수정) queryFn에 realFilters만 전달
+
     queryFn: () => fetchClubs(realFilters),
   });
 

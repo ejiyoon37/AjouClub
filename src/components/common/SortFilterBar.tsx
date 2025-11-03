@@ -4,7 +4,7 @@ import icArrowDown from '../../assets/icon/ic-arrow-down-gray-24.svg';
 import icFilter from '../../assets/icon/icn_filter_16.svg';
 
 interface FilterSortBarProps {
-  sortLabel: string; // ex. '저장순', '최근 게시순'
+  sortLabel: string; 
   onClickSort: () => void;
   onClickFilter: () => void;
 }

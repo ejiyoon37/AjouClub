@@ -20,15 +20,15 @@ const RecruitmentListItem = ({
   recruitmentStatus,
   dDay,
   title,
-  viewCount, // (수정)
+  viewCount,
   saveCount,
   postedDate,
 }: RecruitmentListItemProps) => {
   return (
     <div className="flex w-full bg-white p-4 gap-3 border-b border-gray-100">
-      {/* 썸네일 이미지 (수정) */}
+      {/* 썸네일 이미지 */}
       <img
-        src={imageUrl || DefaultImage} // (수정) 이미지가 없으면 기본 이미지
+        src={imageUrl || DefaultImage} 
         alt={`${title} thumbnail`}
         className="w-[100px] h-[100px] object-cover rounded-[10px] border border-gray-100 flex-shrink-0"
       />
@@ -48,7 +48,7 @@ const RecruitmentListItem = ({
         {/* 조회/저장, 게시 날짜 (수정) */}
         <div className="flex justify-between items-center text-xs font-normal text-gray-300 leading-[1.4] tracking-[-0.02em]">
           <div className="flex gap-2">
-            {/* (수정) viewCount가 있을 때만 표시 */}
+            {/* viewCount가 있을 때만 표시 */}
             {viewCount !== undefined && <span>조회 {viewCount}</span>}
             <span>저장 {saveCount}</span>
           </div>

@@ -25,7 +25,7 @@ const ScrapBtn = ({ count, isActive = false, onClick }: ScrapBtnProps) => {
         }
       `}
     >
-      {/* 2. isActive 값에 따라 다른 아이콘 컴포넌트를 렌더링합니다. */}
+      {/* 2. isActive 값에 따라 다른 아이콘 컴포넌트를 렌더링. */}
       {isActive 
         ? <ScrapIconActive className="w-6 h-6" />
         : <ScrapIconDefault className="w-6 h-6" />

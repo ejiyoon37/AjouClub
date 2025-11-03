@@ -8,20 +8,18 @@ import Header from '../components/common/Header';
 import ClubCard from '../components/common/Card/Card_Club';
 
 import type { Club } from '../types/club';
-// (삭제) import axios from 'axios';
-import useClubs from '../Hooks/useClubs'; // (새로 추가) useClubs 훅 임포트
+
+import useClubs from '../Hooks/useClubs';
 
 const SearchResultPage = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const [keyword, setKeyword] = useState(state?.keyword || '');
 
-  // (새로 추가) useClubs 훅을 사용해 모든 동아리 데이터를 가져옵니다.
+
   const { clubs: allClubs, isLoading, error } = useClubs({});
 
-  // (삭제) 기존 useEffect API 호출 로직
-
-  // (새로 추가) useMemo를 사용해 allClubs와 keyword가 변경될 때만 필터링 수행
+  
   const results = useMemo(() => {
     if (!keyword.trim() || !allClubs) {
       return [];
@@ -29,16 +27,14 @@ const SearchResultPage = () => {
     const lowerCaseKeyword = keyword.toLowerCase().trim();
     return allClubs.filter(club =>
       club.clubName.toLowerCase().includes(lowerCaseKeyword)
-      // (선택 사항) 동아리 설명에서도 검색하려면 아래 주석 해제
-      // || (club.description && club.description.toLowerCase().includes(lowerCaseKeyword))
-    );
-  }, [allClubs, keyword]); // allClubs 또는 keyword가 변경될 때 다시 계산
+          );
+  }, [allClubs, keyword]); 
 
   const handleCardClick = (clubId: number) => {
     navigate(`/club/${clubId}`);
   };
 
-  // (새로 추가) useClubs 로딩 및 에러 처리
+  // useClubs 로딩 및 에러 처리
   if (isLoading) {
     return <div className="p-4 text-center">동아리 목록 로딩 중...</div>;
   }
@@ -57,7 +53,7 @@ const SearchResultPage = () => {
         <SearchField
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
-          disableFocusNavigate={true} // (새로 추가) 포커스 시 네비게이트 방지
+          disableFocusNavigate={true} 
         />
       </div>
 

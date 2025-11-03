@@ -12,8 +12,6 @@ interface ClubCardProps {
 }
 
 const ClubCard = ({ club, variant = 'home' }: ClubCardProps) => {
-  // API의 logoUrl을 profileImageUrl로 매핑했으므로 그대로 사용
-  // clubId, clubName, isRecruiting 사용
   const { clubId, profileImageUrl, clubType, clubName, isRecruiting } = club;
   const navigate = useNavigate();
 
@@ -35,7 +33,7 @@ const ClubCard = ({ club, variant = 'home' }: ClubCardProps) => {
     >
       {/* 프로필 이미지 */}
       <img
-        src={profileImageUrl || '/OnlyLogo.svg'} // 로고가 null일 때 대비
+        src={profileImageUrl || '/OnlyLogo.svg'} // 로고가 null
         alt={`${clubName} profile`} 
         className={`
           ${isExplore ? 'w-[72px] h-[72px]' : 'w-[80px] h-[80px]'}
@@ -43,7 +41,6 @@ const ClubCard = ({ club, variant = 'home' }: ClubCardProps) => {
         `}
       />
 
-      {/* (수정) variant와 관계없이 항상 동아리 분류(TypeChip)만 표시 */}
       <TypeChip size="regular">{clubType}</TypeChip>
 
       {/* 동아리명 */}

@@ -21,20 +21,20 @@ const ClubExplorePage = () => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [sortOption, setSortOption] = useState<ClubSortOption>('최근 등록순');
 
-  // (수정) location.state에서 필터 값 가져오기
+
   const [activeFilters, setActiveFilters] = useState<Record<string, any>>(
     location.state?.filters || {}
   );
 
   const sortOptions: ClubSortOption[] = ['최근 등록순', '가나다 순'];
 
-  // (수정) useClubs 훅에 activeFilters 전달
+ 
   const { clubs, isLoading, error } = useClubs({
     sort: sortOption === '최근 등록순' ? 'recent' : 'alphabetical',
     ...activeFilters,
   });
 
-  // (새로 추가) 필터 칩 생성 로직 (Figma: image_df7582.jpg)
+
   const filterChips = useMemo(() => {
     const chips = [];
     if (activeFilters.type) chips.push(activeFilters.type);
@@ -46,7 +46,7 @@ const ClubExplorePage = () => {
 
   const filterCount = filterChips.length;
 
-  // (새로 추가) 필터 칩 삭제 핸들러
+
   const handleRemoveFilter = (chipLabel: string) => {
     setActiveFilters(prev => {
       const newFilters = { ...prev };
@@ -58,7 +58,7 @@ const ClubExplorePage = () => {
     });
   };
 
-  // (유지) useMemo (클라이언트 정렬)
+
   const sortedClubs = useMemo(() => {
     const clubsCopy = [...clubs];
     switch (sortOption) {
@@ -90,14 +90,13 @@ const ClubExplorePage = () => {
           onClick={() => navigate('/clubs/filter', { state: { filters: activeFilters } })} 
         >
           <FilterIcon className="w-4 h-4" />
-          {/* (수정) 필터 개수 표시 */}
+
           <span className={`text-sm font-medium ${filterCount > 0 ? 'text-gray-700' : 'text-gray-300'}`}>
             필터 {filterCount > 0 && `(${filterCount})`}
           </span>
         </button>
       </div>
 
-      {/* (새로 추가) 활성 필터 칩 목록 (Figma: image_df7582.jpg) */}
       {filterCount > 0 && (
         <div className="flex gap-2 px-4 pb-3 overflow-x-auto scrollbar-hide border-b border-gray-100">
           {filterChips.map((label) => (
@@ -111,7 +110,6 @@ const ClubExplorePage = () => {
         </div>
       )}
 
-      {/* (수정) 로딩/에러/결과 없음 처리 */}
       <main className="flex-grow px-4 pt-4">
         {isLoading ? (
           <div className="text-center pt-20">로딩 중...</div>
@@ -124,9 +122,9 @@ const ClubExplorePage = () => {
             ))}
           </div>
         ) : (
-          // (새로 추가) 필터링 결과 없음 (Figma: image_df7582.jpg)
+        
           <div className="flex flex-col items-center justify-center pt-20">
-            {/* (Figma: image_df0f8a.png 폰트 스타일과 동일) */}
+        
             <p className="text-[16px] font-semibold text-gray-500 leading-[1.35] tracking-[-0.03em] text-center">
               해당하는 동아리가 없습니다.
             </p>
@@ -134,7 +132,7 @@ const ClubExplorePage = () => {
         )}
       </main>
 
-      {/* (유지) 바텀시트 */}
+ 
       <BottomSheet isOpen={isBottomSheetOpen} onClose={() => setIsBottomSheetOpen(false)}>
         <ul className="space-y-2">
           {sortOptions.map(option => (
