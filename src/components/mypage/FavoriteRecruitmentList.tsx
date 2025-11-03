@@ -3,7 +3,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { FavoriteRecruitment } from '../../types/user'; 
-
+import DefaultImage from '../../assets/img/Default_images.png'; 
 
 
 interface Props {
@@ -14,7 +14,7 @@ const FavoriteRecruitmentList = ({ item }: Props) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/recruitments/${item.recruitmentId}`);
+    navigate(`/recruitments/${item.clubId}`); 
   };
 
   return (
@@ -23,7 +23,7 @@ const FavoriteRecruitmentList = ({ item }: Props) => {
       onClick={handleClick}
     >
       <img
-        src={item.thumbnailUrl}
+        src={item.thumbnailUrl || DefaultImage} 
         alt={item.title}
         className="w-[80px] h-[80px] rounded-md object-cover border border-gray-200"
       />
