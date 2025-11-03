@@ -1,5 +1,3 @@
-// src/components/club-detail/ClubDescription.tsx
-
 import React from 'react';
 import type { Club } from '../../types/club'; 
 
@@ -8,14 +6,14 @@ interface ClubDescriptionProps {
   activityImages?: string[]; 
 }
 
-
+// SectionTitle
 const SectionTitle = ({ title }: { title: string }) => (
   <h3 className="text-[14px] font-semibold text-gray-800 leading-[1.35] tracking-[-0.03em] mb-3">
     {title}
   </h3>
 );
 
-
+//  SectionContent에 줄바꿈 처리 추가
 const SectionContent = ({ content }: { content: string | null | undefined }) => {
   if (!content) {
     return (
@@ -24,21 +22,22 @@ const SectionContent = ({ content }: { content: string | null | undefined }) => 
       </p>
     );
   }
+  
 
   const processedContent = content.replace(/\\n/g, '\n');
 
   return (
-    <p className="text-[16px] font-medium text-gray-700 leading-[1.65] tracking-[-0.03em] whitespace-pre-wrap break-words">
+    <p className="text-[16px] font-medium text-gray-700 leading-[1.65] tracking-[-0.03em] whitespace-pre-wrap">
       {processedContent}
     </p>
   );
 };
 
 
-const ClubDescription = ({ club, activityImages = [] }: ClubDescriptionProps) => {
-  
+const ClubDescription = ({ club, activityImages }: ClubDescriptionProps) => {
 
-  const IMAGE_BASE_URL = 'https://ajouclubserver.shop';
+
+  const validImages = activityImages ? activityImages.filter(imgUrl => !!imgUrl) : [];
 
   return (
     <div className="bg-gray-50 p-4 space-y-6">
@@ -57,15 +56,14 @@ const ClubDescription = ({ club, activityImages = [] }: ClubDescriptionProps) =>
       {/* 3. 활동 사진 */}
       <section>
         <SectionTitle title="활동 사진" />
-        
-        {activityImages && activityImages.length > 0 ? (
+        {validImages.length > 0 ? (
           <div className="space-y-4">
-            {activityImages.map((imgUrl, index) => (
+            {validImages.map((imgUrl, index) => (
               <img
                 key={index}
-                src={`${IMAGE_BASE_URL}${imgUrl}`} 
+                src={imgUrl} 
                 alt={`활동 사진 ${index + 1}`}
-                className="w-full h-auto rounded-lg object-cover"
+                className="w-full h-auto rounded-lg object-cover border border-gray-100" 
               />
             ))}
           </div>
