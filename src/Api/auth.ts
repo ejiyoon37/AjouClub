@@ -1,5 +1,5 @@
 // src/api/auth.ts
-import axios from "axios";
+import axios from '../utils/axios'; //커스텀 인스턴스 사용
 import { useAuthStore } from "../stores/useAuthStore";
 
 export const loginWithGoogle = async (idToken: string) => {
@@ -18,6 +18,7 @@ export const refreshAccessToken = async () => {
 
 export const logout = async () => {
   try {
+    
     await axios.post('/api/auth/logout'); // RT-쿠키
 
     useAuthStore.getState().logout(); 
@@ -25,4 +26,3 @@ export const logout = async () => {
     console.error('Logout 실패:', err);
   }
 };
-

@@ -1,99 +1,33 @@
 // src/components/club-detail/ClubRecruitmentList.tsx
 
-import React, { useEffect, useState  } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import axios from '../../lib/axios';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import RecruitmentListItem from '../common/Card/Card_recruitment _listitem';
-import type { Recruitment, ApiRecruitmentDetail, RecruitmentStatus, RecruitmentType } from '../../types/recruit';
-import type { ApiResponse } from '../../types/club';
 import { formatDate } from '../../utils/date';
+import { useRecruitmentDetail } from '../../Hooks/useRecruitmentDetail'; // (수정) 훅 임포트
 
 interface ClubRecruitmentListProps {
   clubId: number;
 }
 
-const calculateDDay = (endDate: string | null): number => {
-  if (!endDate) return 0;
-  const today = new Date();
-  const end = new Date(endDate);
-  today.setHours(0, 0, 0, 0);
-  end.setHours(0, 0, 0, 0);
-  const diffTime = end.getTime() - today.getTime();
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  return diffDays < 0 ? 0 : diffDays;
-};
-
-const calculateStatus = (
-  type: RecruitmentType,
-  endDate: string | null
-): RecruitmentStatus => {
-  if (type === '상시모집') return 'regular';
-  if (!endDate) return 'regular';
-  const dDay = calculateDDay(endDate);
-  if (dDay === 0) return 'end';
-  if (dDay <= 7) return 'd-day';
-  return 'regular';
-};
-
-
 const ClubRecruitmentList = ({ clubId }: ClubRecruitmentListProps) => {
+  const navigate = useNavigate();
+  
+  // useRecruitmentDetail 훅을 사용
+  const { data: recruitment, isLoading, error } = useRecruitmentDetail(clubId);
 
-  const [recruitment, setRecruitment] = useState<Recruitment | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate(); 
-
-  useEffect(() => {
-    if (!clubId) return;
-
-    const fetchRecruitments = async () => {
-      setIsLoading(true); // (추가)
-      try {
-        const response = await axios.get<ApiResponse<ApiRecruitmentDetail>>(`/api/recruitments/${clubId}`);
-        const apiData = response.data.data;
-
-        // API 데이터를 프론트엔드 Recruitment 타입으로 매핑
-        const mappedData: Recruitment = {
-          recruitmentId: apiData.id,
-          clubId: apiData.clubId,
-          clubName: apiData.clubName,
-          title: apiData.title,
-          description: apiData.description,
-          type: apiData.type,
-          phoneNumber: apiData.phoneNumber,
-          email: apiData.email,
-          startDate: apiData.startDate,
-          endDate: apiData.endDate,
-          url: apiData.url,
-          createdAt: apiData.createdAt,
-          images: [], // API는 이미지 안줌
-          status: calculateStatus(apiData.type, apiData.endDate),
-          dDay: calculateDDay(apiData.endDate),
-          isScrapped: false,
-          scrapCount: 0, // API에 saveCount가 없음
-        };
-        
-        setRecruitment(mappedData); // 매핑된 단일 객체 저장
-
-      } catch (error: any) {
-        //  404 에러(공고 없음)는 정상 처리
-        if (error.response && error.response.status === 404) {
-          setRecruitment(null); // 공고 없음
-        } else {
-          console.error('Error fetching recruitments:', error);
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchRecruitments();
-  }, [clubId]);
-
+  // 로딩 상태 처리
   if (isLoading) return <p className="p-4 text-center">로딩 중...</p>;
+
+  // 에러 상태 처리
+  if (error) {
+    return <p className="p-4 text-center text-red-500">모집 공고를 불러오는 중 오류가 발생했습니다.</p>;
+  }
 
   return (
     <div className="flex flex-col divide-y divide-gray-100">
       
+      {/* null을 반환하면 공고 없음 처리 */}
       {!recruitment ? (
         <div className="py-10 text-center text-gray-300 text-base font-medium leading-[1.35] tracking-[-0.03em]">
           등록된 모집 공고가 없습니다.
@@ -102,13 +36,11 @@ const ClubRecruitmentList = ({ clubId }: ClubRecruitmentListProps) => {
         
         <div
           key={recruitment.recruitmentId}
-    
-          
           onClick={() => navigate(`/recruitments/${recruitment.clubId}`)}
           className="cursor-pointer"
         >
           <RecruitmentListItem
-              imageUrl={recruitment.images[0]} 
+            imageUrl={recruitment.images[0]} 
             recruitmentStatus={recruitment.status}
             dDay={recruitment.dDay}
             title={recruitment.title}

@@ -1,83 +1,105 @@
-// src/pages/Search/SearchResultPage.tsx
+// src/pages/SearchResultPage.tsx
 
-import React, { useState, useMemo } from 'react'; // (수정) useEffect, useState -> useState, useMemo
+import React, { useState, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 import SearchField from '../components/ui/Field/TextField_search';
-import Header from '../components/common/Header';
+import TopNav from '../components/common/TopNav'; // (수정) Header -> TopNav
 import ClubCard from '../components/common/Card/Card_Club';
-
-import type { Club } from '../types/club';
+// (삭제) RecruitmentCard, TextBtn
 
 import useClubs from '../Hooks/useClubs';
 
+import type { Club } from '../types/club';
+
+
 const SearchResultPage = () => {
   const navigate = useNavigate();
-  const { state } = useLocation();
-  const [keyword, setKeyword] = useState(state?.keyword || '');
+  const location = useLocation();
 
-
-  const { clubs: allClubs, isLoading, error } = useClubs({});
-
-  
-  const results = useMemo(() => {
-    if (!keyword.trim() || !allClubs) {
-      return [];
-    }
-    const lowerCaseKeyword = keyword.toLowerCase().trim();
-    return allClubs.filter(club =>
-      club.clubName.toLowerCase().includes(lowerCaseKeyword)
-          );
-  }, [allClubs, keyword]); 
-
-  const handleCardClick = (clubId: number) => {
-    navigate(`/club/${clubId}`);
+  const getKeywordFromQuery = () => {
+    const params = new URLSearchParams(location.search);
+    return params.get('query') || '';
   };
 
-  // useClubs 로딩 및 에러 처리
-  if (isLoading) {
-    return <div className="p-4 text-center">동아리 목록 로딩 중...</div>;
-  }
+  const [keyword, setKeyword] = useState(getKeywordFromQuery());
 
-  if (error) {
-    return <div className="p-4 text-center text-red-500">오류가 발생했습니다.</div>;
-  }
+  const { clubs: allClubs, isLoading: isClubsLoading } = useClubs({});
+
+
+  const handleSearch = () => {
+    if (!keyword.trim()) return;
+    // 검색 시 URL 쿼리 파라미터 변경
+    navigate(`/search/result?query=${encodeURIComponent(keyword.trim())}`);
+  };
+
+  const lowerCaseKeyword = keyword.toLowerCase().trim();
+
+  // 동아리 필터링 로직 (name + description)
+  const filteredClubs = useMemo(() => {
+    if (!lowerCaseKeyword || !allClubs) return [];
+    return allClubs.filter(
+      (club) =>
+        club.name.toLowerCase().includes(lowerCaseKeyword) ||
+        (club.description &&
+          club.description.toLowerCase().includes(lowerCaseKeyword))
+    );
+  }, [allClubs, lowerCaseKeyword]);
+
+
+  const isLoading = isClubsLoading; 
 
   return (
-    <div className="px-4 py-2">
-      {/* 상단 네비게이션 (오른쪽 아이콘 없이) */}
-      <Header variant={'home'} />
+    <div className="flex flex-col h-screen bg-white">
+      <TopNav title="동아리 검색" />
 
       {/* 검색 필드 */}
-      <div className="mt-4">
+      <div className="px-4 py-3">
         <SearchField
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === 'Search') handleSearch();
+          }}
           disableFocusNavigate={true} 
         />
       </div>
 
+
       {/* 결과 리스트 */}
-      <div className="mt-4 grid grid-cols-2 gap-4">
-        {results.length > 0 ? (
-          results.map((club) => (
-            <div key={club.clubId} onClick={() => handleCardClick(club.clubId)}>
-              <ClubCard club={club} />
-            </div>
-          ))
+      <main className="flex-grow p-4 overflow-y-auto">
+        {isLoading ? (
+          <div className="text-center pt-20">검색 중...</div>
         ) : (
-          <div className="flex flex-col items-center justify-center col-span-2 mt-20 h-[300px]">
-            <p className="text-[18px] font-semibold text-gray-700 leading-[135%] tracking-[-0.03em] text-center">
-              검색 결과가 없어요..
-            </p>
-            <p className="text-[16px] font-medium text-gray-400 leading-[135%] tracking-[-0.03em] text-center mt-1">
-              다른 검색어로 검색해 보세요!
-            </p>
-          </div>
+          <>
+            
+            {filteredClubs.length > 0 ? (
+              <div className="grid grid-cols-3 gap-x-6 gap-y-5 w-fit mx-auto">
+                {filteredClubs.map((club) => (
+                  <ClubCard
+                    key={club.clubId}
+                    club={club}
+                    variant="explore"
+                  />
+                ))}
+              </div>
+            ) : (
+              <NoResultView />
+            )}
+          </>
         )}
-      </div>
+      </main>
     </div>
   );
 };
+
+// 결과 없음 컴포넌트
+const NoResultView = () => (
+  <div className="flex flex-col items-center justify-center pt-20">
+    <p className="text-[16px] font-semibold text-gray-500 leading-[1.35] tracking-[-0.03em] text-center">
+      검색 결과가 없습니다.
+    </p>
+  </div>
+);
 
 export default SearchResultPage;

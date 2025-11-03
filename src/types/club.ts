@@ -1,41 +1,47 @@
 // src/types/club.ts
 
-export type ClubType = '중앙동아리' | '소학회';
+export type ClubType = '중앙동아리' | '소학회' | '기타';
 
-//  상세 API 응답(JSON[1]) 기준으로 필드 상세화
+
 export interface Club {
   clubId: number;
-  clubName: string;
+  name: string;
   description: string | null;
   mainActivities: string | null; 
-  location: string | null; 
-  contactPhoneNumber: string | null; 
+  location: string | null;
+  contactPhoneNumber: string | null;
   instagramUrl: string | null;
-  youtubeUrl: string | null; 
-  linktreeUrl: string | null; 
-  clubUrl: string | null; 
-  contactEmail: string | null; 
+  youtubeUrl: string | null;
+  linktreeUrl: string | null;
+  clubUrl: string | null;
+  contactEmail: string | null;
   createdAt: string;
-  updatedAt: string; 
+  updatedAt: string;
   clubType: ClubType;
   profileImageUrl: string | null; 
-  category: string;
+  category: string; 
   details: string | null; 
   isRecruiting: boolean;
-  recruitmentTarget: string | null; 
 }
 
-// API 응답data 필드 타입
+// ApiResponse
+export interface ApiResponse<T> {
+  status: number;
+  message: string;
+  data: T;
+}
+
+//  API 응답 원본 데이터 타입 (useClubs.ts용)
 export interface ApiClubData {
   id: number;
   name: string;
   description: string | null;
-  clubType: ClubType;
+  clubType: string; 
   logoUrl: string | null;
-  category: string;
+  category: string; 
   recruiting: boolean;
   
-  // 상세 API에서만 
+  // 상세 API에서만 오는 필드들 (목록 API에도 포함될 수 있음)
   mainActivities?: string | null; 
   location?: string | null; 
   contactPhoneNumber?: string | null; 
@@ -48,21 +54,5 @@ export interface ApiClubData {
   updatedAt?: string; 
   details?: string | null; 
   recruitmentTarget?: string | null;
-}
 
-
-export interface ApiResponse<T> {
-  status: number;
-  message: string;
-  data: T;
-}
-
-
-export interface ClubPreview {
-  id: number;
-  name: string;
-  type: ClubType;
-  description: string;
-  imageUrl: string;
-  isScrappedInitially?: boolean;
 }
