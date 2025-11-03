@@ -11,7 +11,10 @@ import useRecruitments from '../Hooks/useRecruitments';
 import type { Recruitment } from '../types/recruit';
 import FilterChip from '../components/ui/Chip/Chip_filter'; 
 
-// 아이콘 import
+import { useAuthStore } from '../stores/useAuthStore';
+import { useMyPageData } from '../Hooks/useMypageData';
+
+
 import SortIcon from '../assets/icon/ic-arrow-down-gray-24.svg?react';
 import FilterIcon from '../assets/icon/icn_filter_16.svg?react';
 
@@ -28,11 +31,15 @@ const RecruitmentPage = () => {
   const navigate = useNavigate();
   const location = useLocation(); 
 
-  const { posts, isLoading, error } = useRecruitments(); 
+  const { posts, isLoading: isPostsLoading, error } = useRecruitments(); // (수정) isLoading 이름 변경
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [sortOption, setSortOption] = useState<SortOption>('최근 게시순');
 
-  // department 추가
+
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const { favorites, isLoading: isFavoritesLoading } = useMyPageData();
+
+
   const [activeFilters, setActiveFilters] = useState(location.state?.filters || {
     categories: [],
     types: [],
@@ -47,7 +54,7 @@ const RecruitmentPage = () => {
     setIsBottomSheetOpen(false);
   };
 
-  // 필터 칩 및 개수 계산 (department 추가)
+
   const filterChips = [
     ...activeFilters.categories, 
     ...activeFilters.types, 
@@ -56,7 +63,7 @@ const RecruitmentPage = () => {
   ];
   const filterCount = filterChips.length;
 
-  // 칩 삭제 핸들러 (department 추가)
+
   const handleRemoveFilter = (chipLabel: string) => {
     setActiveFilters((prev: any) => ({
       categories: prev.categories.filter((c: string) => c !== chipLabel),
@@ -66,9 +73,22 @@ const RecruitmentPage = () => {
     }));
   };
 
+
+  const postsWithUserScrapStatus = useMemo(() => {
+    if (!isLoggedIn || !favorites) return posts; // 로그인 안했으면 원본 반환
+    
+    // 즐겨찾기 목록을 Set으로 만들어 빠른 조회
+    const favoriteIdSet = new Set(favorites.map(fav => fav.recruitmentId));
+    
+    return posts.map(post => ({
+      ...post,
+      isScrapped: favoriteIdSet.has(post.recruitmentId), // 실제 스크랩 상태 반영
+    }));
+  }, [posts, favorites, isLoggedIn]);
  
+
   const sortedAndFilteredPosts = useMemo(() => {
-    const filtered = posts.filter(post => {
+    const filtered = postsWithUserScrapStatus.filter(post => { // (수정)
       //'모집 상태' 필터링 
       if (activeFilters.statuses.length > 0) {
         const hasMatchingStatus = activeFilters.statuses.some((statusLabel: string) => {
@@ -80,8 +100,6 @@ const RecruitmentPage = () => {
         if (!hasMatchingStatus) return false;
       }
       
-
-
       return true;
     });
 
@@ -103,8 +121,11 @@ const RecruitmentPage = () => {
       default:
         return postsCopy;
     }
-  }, [posts, sortOption, activeFilters]); 
+  }, [postsWithUserScrapStatus, sortOption, activeFilters]); // (수정)
 
+
+  // 로딩 상태
+  const isLoading = isPostsLoading || (isLoggedIn && isFavoritesLoading);
 
   if (isLoading) {
     return <div className="p-4 text-center">로딩 중...</div>;
@@ -158,7 +179,7 @@ const RecruitmentPage = () => {
               <RecruitmentCard
                 key={post.recruitmentId}
                 recruitmentId={post.recruitmentId} 
-                clubId={post.clubId} // (수정) clubId 추가
+                clubId={post.clubId}
                 images={post.images} 
                 title={post.title}
                 status={post.status} 
@@ -178,7 +199,22 @@ const RecruitmentPage = () => {
           </div>
         )}
       </main>
-
+      
+     
+      <BottomSheet isOpen={isBottomSheetOpen} onClose={() => setIsBottomSheetOpen(false)}>
+        <ul className="space-y-2">
+          {sortOptions.map(option => (
+            <li key={option}>
+              <BottomSheetListItem
+                isActive={sortOption === option}
+                onClick={() => handleSelectSort(option)}
+              >
+                {option}
+              </BottomSheetListItem>
+            </li>
+          ))}
+        </ul>
+      </BottomSheet>
     </div>
   );
 };
