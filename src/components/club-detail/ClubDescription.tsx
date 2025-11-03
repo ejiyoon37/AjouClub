@@ -1,3 +1,5 @@
+// src/components/club-detail/ClubDescription.tsx
+
 import React from 'react';
 import type { Club } from '../../types/club'; 
 
@@ -22,15 +24,21 @@ const SectionContent = ({ content }: { content: string | null | undefined }) => 
       </p>
     );
   }
+
+  const processedContent = content.replace(/\\n/g, '\n');
+
   return (
-    <p className="text-[16px] font-medium text-gray-700 leading-[1.65] tracking-[-0.03em] whitespace-pre-wrap">
-      {content}
+    <p className="text-[16px] font-medium text-gray-700 leading-[1.65] tracking-[-0.03em] whitespace-pre-wrap break-words">
+      {processedContent}
     </p>
   );
 };
 
 
 const ClubDescription = ({ club, activityImages = [] }: ClubDescriptionProps) => {
+  
+
+  const IMAGE_BASE_URL = 'https://ajouclubserver.shop';
 
   return (
     <div className="bg-gray-50 p-4 space-y-6">
@@ -55,7 +63,7 @@ const ClubDescription = ({ club, activityImages = [] }: ClubDescriptionProps) =>
             {activityImages.map((imgUrl, index) => (
               <img
                 key={index}
-                src={imgUrl}
+                src={`${IMAGE_BASE_URL}${imgUrl}`} 
                 alt={`활동 사진 ${index + 1}`}
                 className="w-full h-auto rounded-lg object-cover"
               />
