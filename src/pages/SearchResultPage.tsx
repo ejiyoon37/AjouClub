@@ -40,7 +40,7 @@ const SearchResultPage = () => {
     if (!lowerCaseKeyword || !allClubs) return [];
     return allClubs.filter(
       (club) =>
-        club.name.toLowerCase().includes(lowerCaseKeyword) ||
+        club.clubName.toLowerCase().includes(lowerCaseKeyword) ||
         (club.description &&
           club.description.toLowerCase().includes(lowerCaseKeyword))
     );

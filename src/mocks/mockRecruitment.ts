@@ -6,7 +6,7 @@ export const mockRecruitments: any[] = [
   {
     id: 1,
     clubId: 101, 
-    imageUrl: 'src/assets/img/AKO.jpg',
+    imageUrl: 'src/assets/img/Default_images.png',
     title: '💙 24-2 SWeat 신입 부원 모집 💙',
     recruitmentStatus: 'regular',
     dDay: 10,
@@ -17,7 +17,7 @@ export const mockRecruitments: any[] = [
   {
     id: 2,
     clubId: 102, 
-    imageUrl: 'src/assets/img/R_image.png',
+    imageUrl: 'src/assets/img/Default_images.png',
     title: '[마감임박] 나비야 밴드부에서 드러머 구합니다!',
     recruitmentStatus: 'd-day',
     dDay: 2,
@@ -28,7 +28,7 @@ export const mockRecruitments: any[] = [
   {
     id: 3,
     clubId: 103, 
-    imageUrl: 'src/assets/img/AKO.jpg',
+    imageUrl: 'src/assets/img/Default_images.png',
     title: '기독교 동아리 [JOY] 24-2학기 모집',
     recruitmentStatus: 'regular',
     dDay: 0,
@@ -39,7 +39,7 @@ export const mockRecruitments: any[] = [
   {
     id: 4,
     clubId: 104, 
-    imageUrl: 'src/assets/img/R_image.png',
+    imageUrl: 'src/assets/img/Default_images.png',
     title: 'C.O.D.E. - 개발 동아리 2기 모집',
     recruitmentStatus: 'end',
     dDay: 0,
@@ -50,7 +50,7 @@ export const mockRecruitments: any[] = [
   {
     id: 5,
     clubId: 105, 
-    imageUrl: 'src/assets/img/AKO.jpg',
+    imageUrl: 'src/assets/img/Default_images.png',
     title: 'SCAU에서 애니메이션 덕후 찾습니다!',
     recruitmentStatus: 'd-day',
     dDay: 1,
@@ -61,7 +61,7 @@ export const mockRecruitments: any[] = [
   {
     id: 6,
     clubId: 106, 
-    imageUrl: 'src/assets/img/R_image.png',
+    imageUrl: 'src/assets/img/Default_images.png',
     title: '수학 문제 풀이 동아리 [정답은 42]',
     recruitmentStatus: 'regular',
     dDay: 12,
@@ -72,7 +72,7 @@ export const mockRecruitments: any[] = [
   {
     id: 7,
     clubId: 107, 
-    imageUrl: 'src/assets/img/AKO.jpg',
+    imageUrl: 'src/assets/img/Default_images.png',
     title: '🧁 베이킹 소모임 [오븐 속 이야기] 신입 모집',
     recruitmentStatus: 'regular',
     dDay: 5,
@@ -83,7 +83,7 @@ export const mockRecruitments: any[] = [
   {
     id: 8,
     clubId: 108, 
-    imageUrl: 'src/assets/img/R_image.png',
+    imageUrl: 'src/assets/img/Default_images.png',
     title: '[시네마 클럽] 단편영화 제작팀원 모집',
     recruitmentStatus: 'end',
     dDay: 0,
@@ -94,7 +94,7 @@ export const mockRecruitments: any[] = [
   {
     id: 9,
     clubId: 109, 
-    imageUrl: 'src/assets/img/AKO.jpg',
+    imageUrl: 'src/assets/img/Default_images.png',
     title: '🌿 환경보호 동아리 [GreenUp]',
     recruitmentStatus: 'd-day',
     dDay: 3,
@@ -105,7 +105,7 @@ export const mockRecruitments: any[] = [
   {
     id: 10,
     clubId: 110, 
-    imageUrl: 'src/assets/img/R_image.png',
+    imageUrl: 'src/assets/img/Default_images.png',
     title: '🔥 운동 동아리 [IRONCLUB] 24-2 기수 모집',
     recruitmentStatus: 'regular',
     dDay: 20,
@@ -116,7 +116,7 @@ export const mockRecruitments: any[] = [
   {
     id: 11,
     clubId: 111, 
-    imageUrl: 'src/assets/img/AKO.jpg',
+    imageUrl: 'src/assets/img/Default_images.png',
     title: '🎮 게임 개발자 모임 [UnityVerse]',
     recruitmentStatus: 'end',
     dDay: 0,
@@ -127,7 +127,7 @@ export const mockRecruitments: any[] = [
   {
     id: 12,
     clubId: 112, 
-    imageUrl: 'src/assets/img/R_image.png',
+    imageUrl: 'src/assets/img/Default_images.png',
     title: '✏️ 창작 글쓰기 동아리 [흑백논리]',
     recruitmentStatus: 'regular',
     dDay: 7,

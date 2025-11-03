@@ -5,7 +5,7 @@ export type ClubType = '중앙동아리' | '소학회' | '기타';
 
 export interface Club {
   clubId: number;
-  name: string;
+  clubName: string;
   description: string | null;
   mainActivities: string | null; 
   location: string | null;

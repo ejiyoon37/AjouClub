@@ -2,7 +2,7 @@
 
 import React from 'react';
 import PeriodChip from '../../ui/Chip/Chip_period';
-import DefaultImage from '../../../assets/img/R_image.png'; // (새로 추가)
+import DefaultImage from '../../../assets/img/Default_images.png'; // (새로 추가)
 
 interface RecruitmentListItemProps {
   imageUrl: string | null | undefined; // (수정) null 또는 undefined 허용
