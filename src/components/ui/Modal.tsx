@@ -1,4 +1,4 @@
-// src/ui/Modal.tsx
+// src/components/ui/Modal.tsx
 import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -9,32 +9,53 @@ interface ModalProps {
 }
 
 const Modal = ({ isOpen, onClose, children }: ModalProps) => {
+
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden'; // 모달 열리면 스크롤 방지
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'unset'; // 모달 닫히면 스크롤 허용
+      document.body.style.overflow = 'auto';
     }
     return () => {
-      document.body.style.overflow = 'unset'; // 컴포넌트 언마운트 시 정리
+      document.body.style.overflow = 'auto';
     };
   }, [isOpen]);
 
+
+  useEffect(() => {
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose(); 
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+   
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]); 
+
   if (!isOpen) return null;
 
+
   return createPortal(
-    <div 
-      className="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-90 p-4"
-      onClick={onClose} // 배경 클릭 시 모달 닫기
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+      onClick={onClose} 
     >
-      <div 
-        className="relative w-full h-full flex items-center justify-center"
-        onClick={(e) => e.stopPropagation()} // 모달 내부 클릭 시 닫히지 않도록
+      <div
+        className="relative w-full h-full"
+        onClick={(e) => e.stopPropagation()}
       >
         {children}
       </div>
     </div>,
-    document.body // body에 직접 렌더링
+    document.body
   );
 };
 
