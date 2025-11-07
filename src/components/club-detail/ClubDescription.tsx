@@ -1,5 +1,8 @@
 
 import type { Club } from '../../types/club'; 
+import { useState } from 'react';
+import Modal from '../ui/Modal';
+import { XMarkIcon } from '@heroicons/react/24/outline'; 
 
 interface ClubDescriptionProps {
   club: Club;
@@ -39,6 +42,21 @@ const ClubDescription = ({ club, activityImages }: ClubDescriptionProps) => {
 
   const validImages = activityImages ? activityImages.filter(imgUrl => !!imgUrl) : [];
 
+  //모달 상태관리
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  
+  //모달 관련 핸들러
+  const handleImageClick = (imageUrl: string) => {
+    setSelectedImage(imageUrl);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedImage(null);
+  };
+
   return (
     <div className="bg-gray-50 p-4 space-y-6">
       {/* 1. 동아리 설명 */}
@@ -64,6 +82,7 @@ const ClubDescription = ({ club, activityImages }: ClubDescriptionProps) => {
                 src={imgUrl} 
                 alt={`활동 사진 ${index + 1}`}
                 className="w-full h-auto rounded-lg object-cover border border-gray-100" 
+                onClick={() => handleImageClick(imgUrl)}
               />
             ))}
           </div>
@@ -73,6 +92,25 @@ const ClubDescription = ({ club, activityImages }: ClubDescriptionProps) => {
           </p>
         )}
       </section>
+
+      {/* 이미지 뷰어 모달 */}
+      {isModalOpen && selectedImage && (
+        <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
+          <div className="relative w-full h-full flex items-center justify-center p-4">
+            <button 
+              onClick={handleCloseModal} 
+              className="absolute top-4 right-4 text-white hover:text-gray-300 z-50 p-2 bg-black bg-opacity-50 rounded-full"
+            >
+              <XMarkIcon className="h-6 w-6" />
+            </button>
+            <img 
+              src={selectedImage} 
+              alt="확대된 활동 사진" 
+              className="max-w-full max-h-full object-contain" 
+            />
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };
