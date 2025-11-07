@@ -15,6 +15,7 @@ export const useMyPageData = () => {
   } = useQuery<UserInfo, Error>({
     queryKey: ['myInfo'],
     queryFn: getMyInfo, 
+    enabled: isLoggedIn,
   });
 
   const { 

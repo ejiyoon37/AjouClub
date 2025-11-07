@@ -1,7 +1,7 @@
 // src/components/common/Card/Card_recruitment.tsx
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from '../../../utils/axios';
 import PeriodChip from '../../ui/Chip/Chip_period';
@@ -9,6 +9,7 @@ import ScrapIconDefault from '../../../assets/icon/ScrapBtn_default-2.svg?react'
 import ScrapIconActive from '../../../assets/icon/ScrapBtn_activated.svg?react';
 import { addToFavorites, removeFromFavorites } from '../../../api/recruitment';
 import DefaultImage from '../../../assets/img/Default_images.png'; 
+import { useAuthStore } from '../../../stores/useAuthStore';
 
 interface RecruitmentCardProps {
   recruitmentId: number;
@@ -47,6 +48,8 @@ const RecruitmentCard = ({
   const [scrapCount, setScrapCount] = useState(initialScrapCount);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const location = useLocation();
 
  // recruitmentId로 썸네일 쿼리
   const { data: thumbnailImages } = useQuery<string[], Error>({
@@ -57,6 +60,13 @@ const RecruitmentCard = ({
 
   const handleScrapClick = async (e: React.MouseEvent) => {
     e.stopPropagation(); 
+    
+    if (!isLoggedIn) {
+     alert('로그인이 필요합니다.');
+     navigate(`/login?redirect=${location.pathname}`);
+     return;
+    }
+
     try {
       if (!isScrapped) {
         await addToFavorites(recruitmentId);
