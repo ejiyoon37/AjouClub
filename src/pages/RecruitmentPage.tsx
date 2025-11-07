@@ -1,6 +1,6 @@
 // src/pages/RecruitmentPage.tsx
 
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom'; 
 import Header from '../components/common/Header';
 import TextBtn from '../components/ui/Button/TextBtn';
