@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import ArrowIcon from '../../assets/icon/ic_arrow_up_16.svg?react';

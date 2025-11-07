@@ -1,4 +1,4 @@
-import React from 'react';
+//import React from 'react';
 import IcArrowUp16 from '../../assets/icon/ic-arrow-down-gray-24.svg?react';
 interface PaginationProps {
   currentPage: number;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 
 type Tab = '모집공고' | '동아리 소개';
 

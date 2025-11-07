@@ -1,5 +1,5 @@
 // src/components/common/FilterSortBar.tsx
-import React from 'react';
+// import React from 'react';
 import icArrowDown from '../../assets/icon/ic-arrow-down-gray-24.svg';
 import icFilter from '../../assets/icon/icn_filter_16.svg';
 

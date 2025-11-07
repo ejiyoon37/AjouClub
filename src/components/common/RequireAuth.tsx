@@ -1,10 +1,10 @@
-import { Navigate, useLocation } from 'react-router-dom';
-import { useAuthStore } from '../../stores/useAuthStore';
-import type { ReactNode } from 'react';
+// import { Navigate, useLocation } from 'react-router-dom';
+// import { useAuthStore } from '../../stores/useAuthStore';
+// import type { ReactNode } from 'react';
 
-interface Props {
-  children: ReactNode;
-}
+// interface Props {
+//   children: ReactNode;
+// }
 //로그인 정상화
 // const RequireAuth = ({ children }: Props) => {
 //   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
@@ -19,7 +19,7 @@ interface Props {
 // };
 
 const RequireAuth = ({ children }: { children: React.ReactNode }) => {
-  const isLoggedIn = false; 
+  //const isLoggedIn = false; 
   return <>{children}</>;   
 };
 
