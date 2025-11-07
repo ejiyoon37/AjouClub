@@ -55,6 +55,7 @@ const RecruitmentDetailPage = () => {
         await removeFromFavorites(recruitment.recruitmentId);
         setIsScrapped(false);
         setScrapCount((prev) => (prev > 0 ? prev - 1 : 0));
+        queryClient.invalidateQueries({ queryKey: ['myFavorites'] });
       } else {
  
         await addToFavorites(recruitment.recruitmentId);
