@@ -1,7 +1,9 @@
 // src/pages/RecruitDetailPage.tsx
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom'; 
+import { useQueryClient } from '@tanstack/react-query';
+
 import Header from '../components/common/Header';
 import RecruitmentMetaSection from '../components/recruit-detail/RecruitmentMeta';
 import RecruitmentImage from '../components/recruit-detail/RecruitmentImage';
@@ -17,6 +19,7 @@ import { useAuthStore } from '../stores/useAuthStore';
 
 const RecruitmentDetailPage = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { clubId } = useParams<{ clubId: string }>();
 
@@ -57,6 +60,7 @@ const RecruitmentDetailPage = () => {
         await addToFavorites(recruitment.recruitmentId);
         setIsScrapped(true);
         setScrapCount((prev) => prev + 1);
+        queryClient.invalidateQueries({ queryKey: ['myFavorites'] });
       }
     } catch (err) {
       console.error('Scrap toggle failed:', err);

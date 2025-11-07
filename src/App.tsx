@@ -1,21 +1,24 @@
 // src/App.tsx
-import { useEffect } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 
-import Homepage from './pages/Homepage';
-import LoginPage from './pages/loginPage';
-import SearchPage from './pages/SearchPage';
-import SearchResultPage from './pages/SearchResultPage';
-import RecruitmentPage from './pages/RecruitmentPage';
-import RecruitmentFilterPage from './pages/RecruitmentFilterPage';
-import ClubExplorePage from './pages/ClubExplorePage';
-import ClubFilterPage from './pages/ClubFilterPage';
-import MyPage from './pages/MyPage';
-import ClubDetailPage from './pages/ClubDetailPage';
-import RecruitmentDetailPage from './pages/RecruitDetailPage';
-
 import { useAuthStore } from './stores/useAuthStore';
-import RequireAuth from './components/common/RequireAuth';
+//import RequireAuth from './components/common/RequireAuth';
+
+//lazy loading 적용
+const Homepage = lazy(() => import('./pages/Homepage'));
+const LoginPage = lazy(() => import('./pages/loginPage'));
+const SearchPage = lazy(() => import('./pages/SearchPage'));
+const SearchResultPage = lazy(() => import('./pages/SearchResultPage'));
+const RecruitmentPage = lazy(() => import('./pages/RecruitmentPage'));
+const RecruitmentFilterPage = lazy(() => import('./pages/RecruitmentFilterPage'));
+const ClubExplorePage = lazy(() => import('./pages/ClubExplorePage'));
+const ClubFilterPage = lazy(() => import('./pages/ClubFilterPage'));
+const MyPage = lazy(() => import('./pages/MyPage'));
+const ClubDetailPage = lazy(() => import('./pages/ClubDetailPage'));
+const RecruitmentDetailPage = lazy(() => import('./pages/RecruitDetailPage'));
+
+
 
 function App() {
   const rehydrateAuth = useAuthStore((state) => state.rehydrateAuth);
@@ -25,43 +28,45 @@ function App() {
   }, []);
 
   return (
-    <Routes>
-    <Route path="/" element={<Homepage />} />
-    <Route path="/login" element={<LoginPage />} />
-    {/* auth임시해제 */}
-    {/* <Route path="/mypage" element={
-      <RequireAuth>
-        <MyPage />
-      </RequireAuth>
-    } /> */}
-    <Route path="/mypage" element={<MyPage />} />
-    <Route path="/search" element={<SearchPage />} />
-    <Route path="/search/result" element={<SearchResultPage />} />
-    <Route path="/recruitment" element={<RecruitmentPage />} />
-    <Route path="/recruitment/filter" element={<RecruitmentFilterPage />} />
-    <Route path="/clubs" element={<ClubExplorePage />} />
-    <Route path="/clubs/filter" element={<ClubFilterPage />} />
-
-    <Route path="/recruitments/:clubId" element={<RecruitmentDetailPage />} />
-    <Route path="/clubs/:clubId" element={<ClubDetailPage />} />
-    {/* <Route
-      path="/clubs/:clubId"
-      element={
+    <Suspense fallback={<div className="p-4 text-center">로딩 중...</div>}>
+      <Routes>
+      <Route path="/" element={<Homepage />} />
+      <Route path="/login" element={<LoginPage />} />
+      {/* auth임시해제 */}
+      {/* <Route path="/mypage" element={
         <RequireAuth>
-          <ClubDetailPage />
+          <MyPage />
         </RequireAuth>
-      }
-    />
+      } /> */}
+      <Route path="/mypage" element={<MyPage />} />
+      <Route path="/search" element={<SearchPage />} />
+      <Route path="/search/result" element={<SearchResultPage />} />
+      <Route path="/recruitment" element={<RecruitmentPage />} />
+      <Route path="/recruitment/filter" element={<RecruitmentFilterPage />} />
+      <Route path="/clubs" element={<ClubExplorePage />} />
+      <Route path="/clubs/filter" element={<ClubFilterPage />} />
 
-    <Route
-      path="/recruitment/:recruitmentId"
-      element={
-        <RequireAuth>
-          <RecruitmentDetailPage />
-        </RequireAuth>
-      }
-    /> */}
-  </Routes>
+      <Route path="/recruitments/:clubId" element={<RecruitmentDetailPage />} />
+      <Route path="/clubs/:clubId" element={<ClubDetailPage />} />
+      {/* <Route
+        path="/clubs/:clubId"
+        element={
+          <RequireAuth>
+            <ClubDetailPage />
+          </RequireAuth>
+        }
+      />
+
+      <Route
+        path="/recruitment/:recruitmentId"
+        element={
+          <RequireAuth>
+            <RecruitmentDetailPage />
+          </RequireAuth>
+        }
+      /> */}
+    </Routes>
+  </Suspense>
   );
 }
 

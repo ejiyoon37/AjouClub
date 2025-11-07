@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query'; 
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from '../../../utils/axios';
 import PeriodChip from '../../ui/Chip/Chip_period';
 import ScrapIconDefault from '../../../assets/icon/ScrapBtn_default-2.svg?react';
@@ -46,6 +46,7 @@ const RecruitmentCard = ({
   const [isScrapped, setIsScrapped] = useState(isScrappedInitially);
   const [scrapCount, setScrapCount] = useState(initialScrapCount);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
  // recruitmentId로 썸네일 쿼리
   const { data: thumbnailImages } = useQuery<string[], Error>({
@@ -66,6 +67,8 @@ const RecruitmentCard = ({
         setIsScrapped(false);
         setScrapCount((prev) => prev - 1);
       }
+      //무효화
+      queryClient.invalidateQueries({ queryKey: ['myFavorites'] }); 
     } catch (error) {
       console.error('스크랩 처리 중 오류:', error);
     }
@@ -75,7 +78,7 @@ const RecruitmentCard = ({
     navigate(`/recruitments/${clubId}`);
   };
 
-  // (API로 가져온 썸네일(thumbnailImages)을 사용
+  // thumbnailImages from API 사용
   const thumbnailUrl = thumbnailImages?.[0] || DefaultImage;
 
   return (

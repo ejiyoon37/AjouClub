@@ -3,10 +3,11 @@
 import { useQuery } from '@tanstack/react-query'; 
 import { getMyInfo, getFavoriteRecruitments } from '../api/user';
 import type { UserInfo, FavoriteRecruitment } from '../types/user'; 
+import { useAuthStore } from '../stores/useAuthStore';
 
 
 export const useMyPageData = () => {
-
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const { 
     data: user, 
     isLoading: isUserLoading,
@@ -23,7 +24,7 @@ export const useMyPageData = () => {
   } = useQuery<FavoriteRecruitment[], Error>({
     queryKey: ['myFavorites'],
     queryFn: getFavoriteRecruitments,
-    enabled: !!user, 
+    enabled: isLoggedIn,
   });
 
 

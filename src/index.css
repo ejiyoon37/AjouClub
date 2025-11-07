@@ -1,2 +1,13 @@
 @import "tailwindcss";
 @import url('https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.1/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css');
+
+body {
+   @apply bg-gray-100; 
+ }
+ 
+ #root {
+   @apply relative w-full min-h-screen mx-auto bg-white;
+   /* 모바일 최대 너비 */
+   max-width: 420px; 
+   @apply relative w-full min-h-screen mx-auto bg-white shadow-lg overflow-x-hidden;
+ }

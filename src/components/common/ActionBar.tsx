@@ -1,4 +1,4 @@
-import React from 'react';
+//import React from 'react';
 
 import ScrapBtn from '../ui/Button/ScrapBtn';
 import CTABtn from '../ui/Button/CTABtn';
@@ -19,8 +19,7 @@ export const ActionBar = ({
 }: ActionBarProps) => {
   return (
 
-    <div className="fixed bottom-0 left-0 right-0 flex items-center gap-2 p-2 bg-white border-t border-gray-100 shadow-[0_-2px_4px_rgba(0,0,0,0.05)]">
-      {/* 왼쪽 스크랩 버튼 */}
+    <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[420px] flex items-center gap-2 p-2 bg-white border-t border-gray-100 shadow-[0_-2px_4px_rgba(0,0,0,0.05)]">
       <ScrapBtn 
         count={scrapCount}
         isActive={isActive}
