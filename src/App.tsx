@@ -4,6 +4,7 @@ import { Routes, Route } from 'react-router-dom';
 
 import { useAuthStore } from './stores/useAuthStore';
 //import RequireAuth from './components/common/RequireAuth';
+import RouteChangeTracker from './components/common/RouteChangeTracker';
 
 //lazy loading 적용
 const Homepage = lazy(() => import('./pages/Homepage'));
@@ -29,6 +30,8 @@ function App() {
 
   return (
     <Suspense fallback={<div className="p-4 text-center">로딩 중...</div>}>
+      {/* 2. 라우터 추적기 추가 */}
+      <RouteChangeTracker /> 
       <Routes>
       <Route path="/" element={<Homepage />} />
       <Route path="/login" element={<LoginPage />} />

@@ -13,8 +13,17 @@ import { setAccessToken } from './utils/axios.ts';
 // React Query 1, 2
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+//Google Analytics
+import ReactGA from 'react-ga4';
+
 // React Query 3
 const queryClient = new QueryClient();
+
+const GA_MEASUREMENT_ID = "YOUR_GA_MEASUREMENT_ID"; // G-XXXXXXXXXX
+ if (GA_MEASUREMENT_ID) {
+   ReactGA.initialize(GA_MEASUREMENT_ID);
+ }
+
 
 const restoreAuthState = () => {
   const raw = localStorage.getItem('auth');
