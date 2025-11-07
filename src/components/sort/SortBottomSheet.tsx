@@ -1,4 +1,4 @@
-import React from 'react';
+//import React from 'react';
 import type { SortType } from './SortOption';
 import { sortOptions } from './SortOption';
 import IcCheck from '../../assets/icon/icn_check_24-2.svg?react';

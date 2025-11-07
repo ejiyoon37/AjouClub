@@ -21,11 +21,11 @@ import FilterIcon from '../assets/icon/icn_filter_16.svg?react';
 type SortOption = '최근 게시순' | '저장순' | '마감 임박순';
 
 
-const reverseStatusMap: Record<string, string> = {
-  'soon': '모집중',
-  'regular': '상시 모집',
-  'end': '모집 마감',
-};
+// const reverseStatusMap: Record<string, string> = {
+//   'soon': '모집중',
+//   'regular': '상시 모집',
+//   'end': '모집 마감',
+// };
 
 const RecruitmentPage = () => {
   const navigate = useNavigate();

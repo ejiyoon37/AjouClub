@@ -1,6 +1,6 @@
 // src/components/recruit-detail/RecruitmentMeta.tsx
 
-import React from 'react';
+//import React from 'react';
 import PeriodChip from '../ui/Chip/Chip_period';
 import { formatDate } from '../../utils/date';
 

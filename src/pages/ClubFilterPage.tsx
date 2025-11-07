@@ -1,6 +1,6 @@
 // src/pages/ClubFilterPage.tsx
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import TopNav from '../components/common/TopNav';
 import CTABtn from '../components/ui/Button/CTABtn';

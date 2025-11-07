@@ -36,7 +36,7 @@ const SearchField = ({
       <SearchIcon className={`w-6 h-6 ${iconColorClass}`} />
       <input
         value={value}
-        onFocus={(e) => {
+        onFocus={() => {
           setIsActivated(true);
           
           if (!disableFocusNavigate) {

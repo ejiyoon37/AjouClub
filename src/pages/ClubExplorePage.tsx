@@ -1,6 +1,6 @@
 // src/pages/ClubExplorePage.tsx
 
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom'; 
 import Header from '../components/common/Header';
 import TextBtn from '../components/ui/Button/TextBtn';
@@ -11,7 +11,7 @@ import useClubs from '../Hooks/useClubs';
 import SortIcon from '../assets/icon/ic-arrow-down-gray-24.svg?react';
 import FilterIcon from '../assets/icon/icn_filter_16.svg?react';
 import FilterChip from '../components/ui/Chip/Chip_filter'; 
-import type { Club } from '../types/club'; 
+//import type { Club } from '../types/club'; 
 
 type ClubSortOption = '최근 등록순' | '가나다 순';
 

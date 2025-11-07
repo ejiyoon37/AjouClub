@@ -9,11 +9,13 @@ export const mockUser: User = {
   favorites: [
     {
       recruitmentId: 1,
+      clubId: 101,
       title: '24-2 SWeat 부원 모집 💙',
       thumbnailUrl: '../assets/img/AKO.jpg',
     },
     {
       recruitmentId: 2,
+      clubId: 101,
       title: 'ACM 대학생 프로그래밍 동아리',
       thumbnailUrl: '../assets/img/R_image.png',
     },

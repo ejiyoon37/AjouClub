@@ -1,5 +1,5 @@
 // src/Api/recruitment.ts
-import type { Recruitment } from '../types/recruit';
+//import type { Recruitment } from '../types/recruit';
 import axios from '../utils/axios'; 
 
 

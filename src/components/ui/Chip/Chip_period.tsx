@@ -1,4 +1,4 @@
-import React from 'react';
+//import React from 'react';
 
 type ChipStatus = 'regular' | 'd-day' | 'end';
 type ChipSize = 'small' | 'medium' | 'large';

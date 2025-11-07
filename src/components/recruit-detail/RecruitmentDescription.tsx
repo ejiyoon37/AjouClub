@@ -1,6 +1,6 @@
 // src/components/recruitment-detail/RecruitmentDescriptionSection.tsx
 
-import React from 'react';
+//import React from 'react';
 
 interface RecruitmentDescriptionSectionProps {
   description: string;

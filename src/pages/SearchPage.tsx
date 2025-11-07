@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SearchField from '../components/ui/Field/TextField_search';
 import TopNav from '../components/common/TopNav';

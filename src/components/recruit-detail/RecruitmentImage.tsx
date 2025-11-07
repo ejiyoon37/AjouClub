@@ -1,6 +1,6 @@
 // src/components/recruitment-detail/RecruitmentImageSection.tsx
 
-import React from 'react';
+//import React from 'react';
 
 interface RecruitmentImageSectionProps {
   imageUrl?: string;

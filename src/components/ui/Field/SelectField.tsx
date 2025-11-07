@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import  { useState, useRef, useEffect } from 'react';
 
 
 import ArrowDownIcon from '../../../assets/icon/ic_arrow_down_16.svg?react';

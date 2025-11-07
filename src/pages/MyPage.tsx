@@ -1,6 +1,6 @@
 // src/pages/MyPage.tsx
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../stores/useAuthStore';
 import { useMyPageData } from '../Hooks/useMypageData'; 

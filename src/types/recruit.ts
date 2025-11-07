@@ -1,6 +1,6 @@
 // src/types/recruit.ts
 
-import type { ApiResponse } from './club'; 
+//import type { ApiResponse } from './club'; 
 
 export type RecruitmentType = '상시모집' | '수시모집';
 export type RecruitmentStatus = 'regular' | 'd-day' | 'end';

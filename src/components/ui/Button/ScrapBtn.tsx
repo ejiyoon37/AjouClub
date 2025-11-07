@@ -1,4 +1,4 @@
-import React from 'react';
+//import React from 'react';
 
 
 import  ScrapIconDefault from '../../../assets/icon/ScrapBtn_default-2.svg?react';

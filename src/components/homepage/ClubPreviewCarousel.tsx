@@ -1,6 +1,6 @@
 // src/components/homepage/ClubPreviewCarousel.tsx
 
-import React, { useMemo } from 'react'; 
+import  { useMemo } from 'react'; 
 import useClubs from '../../Hooks/useClubs'; 
 import type { Club } from '../../types/club';
 import ClubCard from '../common/Card/Card_Club';
