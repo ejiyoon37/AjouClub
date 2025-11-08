@@ -1,7 +1,7 @@
 // src/pages/RecruitDetailPage.tsx
 
-import { useState, useEffect, useMemo } from 'react'; 
-import { useParams, useNavigate } from 'react-router-dom'; 
+import { useState, useEffect, useMemo } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 
 import Header from '../components/common/Header';
@@ -11,9 +11,9 @@ import RecruitmentDescription from '../components/recruit-detail/RecruitmentDesc
 import RecruitmentApplyBar from '../components/recruit-detail/RecruitmentApplyBar';
 
 import { useRecruitmentDetail } from '../Hooks/useRecruitmentDetail';
-import { addToFavorites, removeFromFavorites  } from '../api/recruitment';
-import { useAuthStore } from '../stores/useAuthStore'; 
-import { useMyPageData } from '../Hooks/useMypageData'; 
+import { addToFavorites, removeFromFavorites } from '../Api/recruitment';
+import { useAuthStore } from '../stores/useAuthStore';
+import { useMyPageData } from '../Hooks/useMypageData';
 
 const RecruitmentDetailPage = () => {
   const navigate = useNavigate();
@@ -22,21 +22,27 @@ const RecruitmentDetailPage = () => {
   const { clubId } = useParams<{ clubId: string }>();
 
   const numericId = clubId ? Number(clubId) : null;
-  const isLoggedIn = useAuthStore((state) => state.isLoggedIn); 
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
-  const { data: recruitment, isLoading: isRecruitmentLoading, isError, error } = useRecruitmentDetail(numericId);
+  const {
+    data: recruitment,
+    isLoading: isRecruitmentLoading,
+    isError,
+    error,
+  } = useRecruitmentDetail(numericId);
   const { favorites, isLoading: isFavoritesLoading } = useMyPageData();
 
   const [isScrapped, setIsScrapped] = useState(false);
-  const [scrapCount, setScrapCount] = useState(0); 
-
+  const [scrapCount, setScrapCount] = useState(0);
 
   const userScrapStatus = useMemo(() => {
     if (!isLoggedIn || !favorites || !recruitment) {
       return false;
     }
 
-    return favorites.some(fav => fav.recruitmentId === recruitment.recruitmentId);
+    return favorites.some(
+      (fav) => fav.recruitmentId === recruitment.recruitmentId
+    );
   }, [isLoggedIn, favorites, recruitment]);
 
   useEffect(() => {
@@ -51,7 +57,6 @@ const RecruitmentDetailPage = () => {
     }
   }, [userScrapStatus, isFavoritesLoading]);
 
-  
   const handleToggleScrap = async () => {
     if (!isLoggedIn) {
       alert('로그인이 필요합니다.');
@@ -61,12 +66,14 @@ const RecruitmentDetailPage = () => {
     if (!recruitment) return;
 
     try {
-      if (isScrapped) { // 스크랩 취소
+      if (isScrapped) {
+        // 스크랩 취소
         await removeFromFavorites(recruitment.recruitmentId);
         setIsScrapped(false);
         setScrapCount((prev) => (prev > 0 ? prev - 1 : 0));
         queryClient.invalidateQueries({ queryKey: ['myFavorites'] }); // 수정됨
-      } else { // 스크랩 추가
+      } else {
+        // 스크랩 추가
         await addToFavorites(recruitment.recruitmentId);
         setIsScrapped(true);
         setScrapCount((prev) => prev + 1);
@@ -83,12 +90,12 @@ const RecruitmentDetailPage = () => {
       alert('신청 링크가 없습니다.');
       return;
     }
-    
+
     let url = recruitment.url;
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
       url = 'https://' + url;
     }
-    
+
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
@@ -106,7 +113,7 @@ const RecruitmentDetailPage = () => {
       </div>
     );
   }
-  
+
   // --- 성공 시 렌더링 ---
   return (
     <div className="bg-white min-h-screen pb-[80px]">
@@ -125,8 +132,8 @@ const RecruitmentDetailPage = () => {
 
       <RecruitmentApplyBar
         status={recruitment.status}
-        isScrapped={isScrapped} 
-        scrapCount={scrapCount} 
+        isScrapped={isScrapped}
+        scrapCount={scrapCount}
         onToggleScrap={handleToggleScrap}
         onApplyClick={handleApplyClick}
       />

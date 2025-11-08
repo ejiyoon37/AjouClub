@@ -3,15 +3,15 @@
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../stores/useAuthStore';
-import { useMyPageData } from '../Hooks/useMypageData'; 
+import { useMyPageData } from '../Hooks/useMypageData';
 
 import UserProfileSection from '../components/mypage/UserProfileSection';
 import FavoriteRecruitmentList from '../components/mypage/FavoriteRecruitmentList';
-import Header from '../components/common/Header'; 
-import { logout as requestLogout } from '../api/auth'; 
+import Header from '../components/common/Header';
+import { logout as requestLogout } from '../Api/auth';
 
 const MyPage = () => {
-  const { isLoggedIn, logout } = useAuthStore(); 
+  const { isLoggedIn, logout } = useAuthStore();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -44,14 +44,14 @@ const MyPage = () => {
   if (error || !user) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        오류가 발생했습니다: {error?.message || '사용자 정보를 불러올 수 없습니다.'}
+        오류가 발생했습니다:{' '}
+        {error?.message || '사용자 정보를 불러올 수 없습니다.'}
       </div>
     );
   }
 
   return (
-
-    <div className="min-h-screen bg-gray-50 pb-20"> 
+    <div className="min-h-screen bg-gray-50 pb-20">
       {/* 공통 헤더 사용 */}
       <Header variant="page" />
 
@@ -67,7 +67,6 @@ const MyPage = () => {
         </p>
 
         {favorites.length === 0 ? (
-
           <div className="flex flex-col items-center justify-center py-16">
             <p className="text-[16px] font-medium text-gray-300 leading-[135%] tracking-[-0.03em] text-center">
               저장한 공고가 없습니다
@@ -81,7 +80,6 @@ const MyPage = () => {
           ))
         )}
       </div>
-
 
       <div className="px-6 mt-10">
         <button
