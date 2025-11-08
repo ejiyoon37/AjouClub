@@ -1,7 +1,7 @@
 // src/Hooks/useClubs.ts
 
 import { useQuery } from '@tanstack/react-query'; 
-import type { Club, ApiResponse, ApiClubData } from '../types/club'; 
+import type { Club, ApiResponse, ApiClubData , ClubType } from '../types/club'; 
 import axios from '../utils/axios'; 
 
 interface ClubFilterParams {
@@ -17,7 +17,7 @@ const mapApiClubToClub = (apiClub: ApiClubData): Club => {
   return {
     clubId: apiClub.id,
     clubName: apiClub.name,
-    clubType: apiClub.clubType,
+    clubType: apiClub.clubType as ClubType,
     profileImageUrl: apiClub.logoUrl,
     description: apiClub.description,
     category: apiClub.category,
@@ -33,15 +33,15 @@ const mapApiClubToClub = (apiClub: ApiClubData): Club => {
     createdAt: '', 
     updatedAt: '',
     details: null,
-    recruitmentTarget: apiClub.recruitmentTarget || null,
+    //recruitmentTarget: apiClub.recruitmentTarget || null,
   };
 };
 
 
 const fetchClubs = async (filters: ClubFilterParams): Promise<Club[]> => {
   
-  const { sort, isRecruiting, department, category, type } = filters;
-  
+  //const { sort, isRecruiting, department, category, type } = filters;
+  const { isRecruiting, department, category, type } = filters;
   const apiParams: Record<string, any> = {};
   if (type) apiParams.type = type;
   if (category) apiParams.category = category;

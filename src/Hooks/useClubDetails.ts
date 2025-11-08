@@ -2,7 +2,7 @@
 
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import axios from '../utils/axios'; 
-import type { Club, ApiResponse, ApiClubData } from '../types/club'; 
+import type { Club, ApiResponse, ApiClubData , ClubType } from '../types/club'; 
 
 
 const mapApiDataToClub = (data: ApiClubData): Club => {
@@ -20,12 +20,12 @@ const mapApiDataToClub = (data: ApiClubData): Club => {
     contactEmail: data.contactEmail || null,
     createdAt: data.createdAt || '',
     updatedAt: data.updatedAt || '',
-    clubType: data.clubType,
+    clubType: data.clubType as ClubType,
     profileImageUrl: data.logoUrl,
     category: data.category,
     details: data.details || null, 
     isRecruiting: data.recruiting,
-    recruitmentTarget: data.recruitmentTarget || null, 
+    //recruitmentTarget: data.recruitmentTarget || null, 
   };
 };
 

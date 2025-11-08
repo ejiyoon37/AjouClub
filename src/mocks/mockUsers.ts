@@ -5,7 +5,7 @@ export const mockUser: User = {
   id: 1,
   name: '이지윤',
   email: 'jiyoon@ajou.ac.kr',
-  profileImageUrl: profileImg,
+  profilePic: profileImg,
   favorites: [
     {
       recruitmentId: 1,

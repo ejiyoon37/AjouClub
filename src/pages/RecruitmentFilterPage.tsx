@@ -41,7 +41,7 @@ const RecruitmentFilterPage = () => {
 
   const toggleSelect = (
     item: string,
-    selectedList: string[],
+    //selectedList: string[],
     setSelectedList: React.Dispatch<React.SetStateAction<string[]>>
   ) => {
     setSelectedList(prev =>
@@ -90,7 +90,7 @@ const RecruitmentFilterPage = () => {
               <FilterChipButton
                 key={option}
                 isActive={selectedFields.includes(option)}
-                onClick={() => toggleSelect(option, selectedFields, setSelectedFields)}
+                onClick={() => toggleSelect(option,  setSelectedFields)}
               >
                 {option}
               </FilterChipButton>
@@ -106,7 +106,7 @@ const RecruitmentFilterPage = () => {
               <FilterChipButton
                 key={option}
                 isActive={selectedTypes.includes(option)}
-                onClick={() => toggleSelect(option, selectedTypes, setSelectedTypes)}
+                onClick={() => toggleSelect(option, setSelectedTypes)}
               >
                 {option}
               </FilterChipButton>
@@ -134,7 +134,7 @@ const RecruitmentFilterPage = () => {
               <FilterChipButton
                 key={option}
                 isActive={selectedStatuses.includes(option)}
-                onClick={() => toggleSelect(option, selectedStatuses, setSelectedStatuses)}
+                onClick={() => toggleSelect(option, setSelectedStatuses)}
               >
                 {option}
               </FilterChipButton>
