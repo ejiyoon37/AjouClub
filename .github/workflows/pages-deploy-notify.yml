@@ -1,0 +1,49 @@
+name: Notify on GitHub Pages Deployment
+
+on:
+  deployment_status:
+    types:
+      - success
+      - failure
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Notify on success
+        if: github.event.deployment_status.state == 'success'
+        run: |
+          curl -H "Content-Type: application/json" \
+          -d '{
+            "embeds": [{
+              "title": "✅ GitHub Pages 최종 배포 완료",
+              "description": "사이트 **ajouclub.co.kr** 의 배포가 완료되었습니다.",
+              "color": 65280,
+              "fields": [
+                {"name": "Repository", "value": "${{ github.repository }}", "inline": true},
+                {"name": "Branch", "value": "${{ github.event.deployment.ref }}", "inline": true},
+                {"name": "환경", "value": "${{ github.event.deployment.environment }}", "inline": true}
+              ],
+              "footer": {"text": "GitHub Pages - 최종 배포 완료"}
+            }]
+          }' \
+          ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+      - name: Notify on failure
+        if: github.event.deployment_status.state != 'success'
+        run: |
+          curl -H "Content-Type: application/json" \
+          -d '{
+            "embeds": [{
+              "title": "🚨 GitHub Pages 배포 실패",
+              "description": "GitHub Pages 내부 빌드 또는 배포가 실패했습니다.",
+              "color": 16711680,
+              "fields": [
+                {"name": "Repository", "value": "${{ github.repository }}", "inline": true},
+                {"name": "Branch", "value": "${{ github.event.deployment.ref }}", "inline": true}
+              ],
+              "footer": {"text": "GitHub Pages - 배포 실패"}
+            }]
+          }' \
+          ${{ secrets.DISCORD_WEBHOOK_URL }}

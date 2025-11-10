@@ -49,26 +49,6 @@ jobs:
           echo "❌ Deployment verification failed after 5 attempts."
           exit 1
 
-      - name: Notify on success (Discord)
-        if: success()
-        run: |
-          curl -H "Content-Type: application/json" \
-          -d '{
-            "embeds": [{
-              "title": "✅ GitHub Pages 배포 성공",
-              "description": "프로젝트 **AjouClub**이 정상적으로 배포되었습니다.",
-              "color": 65280,
-              "fields": [
-                {"name": "Repository", "value": "${{ github.repository }}", "inline": true},
-                {"name": "Run ID", "value": "${{ github.run_id }}", "inline": true},
-                {"name": "URL", "value": "https://ajouclub.co.kr"}
-              ],
-              "footer": {"text": "GitHub Actions - 자동 배포 알림"}
-            }]
-          }' \
-          ${{ secrets.DISCORD_WEBHOOK_URL }}
-
-      # 9️⃣ 배포 실패 시 Discord 알림
       - name: Notify on failure (Discord)
         if: failure()
         run: |
