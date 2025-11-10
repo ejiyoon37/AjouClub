@@ -38,7 +38,7 @@ jobs:
         run: |
           for i in {1..5}; do
             echo "🔍 Trying to verify deployment (attempt $i)..."
-            if curl -IL https://ajouclub.co.kr | grep "200"; then
+            if curl -IL https://ejiyoon37.github.io/AjouClub | grep "200"; then
               echo "✅ Deployment verified!"
               exit 0
             fi
