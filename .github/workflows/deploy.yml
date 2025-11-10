@@ -24,8 +24,51 @@ jobs:
       - name: Build project
         run: npm run build
 
+      - name: Verify build output
+        run: test -f dist/index.html
+
       - name: Deploy to GitHub Pages
+        id: deploy
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
+
+      - name: Verify deployment
+        run: curl -IL https://ajouclub.co.kr/ | grep "200 OK"
+
+      - name: Notify on success (Discord)
+        if: success()
+        run: |
+          curl -H "Content-Type: application/json" \
+          -d '{
+            "embeds": [{
+              "title": "✅ GitHub Pages 배포 성공",
+              "description": "프로젝트 AjouClub이 정상적으로 배포되었습니다.",
+              "color": 65280,
+              "fields": [
+                {"name": "Repository", "value": "${{ github.repository }}", "inline": true},
+                {"name": "Run ID", "value": "${{ github.run_id }}", "inline": true}
+              ],
+              "footer": {"text": "GitHub Actions - 자동 배포 알림"}
+            }]
+          }' \
+          ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+      - name: Notify on failure (Discord)
+        if: failure()
+        run: |
+          curl -H "Content-Type: application/json" \
+          -d '{
+            "embeds": [{
+              "title": "🚨 GitHub Pages 배포 실패",
+              "description": "워크플로 ${{ github.workflow }} 이(가) 실패했습니다.",
+              "color": 16711680,
+              "fields": [
+                {"name": "Repository", "value": "${{ github.repository }}", "inline": true},
+                {"name": "Run ID", "value": "${{ github.run_id }}", "inline": true}
+              ],
+              "footer": {"text": "GitHub Actions - 자동 배포 알림"}
+            }]
+          }' \
+          ${{ secrets.DISCORD_WEBHOOK_URL }}
