@@ -13,13 +13,13 @@ export const CTABtn = ({
 }: CTABtnProps) => {
   const baseStyle = `
     w-full h-12 px-3 py-2.5 rounded-lg
-    font-semibold text-base leading-[1.35] tracking-[-0.03em]
+    font-sans font-semibold text-base leading-[1.35] tracking-[-0.03em]
     transition-colors
   `;
 
   const activeStyle = isActive
-    ? 'bg-blue-400 text-white'  // 활성화
-    : 'bg-gray-400 text-white'; // 비활성화
+    ? 'bg-[#3168FF] text-white'  // 활성화
+    : 'bg-[#A0AAB0] text-white'; // 비활성화
 
   return (
     <button
