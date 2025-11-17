@@ -1,4 +1,4 @@
-import{j as l}from"./index-BOwi9D-X.js";const i=({isActive:t,children:e,className:s="",...n})=>{const o=`
+import{j as l}from"./index-DacEIc5C.js";const i=({isActive:t,children:e,className:s="",...n})=>{const o=`
     w-full h-12 px-3 py-2.5 rounded-lg
     font-sans font-semibold text-base leading-[1.35] tracking-[-0.03em]
     transition-colors
