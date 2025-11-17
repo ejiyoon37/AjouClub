@@ -46,8 +46,7 @@ const fetchClubs = async (filters: ClubFilterParams): Promise<Club[]> => {
   if (type) apiParams.type = type;
   if (category) apiParams.category = category;
   if (department && department !== '전체') apiParams.department = department;
-  if (isRecruiting) apiParams.recruiting = true; 
-
+  if (isRecruiting) apiParams.status = 'RECRUITING'
   const hasFilters = Object.values(apiParams).some(val => val !== undefined);
 
   let response;

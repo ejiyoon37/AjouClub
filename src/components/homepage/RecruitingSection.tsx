@@ -14,10 +14,8 @@ const POSTS_PER_PAGE = 6;
 
 const RecruitingSection = () => {
   //const navigate = useNavigate();
-  const [currentPage, setCurrentPage] = useState(1);
-
-
- const { posts, isLoading: isPostsLoading, error } = useRecruitments();
+ const [currentPage, setCurrentPage] = useState(1);
+ const { posts, isLoading: isPostsLoading, error } = useRecruitments('main');
  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
  const { favorites, isLoading: isFavoritesLoading } = useMyPageData();
 
@@ -52,7 +50,7 @@ const RecruitingSection = () => {
         <SeeAllButton navigateTo="/recruitment" />
       </div>
 
-      {/* 카드 그리드 (수정) */}
+      {/* 카드 그리드 */}
       <div className="grid grid-cols-3 gap-4">
         {paginatedPosts.map((post) => (
           <RecruitmentCard

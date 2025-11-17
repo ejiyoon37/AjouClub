@@ -1,3 +1,4 @@
+// src/components/club-detail/ClubDescription.tsx
 
 import type { Club } from '../../types/club'; 
 import { useState } from 'react';
@@ -83,6 +84,8 @@ const ClubDescription = ({ club, activityImages }: ClubDescriptionProps) => {
                 alt={`활동 사진 ${index + 1}`}
                 className="w-full h-auto rounded-lg object-cover border border-gray-100" 
                 onClick={() => handleImageClick(imgUrl)}
+                loading="lazy"
+                decoding="async"
               />
             ))}
           </div>

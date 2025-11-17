@@ -17,7 +17,8 @@ const LoginPage = () => {
 
   const handleSuccess = async (credentialResponse: any) => {
     try {
-      const res = await axios.post('/api/auth/google', {
+      // [수정됨] /api/auth/google -> /google
+      const res = await axios.post('/google', {
         idToken: credentialResponse.credential,
       });
 
@@ -41,7 +42,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen px-6 bg-white">
+    <div className="flex flex-col items-center justify-center h-screen px-4 bg-white">
       <p className="text-[18px] font-medium text-[#5A6167] leading-[135%] tracking-[-3%] mb-2">
         아주대학교 동아리를 담은
       </p>

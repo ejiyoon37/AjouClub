@@ -1,22 +1,36 @@
 // src/components/common/Card/Card_recruitment _listitem.tsx
 
-
+import { useQuery } from '@tanstack/react-query'; // [수정됨]
+import axios from '../../../utils/axios'; // [수정됨]
 import PeriodChip from '../../ui/Chip/Chip_period';
-import DefaultImage from '../../../assets/img/Default_images.png'; // (새로 추가)
+import DefaultImage from '../../../assets/img/Default_images.png'; 
 
 interface RecruitmentListItemProps {
-  imageUrl: string | null | undefined; // (수정) null 또는 undefined 허용
+  // imageUrl: string | null | undefined; // [제거됨]
+  recruitmentId: number; // [추가됨]
   recruitmentStatus: 'regular' | 'd-day' | 'end';
   dDay?: number;
   title: string;
-  viewCount?: number; // (수정) 선택적(optional) props로 변경
+  viewCount?: number; 
   saveCount: number;
   postedDate: string; // "YYYY. MM. DD" 
 }
 
+// 카드 썸네일 API 호출 함수
+const fetchListItemThumbnail = async (recruitmentId: number): Promise<string[]> => {
+  try {
+    const res = await axios.get<string[]>(
+      `/api/recruitments/${recruitmentId}/images`
+    );
+    return res.data;
+  } catch (error) {
+    return [];
+  }
+};
+
 
 const RecruitmentListItem = ({
-  imageUrl,
+  recruitmentId, 
   recruitmentStatus,
   dDay,
   title,
@@ -24,13 +38,26 @@ const RecruitmentListItem = ({
   saveCount,
   postedDate,
 }: RecruitmentListItemProps) => {
+
+
+  const { data: thumbnailImages } = useQuery<string[], Error>({
+    queryKey: ['recruitmentThumbnail', recruitmentId],
+    queryFn: () => fetchListItemThumbnail(recruitmentId),
+    staleTime: Infinity,
+  });
+
+  const thumbnailUrl = thumbnailImages?.[0] || DefaultImage;
+
+
   return (
     <div className="flex w-full bg-white p-4 gap-3 border-b border-gray-100">
       {/* 썸네일 이미지 */}
       <img
-        src={imageUrl || DefaultImage} 
+        src={thumbnailUrl} 
         alt={`${title} thumbnail`}
         className="w-[100px] h-[100px] object-cover rounded-[10px] border border-gray-100 flex-shrink-0"
+        loading="lazy" // 리스트 아이템이므로 Lazy Loading 적용
+        decoding="async"
       />
 
 

@@ -1,9 +1,8 @@
 // src/App.tsx
-import { useEffect, lazy, Suspense } from 'react';
+import { lazy, Suspense } from 'react'; // [수정됨] useEffect 제거
 import { Routes, Route } from 'react-router-dom';
 
-import { useAuthStore } from './stores/useAuthStore';
-//import RequireAuth from './components/common/RequireAuth';
+// [수정됨] useAuthStore 제거
 import RouteChangeTracker from './components/common/RouteChangeTracker';
 
 //lazy loading 적용
@@ -22,11 +21,11 @@ const RecruitmentDetailPage = lazy(() => import('./pages/RecruitDetailPage'));
 
 
 function App() {
-  const rehydrateAuth = useAuthStore((state) => state.rehydrateAuth);
-
-  useEffect(() => {
-    rehydrateAuth();
-  }, []);
+  // [수정됨] main.tsx에서 이미 처리하므로 useEffect 제거
+  // const rehydrateAuth = useAuthStore((state) => state.rehydrateAuth);
+  // useEffect(() => {
+  //   rehydrateAuth();
+  // }, []);
 
   return (
     <Suspense fallback={<div className="p-4 text-center">로딩 중...</div>}>
@@ -49,7 +48,7 @@ function App() {
       <Route path="/clubs" element={<ClubExplorePage />} />
       <Route path="/clubs/filter" element={<ClubFilterPage />} />
 
-      <Route path="/recruitments/:clubId" element={<RecruitmentDetailPage />} />
+      <Route path="/recruitments/:recruitmentId" element={<RecruitmentDetailPage />} />
       <Route path="/clubs/:clubId" element={<ClubDetailPage />} />
       {/* <Route
         path="/clubs/:clubId"

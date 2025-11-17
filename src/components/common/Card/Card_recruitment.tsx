@@ -7,7 +7,7 @@ import axios from '../../../utils/axios';
 import PeriodChip from '../../ui/Chip/Chip_period';
 import ScrapIconDefault from '../../../assets/icon/ScrapBtn_default-2.svg?react';
 import ScrapIconActive from '../../../assets/icon/ScrapBtn_activated.svg?react';
-import { addToFavorites, removeFromFavorites } from '../../../Api/recruitment';
+import { addToFavorites, removeFromFavorites } from '../../../api/recruitment';
 import DefaultImage from '../../../assets/img/Default_images.png';
 import { useAuthStore } from '../../../stores/useAuthStore';
 
@@ -38,7 +38,7 @@ const fetchThumbnail = async (recruitmentId: number): Promise<string[]> => {
 
 const RecruitmentCard = ({
   recruitmentId,
-  clubId,
+  //clubId,
   title,
   status,
   dDay,
@@ -87,7 +87,8 @@ const RecruitmentCard = ({
   };
 
   const handleCardClick = () => {
-    navigate(`/recruitments/${clubId}`);
+    // [수정됨] clubId -> recruitmentId
+    navigate(`/recruitments/${recruitmentId}`);
   };
 
   // thumbnailImages from API 사용
@@ -106,6 +107,8 @@ const RecruitmentCard = ({
           className="w-[109px] h-[109px] object-cover rounded-[8px] border border-gray-100"
           src={thumbnailUrl}
           alt={`${title} thumbnail`}
+          loading="lazy"
+          decoding="async"
         />
         <button
           onClick={handleScrapClick}

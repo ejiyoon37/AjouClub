@@ -10,8 +10,9 @@ import RecruitmentImage from '../components/recruit-detail/RecruitmentImage';
 import RecruitmentDescription from '../components/recruit-detail/RecruitmentDescription';
 import RecruitmentApplyBar from '../components/recruit-detail/RecruitmentApplyBar';
 
-import { useRecruitmentDetail } from '../Hooks/useRecruitmentDetail';
-import { addToFavorites, removeFromFavorites } from '../Api/recruitment';
+// [수정됨] useRecruitmentDetail -> useRecruitmentPost 훅 사용
+import { useRecruitmentPost } from '../Hooks/useRecruitmentPost';
+import { addToFavorites, removeFromFavorites } from '../api/recruitment';
 import { useAuthStore } from '../stores/useAuthStore';
 import { useMyPageData } from '../Hooks/useMypageData';
 
@@ -19,9 +20,11 @@ const RecruitmentDetailPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { clubId } = useParams<{ clubId: string }>();
+  // [수정됨] clubId -> recruitmentId
+  const { recruitmentId } = useParams<{ recruitmentId: string }>();
 
-  const numericId = clubId ? Number(clubId) : null;
+  // [수정됨] recruitmentId 사용
+  const numericId = recruitmentId ? Number(recruitmentId) : null;
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
   const {
@@ -29,7 +32,7 @@ const RecruitmentDetailPage = () => {
     isLoading: isRecruitmentLoading,
     isError,
     error,
-  } = useRecruitmentDetail(numericId);
+  } = useRecruitmentPost(numericId); // [수정됨] 훅 이름 변경
   const { favorites, isLoading: isFavoritesLoading } = useMyPageData();
 
   const [isScrapped, setIsScrapped] = useState(false);
@@ -71,7 +74,7 @@ const RecruitmentDetailPage = () => {
         await removeFromFavorites(recruitment.recruitmentId);
         setIsScrapped(false);
         setScrapCount((prev) => (prev > 0 ? prev - 1 : 0));
-        queryClient.invalidateQueries({ queryKey: ['myFavorites'] }); // 수정됨
+        queryClient.invalidateQueries({ queryKey: ['myFavorites'] }); 
       } else {
         // 스크랩 추가
         await addToFavorites(recruitment.recruitmentId);

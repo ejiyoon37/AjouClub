@@ -24,24 +24,14 @@ const GA_MEASUREMENT_ID = "YOUR_GA_MEASUREMENT_ID"; // G-XXXXXXXXXX
    ReactGA.initialize(GA_MEASUREMENT_ID);
  }
 
-
+// [수정됨] App.tsx와 동일한 스토어의 rehydrateAuth 함수를 사용하도록 변경
 const restoreAuthState = () => {
-  const raw = localStorage.getItem('auth');
-  if (!raw) return;
-
-  try {
-    const parsed = JSON.parse(raw);
-    if (parsed.accessToken && parsed.user) {
-      useAuthStore.getState().setAuth({
-        isLoggedIn: true,
-        accessToken: parsed.accessToken,
-        user: parsed.user,
-      });
-      setAccessToken(parsed.accessToken);
-    }
-  } catch (e) {
-    console.error('auth 복원 실패:', e);
-    localStorage.removeItem('auth');
+  useAuthStore.getState().rehydrateAuth();
+  // setAccessToken은 rehydrateAuth 내부에서 처리되지 않으므로,
+  // rehydrateAuth가 실행된 *이후*의 상태에서 가져옵니다.
+  const token = useAuthStore.getState().accessToken;
+  if (token) {
+    setAccessToken(token);
   }
 };
 

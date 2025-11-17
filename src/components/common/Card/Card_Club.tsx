@@ -37,6 +37,8 @@ const ClubCard = ({ club, variant = 'home' }: ClubCardProps) => {
           ${isExplore ? 'w-[72px] h-[72px]' : 'w-[80px] h-[80px]'}
           rounded-full border border-gray-100 object-cover
         `}
+        loading="lazy"
+        decoding="async"
       />
 
       <TypeChip size="regular">{clubType}</TypeChip>

@@ -30,8 +30,7 @@ type SortOption = '최근 게시순' | '저장순' | '마감 임박순';
 const RecruitmentPage = () => {
   const navigate = useNavigate();
   const location = useLocation(); 
-
-  const { posts, isLoading: isPostsLoading, error } = useRecruitments(); // (수정) isLoading 이름 변경
+  const { posts, isLoading: isPostsLoading, error } = useRecruitments('all'); 
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [sortOption, setSortOption] = useState<SortOption>('최근 게시순');
 
@@ -103,7 +102,7 @@ const RecruitmentPage = () => {
       return true;
     });
 
-    // 2. 정렬 (유지)
+    // 2. 정렬 
     const postsCopy = [...filtered];
     // ... (switch/case) ...
     const getSortPriority = (post: Recruitment) => {

@@ -13,7 +13,8 @@ const FavoriteRecruitmentList = ({ item }: Props) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/recruitments/${item.clubId}`); 
+    // [수정됨] clubId -> recruitmentId
+    navigate(`/recruitments/${item.recruitmentId}`); 
   };
 
   return (
@@ -25,6 +26,8 @@ const FavoriteRecruitmentList = ({ item }: Props) => {
         src={item.thumbnailUrl || DefaultImage} 
         alt={item.title}
         className="w-[80px] h-[80px] rounded-md object-cover border border-gray-200"
+        loading="lazy"
+        decoding="async"
       />
       <p className="text-[15px] font-medium text-gray-900 leading-[135%] tracking-[-0.03em]">
         {item.title}

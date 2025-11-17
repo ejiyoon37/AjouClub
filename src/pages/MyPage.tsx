@@ -8,7 +8,7 @@ import { useMyPageData } from '../Hooks/useMypageData';
 import UserProfileSection from '../components/mypage/UserProfileSection';
 import FavoriteRecruitmentList from '../components/mypage/FavoriteRecruitmentList';
 import Header from '../components/common/Header';
-import { logout as requestLogout } from '../Api/auth';
+import { logout as requestLogout } from '../api/auth';
 
 const MyPage = () => {
   const { isLoggedIn, logout } = useAuthStore();
@@ -81,7 +81,7 @@ const MyPage = () => {
         )}
       </div>
 
-      <div className="px-6 mt-10">
+      <div className="px-4 mt-10">
         <button
           className="text-[12px] font-medium underline text-gray-600 leading-[140%] tracking-[-0.03em]"
           onClick={handleLogout}

@@ -71,11 +71,15 @@ const mapApiDetailToRecruitment = (apiPost: ApiRecruitmentDetail): Recruitment =
   };
 };
 
-//  API 호출 함수: /api/recruitments 호출
-const getRecruitmentPosts = async (): Promise<Recruitment[]> => {
+// API 호출 함수: (variant에 따라 경로 분기)
+const getRecruitmentPosts = async (variant: 'main' | 'all'): Promise<Recruitment[]> => {
   try {
+    // [수정됨] variant에 따라 엔드포인트 분기
+    const endpoint = variant === 'main' 
+      ? '/api/recruitments/main' 
+      : '/api/recruitments';
 
-    const res = await axios.get<ApiResponse<ApiRecruitmentDetail[]>>('/api/recruitments');
+    const res = await axios.get<ApiResponse<ApiRecruitmentDetail[]>>(endpoint);
     
     if (res.data.status !== 200) {
       throw new Error(res.data.message);
@@ -88,21 +92,21 @@ const getRecruitmentPosts = async (): Promise<Recruitment[]> => {
     return []; // 데이터가 배열이 아니면 빈 배열 반환
 
   } catch (error) {
-    console.error('Error fetching recruitments:', error);
+    console.error(`Error fetching recruitments (${variant}):`, error);
     return [];
   }
 };
 
 
-// 메인 훅 
-const useRecruitments = () => {
+// 메인 훅 (variant 인자 추가)
+const useRecruitments = (variant: 'main' | 'all' = 'all') => {
   const { 
     data: posts = [], 
     isLoading, 
     error 
   } = useQuery<Recruitment[], Error>({
-    queryKey: ['recruitmentsList'], 
-    queryFn: getRecruitmentPosts,   
+    queryKey: ['recruitmentsList', variant], 
+    queryFn: () => getRecruitmentPosts(variant),   
   });
 
   return { posts, isLoading, error };

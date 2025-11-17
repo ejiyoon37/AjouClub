@@ -14,7 +14,7 @@ const UserProfileSection = ({ user }: UserProfileSectionProps) => {
     <section
       role="region"
       aria-label="사용자 프로필 영역"
-      className="flex flex-col items-center py-8 px-6 bg-white"
+      className="flex flex-col items-center py-8 px-4 bg-white"
     >
       <img
         src={user.profilePic || DefaultUserImage} 

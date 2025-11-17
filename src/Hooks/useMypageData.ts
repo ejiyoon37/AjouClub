@@ -1,7 +1,7 @@
 // src/Hooks/useMypageData.ts
 
 import { useQuery } from '@tanstack/react-query'; 
-import { getMyInfo, getFavoriteRecruitments } from '../Api/user';
+import { getMyInfo, getFavoriteRecruitments } from '../api/user';
 import type { UserInfo, FavoriteRecruitment } from '../types/user'; 
 import { useAuthStore } from '../stores/useAuthStore';
 

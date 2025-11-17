@@ -13,5 +13,5 @@ export const getFavoriteRecruitments = async () => {
 };
 
 export const logout = async () => {
-  await axios.post('/api/auth/logout');
+  await axios.post('/logout');
 };

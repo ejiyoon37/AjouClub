@@ -36,8 +36,9 @@ customAxios.interceptors.response.use(
     ) {
       originalRequest._retry = true;
       try {
+        // [수정됨] .../api/auth/refresh -> .../refresh
         const refreshRes = await axios.post(
-          'https://ajouclubserver.shop/api/auth/refresh',
+          'https://ajouclubserver.shop/refresh',
           {},
           { withCredentials: true }
         );
@@ -56,7 +57,13 @@ customAxios.interceptors.response.use(
       } catch (refreshErr) {
         // refresh 실패 → 로그아웃 처리
         useAuthStore.getState().logout();
-        window.location.href = '/login';
+        
+        // 강제 리디렉션을 제거합니다.
+        // window.location.href = '/login'; 
+        
+        // 대신, 쿼리 훅(useQuery)이 에러를 받아서 
+        // 스스로 처리(isLoading, isError)할 수 있도록 에러를 반환합니다.
+        return Promise.reject(refreshErr);
       }
     }
 
