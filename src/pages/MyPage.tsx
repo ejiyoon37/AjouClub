@@ -9,7 +9,7 @@ import useClubs from '../Hooks/useClubs'; // 전체 동아리 정보 가져오�
 import UserProfileSection from '../components/mypage/UserProfileSection';
 import FavoriteRecruitmentList from '../components/mypage/FavoriteRecruitmentList';
 import Header from '../components/common/Header';
-import { logout as requestLogout } from '../api/auth';
+import { logout as requestLogout } from '../api/auth.js';
 
 // 관리자용 동아리 아이템 컴포넌트 (내부 정의 또는 분리) 
 import ManagedClubItem from '../components/mypage/ManagedClubItem';

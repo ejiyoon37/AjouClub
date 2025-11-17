@@ -1,4 +1,4 @@
-// src/Api/recruitment.ts
+// src/api/recruitment.ts
 //import type { Recruitment } from '../types/recruit';
 import axios from '../utils/axios'; 
 
