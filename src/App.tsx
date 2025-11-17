@@ -17,6 +17,7 @@ const ClubFilterPage = lazy(() => import('./pages/ClubFilterPage'));
 const MyPage = lazy(() => import('./pages/MyPage'));
 const ClubDetailPage = lazy(() => import('./pages/ClubDetailPage'));
 const RecruitmentDetailPage = lazy(() => import('./pages/RecruitDetailPage'));
+const ClubAssessmentPage = lazy(() => import('./pages/ClubAssessmentPage'));
 
 
 
@@ -47,9 +48,9 @@ function App() {
       <Route path="/recruitment/filter" element={<RecruitmentFilterPage />} />
       <Route path="/clubs" element={<ClubExplorePage />} />
       <Route path="/clubs/filter" element={<ClubFilterPage />} />
-
       <Route path="/recruitments/:recruitmentId" element={<RecruitmentDetailPage />} />
       <Route path="/clubs/:clubId" element={<ClubDetailPage />} />
+      <Route path="/assessment" element={<ClubAssessmentPage />} />
       {/* <Route
         path="/clubs/:clubId"
         element={
