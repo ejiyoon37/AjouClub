@@ -1,9 +1,0 @@
-import{u as p}from"./useQuery-C7pHblR0.js";import{c as u,u as d,j as o}from"./index-DEXBsR4C.js";import{T as m}from"./Chip_type-CjIAA69-.js";const x=e=>({clubId:e.id,clubName:e.name,clubType:e.clubType,profileImageUrl:e.logoUrl,description:e.description,category:e.category,isRecruiting:e.recruiting,mainActivities:null,location:null,contactPhoneNumber:null,instagramUrl:null,youtubeUrl:null,linktreeUrl:null,clubUrl:null,contactEmail:null,createdAt:"",updatedAt:"",details:null}),g=async e=>{const{isRecruiting:c,department:r,category:a,type:s}=e,t={};s&&(t.type=s),a&&(t.category=a),r&&r!=="전체"&&(t.department=r),c&&(t.recruiting=!0);const i=Object.values(t).some(n=>n!==void 0);let l;if(i?l=await u.get("/api/club/filter",{params:t}):l=await u.get("/api/club/all"),l.data.status!==200)throw new Error(l.data.message||"Failed to fetch clubs");return l.data.data.map(x)},h=(e={})=>{const{sort:c,...r}=e,{data:a=[],isLoading:s,error:t}=p({queryKey:["clubs",r],queryFn:()=>g(r)});return{clubs:a,isLoading:s,error:t}},w=({club:e,variant:c="home"})=>{const{clubId:r,profileImageUrl:a,clubType:s,clubName:t}=e,i=d(),l=()=>{i(`/clubs/${r}`)},n=c==="explore";return o.jsxs("div",{onClick:l,role:"button",tabIndex:0,className:`
-        ${n?"w-[109px] h-[147px] rounded-[12px] px-2 pt-3 pb-4":"w-[120px] h-[156px] rounded-[13.41px] px-2 pt-3 pb-4"}
-        bg-gray-50 flex flex-col items-center justify-between
-      `,children:[o.jsx("img",{src:a||"/OnlyLogo.svg",alt:`${t} profile`,className:`
-          ${n?"w-[72px] h-[72px]":"w-[80px] h-[80px]"}
-          rounded-full border border-gray-100 object-cover
-        `}),o.jsx(m,{size:"regular",children:s}),o.jsx("p",{className:`
-          ${n?"text-[14px] font-medium leading-[135%] tracking-[-0.03em] text-gray-900 text-center w-full truncate":"w-[104px] h-[18px] text-center truncate text-[14px] font-medium text-gray-900 leading-[135%] tracking-[-0.03em]"}
-        `,children:t})]})};export{w as C,h as u};
