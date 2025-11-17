@@ -12,7 +12,7 @@ import RecruitmentApplyBar from '../components/recruit-detail/RecruitmentApplyBa
 
 // [수정됨] useRecruitmentDetail -> useRecruitmentPost 훅 사용
 import { useRecruitmentPost } from '../Hooks/useRecruitmentPost';
-import { addToFavorites, removeFromFavorites } from '../api/recruitment';
+import { addToFavorites, removeFromFavorites } from '../Api/recruitment';
 import { useAuthStore } from '../stores/useAuthStore';
 import { useMyPageData } from '../Hooks/useMypageData';
 

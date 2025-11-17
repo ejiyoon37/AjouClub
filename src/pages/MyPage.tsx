@@ -8,7 +8,7 @@ import { useMyPageData } from '../Hooks/useMypageData';
 import UserProfileSection from '../components/mypage/UserProfileSection';
 import FavoriteRecruitmentList from '../components/mypage/FavoriteRecruitmentList';
 import Header from '../components/common/Header';
-import { logout as requestLogout } from '../api/auth';
+import { logout as requestLogout } from '../Api/auth';
 
 const MyPage = () => {
   const { isLoggedIn, logout } = useAuthStore();
