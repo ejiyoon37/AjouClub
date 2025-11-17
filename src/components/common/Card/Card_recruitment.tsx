@@ -7,7 +7,7 @@ import axios from '../../../utils/axios';
 import PeriodChip from '../../ui/Chip/Chip_period';
 import ScrapIconDefault from '../../../assets/icon/ScrapBtn_default-2.svg?react';
 import ScrapIconActive from '../../../assets/icon/ScrapBtn_activated.svg?react';
-import { addToFavorites, removeFromFavorites } from '../../../Api/recruitment';
+import { addToFavorites, removeFromFavorites } from '../../../api/recruitment';
 import DefaultImage from '../../../assets/img/Default_images.png';
 import { useAuthStore } from '../../../stores/useAuthStore';
 

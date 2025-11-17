@@ -2,22 +2,23 @@
 
 import type { Club } from '../../types/club'; 
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Modal from '../ui/Modal';
 import { XMarkIcon } from '@heroicons/react/24/outline'; 
+import PrimaryBtn from '../ui/Button/PrimaryBtn'; 
 
 interface ClubDescriptionProps {
   club: Club;
   activityImages?: string[]; 
+  isAdmin?: boolean; 
 }
 
-// SectionTitle
 const SectionTitle = ({ title }: { title: string }) => (
   <h3 className="text-[14px] font-semibold text-gray-800 leading-[1.35] tracking-[-0.03em] mb-3">
     {title}
   </h3>
 );
 
-//  SectionContent에 줄바꿈 처리 추가
 const SectionContent = ({ content }: { content: string | null | undefined }) => {
   if (!content) {
     return (
@@ -26,10 +27,7 @@ const SectionContent = ({ content }: { content: string | null | undefined }) => 
       </p>
     );
   }
-  
-
   const processedContent = content.replace(/\\n/g, '\n');
-
   return (
     <p className="text-[16px] font-medium text-gray-700 leading-[1.65] tracking-[-0.03em] whitespace-pre-wrap">
       {processedContent}
@@ -37,17 +35,12 @@ const SectionContent = ({ content }: { content: string | null | undefined }) => 
   );
 };
 
-
-const ClubDescription = ({ club, activityImages }: ClubDescriptionProps) => {
-
-
+const ClubDescription = ({ club, activityImages, isAdmin = false }: ClubDescriptionProps) => {
+  const navigate = useNavigate();
   const validImages = activityImages ? activityImages.filter(imgUrl => !!imgUrl) : [];
-
-  //모달 상태관리
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   
-  //모달 관련 핸들러
   const handleImageClick = (imageUrl: string) => {
     setSelectedImage(imageUrl);
     setIsModalOpen(true);
@@ -59,7 +52,7 @@ const ClubDescription = ({ club, activityImages }: ClubDescriptionProps) => {
   };
 
   return (
-    <div className="bg-gray-50 p-4 space-y-6">
+    <div className="bg-gray-50 p-4 space-y-6 pb-24"> 
       {/* 1. 동아리 설명 */}
       <section>
         <SectionTitle title="동아리 설명" />
@@ -82,7 +75,7 @@ const ClubDescription = ({ club, activityImages }: ClubDescriptionProps) => {
                 key={index}
                 src={imgUrl} 
                 alt={`활동 사진 ${index + 1}`}
-                className="w-full h-auto rounded-lg object-cover border border-gray-100" 
+                className="w-full h-auto rounded-lg object-cover border border-gray-100 cursor-pointer" 
                 onClick={() => handleImageClick(imgUrl)}
                 loading="lazy"
                 decoding="async"
@@ -96,13 +89,26 @@ const ClubDescription = ({ club, activityImages }: ClubDescriptionProps) => {
         )}
       </section>
 
-      {/* 이미지 뷰어 모달 */}
+      {/* 관리자 전용 소개 수정 버튼 */}
+      {isAdmin && (
+        <div className="mt-8">
+          <PrimaryBtn 
+             isActive={true}
+             onClick={() => navigate(`/admin/clubs/${club.clubId}/intro/edit`)}
+             className="w-full"
+          >
+            소개 수정하기
+          </PrimaryBtn>
+        </div>
+      )}
+
+      {/* 이미지 뷰어 모달  */}
       {isModalOpen && selectedImage && (
         <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
           <div className="relative w-full h-full flex items-center justify-center p-4">
             <button 
               onClick={handleCloseModal} 
-              className="absolute top-4 right-4 text-white hover:text-gray-300 z-50 p-2 bg-black bg-opacity-50 rounded-full"
+              className="absolute top-4 right-4 text-white hover:text-gray-300 z-50 p-2 bg-black/50 rounded-full"
             >
               <XMarkIcon className="h-6 w-6" />
             </button>
