@@ -1,7 +1,7 @@
 // src/pages/RecruitDetailPage.tsx
 
 import { useState, useEffect, useMemo } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom'; 
 import { useQueryClient } from '@tanstack/react-query';
 
 import Header from '../components/common/Header';
@@ -10,20 +10,17 @@ import RecruitmentImage from '../components/recruit-detail/RecruitmentImage';
 import RecruitmentDescription from '../components/recruit-detail/RecruitmentDescription';
 import RecruitmentApplyBar from '../components/recruit-detail/RecruitmentApplyBar';
 
-// [수정됨] useRecruitmentDetail -> useRecruitmentPost 훅 사용
 import { useRecruitmentPost } from '../Hooks/useRecruitmentPost';
-import { addToFavorites, removeFromFavorites } from '../api/recruitment.js';
+import { addToFavorites, removeFromFavorites } from '../api/recruitment'; 
 import { useAuthStore } from '../stores/useAuthStore';
 import { useMyPageData } from '../Hooks/useMypageData';
 
 const RecruitmentDetailPage = () => {
   const navigate = useNavigate();
+  const location = useLocation(); // location 훅 추가
   const queryClient = useQueryClient();
 
-  // [수정됨] clubId -> recruitmentId
   const { recruitmentId } = useParams<{ recruitmentId: string }>();
-
-  // [수정됨] recruitmentId 사용
   const numericId = recruitmentId ? Number(recruitmentId) : null;
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
@@ -32,7 +29,8 @@ const RecruitmentDetailPage = () => {
     isLoading: isRecruitmentLoading,
     isError,
     error,
-  } = useRecruitmentPost(numericId); // [수정됨] 훅 이름 변경
+  } = useRecruitmentPost(numericId);
+  
   const { favorites, isLoading: isFavoritesLoading } = useMyPageData();
 
   const [isScrapped, setIsScrapped] = useState(false);
@@ -42,7 +40,6 @@ const RecruitmentDetailPage = () => {
     if (!isLoggedIn || !favorites || !recruitment) {
       return false;
     }
-
     return favorites.some(
       (fav) => fav.recruitmentId === recruitment.recruitmentId
     );
@@ -70,13 +67,11 @@ const RecruitmentDetailPage = () => {
 
     try {
       if (isScrapped) {
-        // 스크랩 취소
         await removeFromFavorites(recruitment.recruitmentId);
         setIsScrapped(false);
         setScrapCount((prev) => (prev > 0 ? prev - 1 : 0));
         queryClient.invalidateQueries({ queryKey: ['myFavorites'] }); 
       } else {
-        // 스크랩 추가
         await addToFavorites(recruitment.recruitmentId);
         setIsScrapped(true);
         setScrapCount((prev) => prev + 1);
@@ -102,7 +97,6 @@ const RecruitmentDetailPage = () => {
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
-  // --- 로딩 및 에러 처리 ---
   const isLoading = isRecruitmentLoading || (isLoggedIn && isFavoritesLoading);
 
   if (isLoading) {
@@ -117,7 +111,6 @@ const RecruitmentDetailPage = () => {
     );
   }
 
-  // --- 성공 시 렌더링 ---
   return (
     <div className="bg-white min-h-screen pb-[80px]">
       <Header variant="page" />
