@@ -1,6 +1,6 @@
 // src/pages/loginPage.tsx
 
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import { setAccessToken } from '../utils/axios';
 import { useAuthStore } from '../stores/useAuthStore';
@@ -11,10 +11,7 @@ import LogoImage from '../assets/logo_typo.svg';
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const setAuth = useAuthStore((state) => state.setAuth);
-
-  const redirectPath = new URLSearchParams(location.search).get('redirect') || '/';
 
   const handleSuccess = async (credentialResponse: any) => {
     try {
@@ -35,8 +32,8 @@ const LoginPage = () => {
         user: userInfo 
       });
 
-      // 5. 페이지 이동
-      navigate(redirectPath, { replace: true });
+      // 5. 메인페이지로 이동
+      navigate('/', { replace: true });
 
     } catch (error: any) {
       console.error('Login failed:', error);
