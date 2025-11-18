@@ -7,13 +7,13 @@ const customAxios = axios.create({
   withCredentials: true, // RT 쿠키 자동 포함
 });
 
-// 💡 accessToken 저장용 (Zustand 안에서 직접 접근 불가하므로 외부 모듈 사용)
+// accessToken 저장 변수
 let accessToken: string | null = null;
 export const setAccessToken = (token: string | null) => {
   accessToken = token;
 };
 
-// ✅ 요청 인터셉터: accessToken 자동 포함
+// 요청 인터셉터
 customAxios.interceptors.request.use(
   (config) => {
     if (accessToken) {
@@ -24,7 +24,7 @@ customAxios.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// ✅ 응답 인터셉터: 401 → refresh → 재요청
+// 응답 인터셉터
 customAxios.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -32,37 +32,33 @@ customAxios.interceptors.response.use(
 
     if (
       error.response?.status === 401 &&
-      !originalRequest._retry // 재시도 방지 플래그
+      !originalRequest._retry
     ) {
       originalRequest._retry = true;
       try {
-        // [수정됨] .../api/auth/refresh -> .../refresh
         const refreshRes = await axios.post(
-          'https://ajouclubserver.shop/refresh',
+          'https://ajouclubserver.shop/api/auth/refresh',
           {},
           { withCredentials: true }
         );
 
         const newAccessToken = refreshRes.data.accessToken;
+        
         setAccessToken(newAccessToken);
+        
+        // Store 업데이트 (User 정보는 유지)
         useAuthStore.getState().setAuth({
           isLoggedIn: true,
           accessToken: newAccessToken,
-          user: useAuthStore.getState().user, // 그대로 유지
+          user: useAuthStore.getState().user,
         });
 
-        // 요청에 새 토큰 넣고 재시도
+        // 재요청 헤더 설정
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return customAxios(originalRequest);
       } catch (refreshErr) {
-        // refresh 실패 → 로그아웃 처리
+        // 리프레시 실패 시 로그아웃
         useAuthStore.getState().logout();
-        
-        // 강제 리디렉션을 제거합니다.
-        // window.location.href = '/login'; 
-        
-        // 대신, 쿼리 훅(useQuery)이 에러를 받아서 
-        // 스스로 처리(isLoading, isError)할 수 있도록 에러를 반환합니다.
         return Promise.reject(refreshErr);
       }
     }

@@ -93,8 +93,11 @@ export const useRecruitmentPost = (recruitmentId: number | null) => {
         status: calculateStatus(detailData.type, detailData.endDate), // 계산된 값
         dDay: calculateDDay(detailData.endDate), // 계산된 값
 
+        //API 데이터 매핑
+        viewCount: detailData.viewCount || 0,
+        scrapCount: detailData.saveCount || 0,
+
         isScrapped: false, // API에 없는 필드 (기본값)
-        scrapCount: 0, // API에 없는 필드 (기본값)
       };
     },
     enabled: !!recruitmentId, // recruitmentId가 있을 때만 실행

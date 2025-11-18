@@ -1,10 +1,11 @@
-// src/pages/LoginPage.tsx
+// src/pages/loginPage.tsx
 
-//import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
-import axios, { setAccessToken } from '../utils/axios';
+import { setAccessToken } from '../utils/axios';
 import { useAuthStore } from '../stores/useAuthStore';
+import { loginWithGoogle } from '../api/auth';
+import { getMyInfo } from '../api/user'; // 유저 정보 조회 API 추가 필요
 
 import LogoImage from '../assets/logo_typo.svg';
 
@@ -17,33 +18,36 @@ const LoginPage = () => {
 
   const handleSuccess = async (credentialResponse: any) => {
     try {
-      // [수정됨] /api/auth/google -> /google
-      const res = await axios.post('/google', {
-        idToken: credentialResponse.credential,
+      // 1. 구글 로그인으로 Access Token 발급
+      const accessToken = await loginWithGoogle(credentialResponse.credential);
+      
+      // 2. Axios에 토큰 설정
+      setAccessToken(accessToken);
+
+      // 3. 발급받은 토큰으로 내 정보 조회 (/api/user/me)
+
+      const userInfo = await getMyInfo();
+
+      // 4. Store에 로그인 정보 저장 (토큰 + 유저정보)
+      setAuth({ 
+        isLoggedIn: true, 
+        accessToken, 
+        user: userInfo 
       });
 
-      const { accessToken, user } = res.data;
-
-      // 저장
-      setAccessToken(accessToken);
-      setAuth({ isLoggedIn: true, accessToken, user });
-
-      // localStorage에 로그인 상태 저장
-      localStorage.setItem(
-        'auth',
-        JSON.stringify({ accessToken, user })
-      );
-
+      // 5. 페이지 이동
       navigate(redirectPath, { replace: true });
+
     } catch (error: any) {
       console.error('Login failed:', error);
-      alert(error?.response?.data?.message || '로그인 중 오류가 발생했습니다.');
+      const errorMessage = error?.response?.data?.message || error.message || '로그인 중 오류가 발생했습니다.';
+      alert(errorMessage);
     }
   };
 
   return (
     <div className="flex flex-col items-center justify-center h-screen px-4 bg-white">
-      <p className="text-[18px] font-medium text-[#5A6167] leading-[135%] tracking-[-3%] mb-2">
+      <p className="text-[18px] font-medium text-[#5A6167] leading-[135%] tracking-[-0.03em] mb-2">
         아주대학교 동아리를 담은
       </p>
 
@@ -72,7 +76,7 @@ const LoginPage = () => {
             theme="outline"
             size="large"
             shape="rectangular"
-            width="343px" 
+            width="343px"
           />
         </div>
       </div>

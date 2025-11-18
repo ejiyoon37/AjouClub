@@ -20,6 +20,8 @@ export interface ApiRecruitmentDetail {
   url: string | null;
   createdAt: string; // "YYYY-MM-DDTHH:mm:ss"
   updatedAt: string;
+  viewCount?: number;
+  saveCount?: number;
 }
 
 

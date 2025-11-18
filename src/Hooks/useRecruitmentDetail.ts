@@ -65,21 +65,18 @@ export const useRecruitmentDetail = (clubId: number | null) => {
     isError, 
     error 
   } = useQuery<Recruitment[] | null, Error>({ // 배열 반환
-    queryKey: ['recruitmentDetail', clubId], // (이 훅은 곧 변경될 것이므로 키는 유지)
+    queryKey: ['recruitmentDetail', clubId], 
     queryFn: async (): Promise<Recruitment[] | null> => { // 배열 반환
       if (!clubId) return null;
 
-      // 1. clubId로 상세 정보(텍스트) 목록
+      // clubId로 상세 정보(텍스트) 목록
       const detailDataList = await fetchRecruitmentDetail(clubId);
       
       if (!detailDataList || detailDataList.length === 0) {
         return []; // 빈 배열 반환
       }
 
-      // 2. (임시) 이미지 로딩은 우선 비워둡니다.
-      // (주: API가 썸네일을 같이 주지 않으면, N+1 쿼리 문제 발생 가능성 있음)
-
-      // 3. 최종 Recruitment 객체 배열
+      // 최종 Recruitment 객체 배열
       return detailDataList.map((detailData) => {
         return {
           recruitmentId: detailData.id,
@@ -100,8 +97,11 @@ export const useRecruitmentDetail = (clubId: number | null) => {
           status: calculateStatus(detailData.type, detailData.endDate), // 계산된 값
           dDay: calculateDDay(detailData.endDate), // 계산된 값
 
+          // API 데이터 매핑
+          viewCount: detailData.viewCount || 0,
+          scrapCount: detailData.saveCount || 0,
+
           isScrapped: false, // API에 없는 필드 (기본값)
-          scrapCount: 0, // API에 없는 필드 (기본값)
         };
       });
     },
