@@ -5,28 +5,17 @@ import axios from '../utils/axios';
 import type { ApiResponse } from '../types/club'; 
 import type { 
   ApiRecruitmentDetail, 
-  // ApiRecruitmentImages, // 개별 이미지 로딩 제거
   Recruitment,
   RecruitmentStatus,
   RecruitmentType
 } from '../types/recruit';
 
-// --- API 호출 함수 (배열 반환 ver) ---
 const fetchRecruitmentDetail = async (clubId: number): Promise<ApiRecruitmentDetail[]> => {
   const res = await axios.get<ApiResponse<ApiRecruitmentDetail[]>>(`/api/recruitments/club/${clubId}`);
   if (res.data.status !== 200) throw new Error(res.data.message);
   return Array.isArray(res.data.data) ? res.data.data : []; 
 };
 
-// (참고: fetchRecruitmentImages는 2단계에서 상세페이지용 훅으로 분리 필요)
-// const fetchRecruitmentImages = async (recruitmentId: number): Promise<ApiRecruitmentImages> => {
-//   const res = await axios.get<ApiRecruitmentImages>(`/api/recruitments/${recruitmentId}/images`);
-//   return res.data;
-// };
-
-// --- 데이터 계산 헬퍼  ---
-
-// D-day 계산
 const calculateDDay = (endDate: string | null): number => {
   if (!endDate) return 0;
   const today = new Date();
@@ -39,44 +28,34 @@ const calculateDDay = (endDate: string | null): number => {
   return diffDays < 0 ? 0 : diffDays;
 };
 
-// '상시모집', 날짜를 기준으로 status 계산
 const calculateStatus = (
-  type: RecruitmentType,
+  _type: RecruitmentType,
   endDate: string | null
 ): RecruitmentStatus => {
-  if (type === '상시모집') return 'regular';
-
-  if (!endDate) return 'regular'; // 종료일 없으면 상시모집 취급
-
+  if (!endDate) return 'regular';
   const dDay = calculateDDay(endDate);
-  
   if (dDay === 0) return 'end';
-  if (dDay <= 7) return 'd-day'; // 7일 이내면 마감임박
-  return 'regular'; // 그 외에는 모집중 (regular)
+  if (dDay <= 7) return 'd-day';
+  return 'regular';
 };
 
-// --- 메인 훅 (배열 반환 ver) ---
-
 export const useRecruitmentDetail = (clubId: number | null) => {
-
   const { 
     data, 
     isLoading, 
     isError, 
     error 
-  } = useQuery<Recruitment[] | null, Error>({ // 배열 반환
+  } = useQuery<Recruitment[] | null, Error>({ 
     queryKey: ['recruitmentDetail', clubId], 
-    queryFn: async (): Promise<Recruitment[] | null> => { // 배열 반환
+    queryFn: async (): Promise<Recruitment[] | null> => { 
       if (!clubId) return null;
 
-      // clubId로 상세 정보(텍스트) 목록
       const detailDataList = await fetchRecruitmentDetail(clubId);
       
       if (!detailDataList || detailDataList.length === 0) {
-        return []; // 빈 배열 반환
+        return []; 
       }
 
-      // 최종 Recruitment 객체 배열
       return detailDataList.map((detailData) => {
         return {
           recruitmentId: detailData.id,
@@ -92,20 +71,20 @@ export const useRecruitmentDetail = (clubId: number | null) => {
           createdAt: detailData.createdAt,
           url: detailData.url,
 
-          images: [], // (TODO: 썸네일 이미지가 API 응답에 포함되어야 함)
+          images: [], 
           
-          status: calculateStatus(detailData.type, detailData.endDate), // 계산된 값
-          dDay: calculateDDay(detailData.endDate), // 계산된 값
+          status: calculateStatus(detailData.type, detailData.endDate),
+          dDay: calculateDDay(detailData.endDate),
 
-          // API 데이터 매핑
+          // 매핑
           viewCount: detailData.viewCount || 0,
           scrapCount: detailData.saveCount || 0,
 
-          isScrapped: false, // API에 없는 필드 (기본값)
+          isScrapped: false, 
         };
       });
     },
-    enabled: !!clubId, // clubId가 있을 때만 실행
+    enabled: !!clubId, 
   });
 
   return { data, isLoading, isError, error };

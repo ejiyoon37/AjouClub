@@ -1,26 +1,28 @@
-// import { Navigate, useLocation } from 'react-router-dom';
-// import { useAuthStore } from '../../stores/useAuthStore';
-// import type { ReactNode } from 'react';
+// src/components/common/RequireAuth.tsx
 
-// interface Props {
-//   children: ReactNode;
-// }
-//로그인 정상화
-// const RequireAuth = ({ children }: Props) => {
-//   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-//   const location = useLocation();
-
-//   if (!isLoggedIn) {
-//     const redirectTo = encodeURIComponent(location.pathname + location.search);
-//     return <Navigate to={`/login?redirect=${redirectTo}`} replace />;
-//   }
-
-//   return children;
-// };
+import React, { useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuthStore } from '../../stores/useAuthStore';
 
 const RequireAuth = ({ children }: { children: React.ReactNode }) => {
-  //const isLoggedIn = false; 
-  return <>{children}</>;   
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      alert('로그인이 필요합니다.');
+      
+      const redirectTo = encodeURIComponent(location.pathname + location.search);
+      navigate(`/login?redirect=${redirectTo}`, { replace: true });
+    }
+  }, [isLoggedIn, navigate, location]);
+
+  if (!isLoggedIn) {
+    return null; 
+  }
+
+  return <>{children}</>;
 };
 
 export default RequireAuth;
