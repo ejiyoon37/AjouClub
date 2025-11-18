@@ -1,1 +1,0 @@
-import{j as n}from"./index-DYhfhBFg.js";const i=({children:t,isActive:r=!1,className:e,...o})=>{const s="px-4 py-2 rounded-md font-bold transition-colors",a=r?"bg-gray-700 text-white border-transparent":"bg-white border border-gray-100 text-gray-700";return n.jsx("button",{className:`${s} ${a} ${e}`,...o,children:t})};export{i as P};

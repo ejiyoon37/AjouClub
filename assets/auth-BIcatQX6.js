@@ -1,0 +1,1 @@
+import{c as s,a as e}from"./index-Ck0rkagM.js";const c=async o=>{const t=(await s.post("/api/auth/google",{idToken:o})).data.accessToken;if(!t)throw new Error("Access token is missing in the response");return t},n=async()=>{try{await s.post("/api/auth/logout"),e.getState().logout()}catch(o){console.error("Logout 실패:",o)}};export{n as a,c as l};
