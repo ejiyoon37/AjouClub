@@ -1,7 +1,7 @@
 // src/components/homepage/ClubAssessmentBottomSheet.tsx
 
 import { useNavigate } from 'react-router-dom';
-import CTABtn from '../ui/Button/CTABtn';
+//import CTABtn from '../ui/Button/CTABtn';
 import DeleteIcon from '../../assets/icon/icn_delete_24.svg?react';
 
 interface ClubAssessmentBottomSheetProps {

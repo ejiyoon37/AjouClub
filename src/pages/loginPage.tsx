@@ -1,7 +1,7 @@
 // src/pages/loginPage.tsx
 
 import { useNavigate } from 'react-router-dom';
-import { useRef, useEffect } from 'react';
+import { useRef} from 'react';
 import { GoogleLogin } from '@react-oauth/google';
 import { setAccessToken } from '../utils/axios';
 import { useAuthStore } from '../stores/useAuthStore';
