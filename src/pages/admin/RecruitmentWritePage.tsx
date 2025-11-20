@@ -6,6 +6,8 @@ import Header from '../../components/common/Header';
 import CTABtn from '../../components/ui/Button/CTABtn';
 import { useClubDetail } from '../../Hooks/useClubDetails';
 import CameraIcon from '../../assets/icon/icon_camera.svg?react';
+import { createRecruitment, uploadRecruitmentImage } from '../../api/recruitment';
+import { useAuthStore } from '../../stores/useAuthStore';
 
 const RecruitmentWritePage = () => {
   const { clubId } = useParams<{ clubId: string }>();
@@ -14,6 +16,7 @@ const RecruitmentWritePage = () => {
 
   const numericClubId = clubId ? Number(clubId) : null;
   const { data: club, isLoading } = useClubDetail(numericClubId || 0);
+  const user = useAuthStore((state) => state.user);
 
   // 동아리 이름
   const clubName = club?.clubName || '';
@@ -24,6 +27,7 @@ const RecruitmentWritePage = () => {
   const [description, setDescription] = useState('');
   const [applicationLink, setApplicationLink] = useState('');
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [uploadedImageFile, setUploadedImageFile] = useState<File | null>(null); // 실제 파일 저장
   const maxImages = 1; // 모집공고는 이미지 1개만
 
   // 에러 상태
@@ -40,9 +44,11 @@ const RecruitmentWritePage = () => {
     if (!files || files.length === 0) return;
 
     const file = files[0]; // 첫 번째 파일만 사용
+    setUploadedImageFile(file); // 실제 파일 저장
+    
     const reader = new FileReader();
     reader.onloadend = () => {
-      setUploadedImages([reader.result as string]); // 1개만 저장
+      setUploadedImages([reader.result as string]); // 미리보기용
     };
     reader.readAsDataURL(file);
   };
@@ -80,7 +86,23 @@ const RecruitmentWritePage = () => {
     }
   };
 
-  const handleSubmit = () => {
+  // 날짜 형식 변환 (YYYY-MM-DD)
+  const formatDateForAPI = (dateString: string): string => {
+    // 입력 형식: "2025. 11. 12. (수)" -> "2025-11-12"
+    if (!dateString) return '';
+    
+    // 숫자와 점만 추출
+    const numbers = dateString.match(/\d+/g);
+    if (numbers && numbers.length >= 3) {
+      const year = numbers[0];
+      const month = numbers[1].padStart(2, '0');
+      const day = numbers[2].padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+    return '';
+  };
+
+  const handleSubmit = async () => {
     // 필수 입력 검증 (상시모집이 체크되지 않았을 때만 마감일 필수)
     const newErrors = {
       title: !title.trim(),
@@ -96,9 +118,54 @@ const RecruitmentWritePage = () => {
       return;
     }
 
-    // TODO: API 연동 (공고 생성 요청)
-    alert('모집 공고가 등록되었습니다.');
-    navigate(`/clubs/${clubId}`);
+    if (!numericClubId) {
+      alert('동아리 ID가 없습니다.');
+      return;
+    }
+
+    try {
+      // API 요청 데이터 준비
+      const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD 형식
+      const endDate = isAlwaysRecruiting ? null : formatDateForAPI(deadline);
+      
+      // type: 상시모집이면 "상시모집", 아니면 "수시모집"
+      const recruitmentType: '상시모집' | '수시모집' = isAlwaysRecruiting ? '상시모집' : '수시모집';
+      
+      // phoneNumber와 email은 동아리 정보나 사용자 정보에서 가져오거나 null
+      // 선택 필드는 null 또는 생략 가능
+      const phoneNumber = club?.contactPhoneNumber || null;
+      const email = club?.contactEmail || user?.email || null;
+
+      // 모집공고 생성
+      const recruitmentId = await createRecruitment(numericClubId, {
+        title: title.trim(),
+        description: description.trim(),
+        type: recruitmentType,
+        phoneNumber,
+        email,
+        startDate: today, // 시작일은 오늘로 설정
+        endDate: endDate || null, // 상시모집이면 null, 아니면 마감일
+        url: applicationLink.trim(),
+      });
+
+      // 이미지가 있으면 업로드
+      if (uploadedImageFile) {
+        try {
+          await uploadRecruitmentImage(recruitmentId, uploadedImageFile);
+        } catch (imageError: any) {
+          console.error('이미지 업로드 실패:', imageError);
+          // 이미지 업로드 실패해도 모집공고는 생성되었으므로 경고만 표시
+          alert('모집 공고는 등록되었지만 이미지 업로드에 실패했습니다.');
+        }
+      }
+
+      alert('모집 공고가 등록되었습니다.');
+      navigate(`/clubs/${clubId}`);
+    } catch (error: any) {
+      console.error('모집공고 생성 실패:', error);
+      const errorMessage = error?.response?.data?.message || error.message || '모집공고 등록 중 오류가 발생했습니다.';
+      alert(errorMessage);
+    }
   };
 
   if (isLoading) {
@@ -272,7 +339,10 @@ const RecruitmentWritePage = () => {
                     className="w-full h-full object-cover"
                   />
                   <button
-                    onClick={() => setUploadedImages(prev => prev.filter((_, i) => i !== idx))}
+                    onClick={() => {
+                      setUploadedImages(prev => prev.filter((_, i) => i !== idx));
+                      setUploadedImageFile(null);
+                    }}
                     className="absolute top-1 right-1 w-6 h-6 bg-black/50 rounded-full flex items-center justify-center text-white hover:bg-black/70"
                   >
                     ×

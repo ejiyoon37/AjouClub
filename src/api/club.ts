@@ -1,68 +1,51 @@
-// src/types/club.ts
+// src/api/club.ts
+import axios from '../utils/axios';
 
-export type ClubType = '중앙동아리' | '소학회';
-
-// 상세 API 응답(JSON[1]) 기준으로 필드 상세화
-export interface Club {
-  clubId: number;
-  clubName: string;
-  description: string | null;
-  mainActivities: string | null; 
-  location: string | null; 
-  contactPhoneNumber: string | null; 
-  instagramUrl: string | null;
-  youtubeUrl: string | null; 
-  linktreeUrl: string | null; 
-  clubUrl: string | null; 
-  contactEmail: string | null; 
-  createdAt: string;
-  updatedAt: string; 
-  clubType: ClubType;
-  profileImageUrl: string | null; 
-  category: string;
-  details: string | null;
-  isRecruiting: boolean;
-  recruitmentTarget: string | null; 
-}
-
-// API 응답
-export interface ApiClubData {
-  id: number;
-  name: string;
-  description: string | null;
-  clubType: ClubType;
-  logoUrl: string | null;
-  category: string;
-  recruiting: boolean;
-  
-  // 상세 API에서만 
-  mainActivities?: string | null; 
-  location?: string | null; 
-  contactPhoneNumber?: string | null; 
-  instagramUrl?: string | null;
-  youtubeUrl?: string | null; 
-  linktreeUrl?: string | null; 
-  clubUrl?: string | null; 
-  contactEmail?: string | null; 
-  createdAt?: string;
-  updatedAt?: string; 
-  details?: string | null; 
-  recruitmentTarget?: string | null;
-}
-
-
-export interface ApiResponse<T> {
-  status: number;
-  message: string;
-  data: T;
-}
-
-
-export interface ClubPreview {
-  id: number;
-  name: string;
-  type: ClubType;
+// 동아리 소개 수정 인터페이스
+export interface UpdateClubIntroRequest {
   description: string;
-  imageUrl: string;
-  isScrappedInitially?: boolean;
+  mainActivities: string;
+  location: string | null;
+  instagramUrl: string | null;
+  youtubeUrl: string | null;
+  linktreeUrl: string | null;
+  clubUrl: string | null;
 }
+
+// 동아리 소개 수정
+export const updateClubIntro = async (
+  clubId: number,
+  data: UpdateClubIntroRequest
+): Promise<void> => {
+  await axios.patch(`/api/club/${clubId}`, data);
+  console.log(`✏️ API 동아리 소개 수정: clubId=${clubId}`, data);
+};
+
+// 동아리 활동 사진 업로드
+export const uploadClubActivityImages = async (
+  clubId: number,
+  files: File[]
+): Promise<void> => {
+  const formData = new FormData();
+  files.forEach((file) => {
+    formData.append('files', file);
+  });
+  
+  await axios.post(`/api/club/${clubId}/activity-images`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  console.log(`📷 API 동아리 활동 사진 업로드: clubId=${clubId}, 파일 수=${files.length}`);
+};
+
+// 동아리 활동 사진 삭제
+export const deleteClubActivityImage = async (
+  clubId: number,
+  imageUrl: string
+): Promise<void> => {
+  await axios.delete(`/api/club/${clubId}/activity-images/one`, {
+    params: { url: imageUrl },
+  });
+  console.log(`🗑️ API 동아리 활동 사진 삭제: clubId=${clubId}, url=${imageUrl}`);
+};

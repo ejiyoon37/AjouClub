@@ -4,7 +4,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 // 컴포넌트
 import Header from '../../components/common/Header';
 import { useClubDetail } from '../../Hooks/useClubDetails';
+import { useClubActivityImages } from '../../Hooks/useClubActivityImages';
 import CameraIcon from '../../assets/icon/icon_camera.svg?react';
+import { updateClubIntro, uploadClubActivityImages, deleteClubActivityImage } from '../../api/club';
 
 const ClubIntroEditPage = () => {
   const { clubId } = useParams<{ clubId: string }>();
@@ -13,13 +15,16 @@ const ClubIntroEditPage = () => {
 
   const numericClubId = clubId ? Number(clubId) : null;
   const { data: club, isLoading } = useClubDetail(numericClubId || 0);
+  const { data: existingImages = [] } = useClubActivityImages(numericClubId || 0);
   
   // 동아리 이름
   const clubName = club?.clubName || '';
 
   const [description, setDescription] = useState('');
   const [mainActivities, setMainActivities] = useState('');
-  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]); // 미리보기용 (기존 이미지 URL + 새 이미지 base64)
+  const [newImageFiles, setNewImageFiles] = useState<File[]>([]); // 새로 추가할 파일들
+  const [deletedImageUrls, setDeletedImageUrls] = useState<string[]>([]); // 삭제할 이미지 URL들
   const maxImages = 8;
 
   // 동아리 데이터 로드 시 초기값 설정
@@ -27,9 +32,15 @@ const ClubIntroEditPage = () => {
     if (club) {
       if (club.description) setDescription(club.description);
       if (club.mainActivities) setMainActivities(club.mainActivities);
-      // TODO: 이미지도 로드 필요 시 여기에 추가
     }
   }, [club]);
+
+  // 기존 이미지 로드
+  useEffect(() => {
+    if (existingImages && existingImages.length > 0) {
+      setUploadedImages(existingImages);
+    }
+  }, [existingImages]);
 
   // 에러 상태
   const [errors, setErrors] = useState({
@@ -38,7 +49,7 @@ const ClubIntroEditPage = () => {
   });
 
   // --- 핸들러 ---
-  const handleSave = () => {
+  const handleSave = async () => {
     // 필수 입력 검증
     const newErrors = {
       description: !description.trim(),
@@ -52,9 +63,50 @@ const ClubIntroEditPage = () => {
       return;
     }
 
-    // TODO: API 전송 로직
-    alert('저장되었습니다.');
-    navigate(-1);
+    if (!numericClubId) {
+      alert('동아리 ID가 없습니다.');
+      return;
+    }
+
+    try {
+      // 1. 동아리 소개 정보 수정
+      await updateClubIntro(numericClubId, {
+        description: description.trim(),
+        mainActivities: mainActivities.trim(),
+        location: club?.location || null,
+        instagramUrl: club?.instagramUrl || null,
+        youtubeUrl: club?.youtubeUrl || null,
+        linktreeUrl: club?.linktreeUrl || null,
+        clubUrl: club?.clubUrl || null,
+      });
+
+      // 2. 삭제할 이미지들 삭제
+      for (const imageUrl of deletedImageUrls) {
+        try {
+          await deleteClubActivityImage(numericClubId, imageUrl);
+        } catch (deleteError: any) {
+          console.error('이미지 삭제 실패:', deleteError);
+          // 삭제 실패해도 계속 진행
+        }
+      }
+
+      // 3. 새로 추가할 이미지들 업로드
+      if (newImageFiles.length > 0) {
+        try {
+          await uploadClubActivityImages(numericClubId, newImageFiles);
+        } catch (uploadError: any) {
+          console.error('이미지 업로드 실패:', uploadError);
+          // 업로드 실패해도 계속 진행
+        }
+      }
+
+      alert('저장되었습니다.');
+      navigate(-1);
+    } catch (error: any) {
+      console.error('동아리 소개 수정 실패:', error);
+      const errorMessage = error?.response?.data?.message || error.message || '동아리 소개 수정 중 오류가 발생했습니다.';
+      alert(errorMessage);
+    }
   };
 
   // 이미지 업로드 핸들러
@@ -62,19 +114,42 @@ const ClubIntroEditPage = () => {
     const files = e.target.files;
     if (!files) return;
 
-    const newImages: string[] = [];
+    const fileArray = Array.from(files);
     const remainingSlots = maxImages - uploadedImages.length;
+    const filesToAdd = fileArray.slice(0, remainingSlots);
 
-    Array.from(files).slice(0, remainingSlots).forEach((file) => {
+    // 새 파일들을 state에 추가
+    setNewImageFiles(prev => [...prev, ...filesToAdd]);
+
+    // 미리보기를 위해 base64로 변환
+    filesToAdd.forEach((file) => {
       const reader = new FileReader();
       reader.onloadend = () => {
-        newImages.push(reader.result as string);
-        if (newImages.length === Math.min(files.length, remainingSlots)) {
-          setUploadedImages(prev => [...prev, ...newImages]);
-        }
+        setUploadedImages(prev => [...prev, reader.result as string]);
       };
       reader.readAsDataURL(file);
     });
+  };
+
+  // 이미지 삭제 핸들러
+  const handleImageDelete = (index: number) => {
+    const imageUrl = uploadedImages[index];
+    
+    // 기존 이미지인지 확인 (URL이 http/https로 시작하면 기존 이미지)
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+      // 기존 이미지 삭제 목록에 추가
+      setDeletedImageUrls(prev => [...prev, imageUrl]);
+    } else {
+      // 새로 추가한 이미지면 newImageFiles에서도 제거
+      // base64 이미지의 순서를 추적하여 해당 파일 제거
+      const base64ImagesBeforeIndex = uploadedImages.slice(0, index).filter(img => 
+        !img.startsWith('http://') && !img.startsWith('https://')
+      );
+      const fileIndex = base64ImagesBeforeIndex.length;
+      setNewImageFiles(prev => prev.filter((_, i) => i !== fileIndex));
+    }
+    
+    setUploadedImages(prev => prev.filter((_, i) => i !== index));
   };
 
   const triggerImageInput = () => {
@@ -208,7 +283,7 @@ const ClubIntroEditPage = () => {
                     className="w-full h-full object-cover" 
                   />
                   <button
-                    onClick={() => setUploadedImages(prev => prev.filter((_, i) => i !== idx))}
+                    onClick={() => handleImageDelete(idx)}
                     className="absolute top-1 right-1 w-6 h-6 bg-black/50 rounded-full flex items-center justify-center text-white hover:bg-black/70"
                   >
                     ×

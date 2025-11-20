@@ -6,6 +6,7 @@ import Header from '../../components/common/Header';
 import CTABtn from '../../components/ui/Button/CTABtn';
 import { useRecruitmentPost } from '../../Hooks/useRecruitmentPost';
 import CameraIcon from '../../assets/icon/icon_camera.svg?react';
+import { updateRecruitment, uploadRecruitmentImage, replaceRecruitmentImage } from '../../api/recruitment';
 
 const RecruitmentEditPage = () => {
   const { recruitmentId } = useParams<{ recruitmentId: string }>();
@@ -24,6 +25,9 @@ const RecruitmentEditPage = () => {
   const [description, setDescription] = useState('');
   const [applicationLink, setApplicationLink] = useState('');
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [uploadedImageFile, setUploadedImageFile] = useState<File | null>(null); // 실제 파일 저장
+  const [isExistingImage, setIsExistingImage] = useState(false); // 기존 이미지인지 새로 업로드한 이미지인지
+  const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null); // 기존 이미지 URL 저장
   const maxImages = 1; // 모집공고는 이미지 1개만
 
   // 기존 데이터 로드
@@ -33,7 +37,10 @@ const RecruitmentEditPage = () => {
       setDescription(recruitment.description || '');
       setApplicationLink(recruitment.url || '');
       if (recruitment.images && recruitment.images.length > 0) {
-        setUploadedImages([recruitment.images[0]]); // 첫 번째 이미지만
+        const firstImage = recruitment.images[0];
+        setUploadedImages([firstImage]); // 첫 번째 이미지만
+        setIsExistingImage(true); // 기존 이미지
+        setExistingImageUrl(firstImage); // 기존 이미지 URL 저장
       }
       if (recruitment.endDate) {
         // 날짜 포맷 변환 (YYYY-MM-DD -> YYYY. MM. DD. (요일))
@@ -63,9 +70,14 @@ const RecruitmentEditPage = () => {
     if (!files || files.length === 0) return;
 
     const file = files[0]; // 첫 번째 파일만 사용
+    setUploadedImageFile(file); // 실제 파일 저장
+    
+    // 기존 이미지가 있으면 교체, 없으면 새로 업로드
+    // isExistingImage는 기존 이미지 URL이 있는지 여부로 판단 (existingImageUrl이 있으면 교체)
+    
     const reader = new FileReader();
     reader.onloadend = () => {
-      setUploadedImages([reader.result as string]); // 1개만 저장
+      setUploadedImages([reader.result as string]); // 미리보기용
     };
     reader.readAsDataURL(file);
   };
@@ -103,7 +115,23 @@ const RecruitmentEditPage = () => {
     }
   };
 
-  const handleSubmit = () => {
+  // 날짜 형식 변환 (YYYY-MM-DD)
+  const formatDateForAPI = (dateString: string): string => {
+    // 입력 형식: "2025. 11. 12. (수)" -> "2025-11-12"
+    if (!dateString) return '';
+    
+    // 숫자와 점만 추출
+    const numbers = dateString.match(/\d+/g);
+    if (numbers && numbers.length >= 3) {
+      const year = numbers[0];
+      const month = numbers[1].padStart(2, '0');
+      const day = numbers[2].padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+    return '';
+  };
+
+  const handleSubmit = async () => {
     // 필수 입력 검증 (상시모집이 체크되지 않았을 때만 마감일 필수)
     const newErrors = {
       title: !title.trim(),
@@ -119,9 +147,61 @@ const RecruitmentEditPage = () => {
       return;
     }
 
-    // TODO: API 연동 (공고 수정 요청)
-    alert('모집 공고가 수정되었습니다.');
-    navigate(`/recruitments/${recruitmentId}`);
+    if (!numericRecruitmentId) {
+      alert('모집공고 ID가 없습니다.');
+      return;
+    }
+
+    try {
+      // API 요청 데이터 준비
+      const startDate = recruitment?.startDate 
+        ? new Date(recruitment.startDate).toISOString().split('T')[0] 
+        : new Date().toISOString().split('T')[0]; // 기존 시작일 또는 오늘
+      const endDate = isAlwaysRecruiting ? null : formatDateForAPI(deadline);
+      
+      // type: 상시모집이면 "상시모집", 아니면 "수시모집"
+      const recruitmentType: '상시모집' | '수시모집' = isAlwaysRecruiting ? '상시모집' : '수시모집';
+      
+      // phoneNumber와 email은 기존 데이터에서 가져오거나 null
+      const phoneNumber = recruitment?.phoneNumber || null;
+      const email = recruitment?.email || null;
+
+      // 모집공고 수정
+      await updateRecruitment(numericRecruitmentId, {
+        title: title.trim(),
+        description: description.trim(),
+        type: recruitmentType,
+        phoneNumber,
+        email,
+        startDate,
+        endDate,
+        url: applicationLink.trim(),
+      });
+
+      // 이미지 처리
+      if (uploadedImageFile) {
+        try {
+          if (isExistingImage && existingImageUrl) {
+            // 기존 이미지를 새 파일로 교체
+            await replaceRecruitmentImage(numericRecruitmentId, existingImageUrl, uploadedImageFile);
+          } else {
+            // 새 이미지 업로드
+            await uploadRecruitmentImage(numericRecruitmentId, uploadedImageFile);
+          }
+        } catch (imageError: any) {
+          console.error('이미지 처리 실패:', imageError);
+          // 이미지 처리 실패해도 모집공고는 수정되었으므로 경고만 표시
+          alert('모집 공고는 수정되었지만 이미지 처리에 실패했습니다.');
+        }
+      }
+
+      alert('모집 공고가 수정되었습니다.');
+      navigate(`/recruitments/${recruitmentId}`);
+    } catch (error: any) {
+      console.error('모집공고 수정 실패:', error);
+      const errorMessage = error?.response?.data?.message || error.message || '모집공고 수정 중 오류가 발생했습니다.';
+      alert(errorMessage);
+    }
   };
 
   if (isLoading) {
@@ -295,7 +375,12 @@ const RecruitmentEditPage = () => {
                     className="w-full h-full object-cover"
                   />
                   <button
-                    onClick={() => setUploadedImages(prev => prev.filter((_, i) => i !== idx))}
+                    onClick={() => {
+                      setUploadedImages(prev => prev.filter((_, i) => i !== idx));
+                      setUploadedImageFile(null);
+                      setIsExistingImage(false);
+                      setExistingImageUrl(null);
+                    }}
                     className="absolute top-1 right-1 w-6 h-6 bg-black/50 rounded-full flex items-center justify-center text-white hover:bg-black/70"
                   >
                     ×
