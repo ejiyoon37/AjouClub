@@ -1,31 +1,37 @@
 // src/pages/loginPage.tsx
 
 import { useNavigate } from 'react-router-dom';
-import { useRef} from 'react';
 import { GoogleLogin } from '@react-oauth/google';
 import { setAccessToken } from '../utils/axios';
 import { useAuthStore } from '../stores/useAuthStore';
 import { loginWithGoogle } from '../api/auth';
-import { getMyInfo } from '../api/user'; // 유저 정보 조회 API 추가 필요
+import { getMyInfo } from '../api/user';
 
 import LogoImage from '../assets/logo_typo.svg';
-import GoogleIcon from '../assets/icon/img_login_google.svg?react';
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const setAuth = useAuthStore((state) => state.setAuth);
-  const googleLoginRef = useRef<HTMLDivElement>(null);
 
   const handleSuccess = async (credentialResponse: any) => {
     try {
-      // 1. 구글 로그인으로 Access Token 발급
+      // 1. 구글 ID 토큰으로 서버에 인증 요청 → Access Token 발급
+      // HTML 참고: POST /api/auth/google, body: { idToken: resp.credential }
       const accessToken = await loginWithGoogle(credentialResponse.credential);
       
-      // 2. Axios에 토큰 설정
+      if (!accessToken) {
+        throw new Error('Access token이 서버로부터 반환되지 않았습니다.');
+      }
+
+      // 2. Axios에 토큰 설정 (이후 모든 API 요청에 Authorization 헤더 추가)
       setAccessToken(accessToken);
 
-      // 3. 발급받은 토큰으로 내 정보 조회 (/api/user/me)
+      // 3. 발급받은 Access Token으로 내 정보 조회 (GET /api/user/me)
       const userInfo = await getMyInfo();
+
+      if (!userInfo) {
+        throw new Error('사용자 정보를 가져올 수 없습니다.');
+      }
 
       // 4. Store에 로그인 정보 저장 (토큰 + 유저정보)
       setAuth({ 
@@ -44,23 +50,9 @@ const LoginPage = () => {
     }
   };
 
-  const handleCustomButtonClick = () => {
-    // 숨겨진 GoogleLogin 버튼 클릭 트리거
-    // GoogleLogin 컴포넌트가 렌더링한 버튼 찾기
-    const googleButton = googleLoginRef.current?.querySelector('div[role="button"]') as HTMLElement;
-    if (googleButton) {
-      googleButton.click();
-    } else {
-      // 버튼이 아직 렌더링되지 않은 경우, 약간의 지연 후 재시도
-      setTimeout(() => {
-        const retryButton = googleLoginRef.current?.querySelector('div[role="button"]') as HTMLElement;
-        if (retryButton) {
-          retryButton.click();
-        }
-      }, 100);
-    }
+  const handleError = () => {
+    alert('Google 로그인에 실패했습니다. 다시 시도해주세요.');
   };
-
 
   return (
     <div className="flex flex-col items-center justify-center h-screen px-4 bg-white">
@@ -84,31 +76,19 @@ const LoginPage = () => {
           />
         </div>
 
-        {/* 구글 로그인 버튼 - 숨김 처리 */}
-        <div ref={googleLoginRef} className="absolute opacity-0 pointer-events-none" style={{ width: '343px', height: '56px' }}>
+        {/* Google 기본 로그인 버튼 */}
+        <div className="w-[343px] flex justify-center items-center">
           <GoogleLogin
             onSuccess={handleSuccess}
-            onError={() => alert('로그인 실패')}
+            onError={handleError}
             type="standard"
             theme="outline"
             size="large"
             shape="rectangular"
+            text="signin_with"
+            useOneTap={false}
           />
         </div>
-
-        {/* 커스텀 구글 로그인 버튼 */}
-        <button
-          onClick={handleCustomButtonClick}
-          className="w-[343px] h-[56px] rounded-[8px] bg-[#E8E8E8] flex items-center justify-center gap-[6px] px-2 py-2 hover:bg-[#DDDDDD] transition-colors"
-        >
-          <GoogleIcon className="w-[19px] h-[19px] flex-shrink-0" />
-          <span
-            className="text-[16px] font-semibold leading-[135%] tracking-[-0.03em] text-[#3F454A]"
-            style={{ fontFamily: 'Wanted Sans' }}
-          >
-            Google로 로그인하기
-          </span>
-        </button>
       </div>
     </div>
   );

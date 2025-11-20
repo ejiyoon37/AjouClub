@@ -1,3 +1,34 @@
 @import url('https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.1/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css');
 @import "tailwindcss";
 @config "../tailwind.config.js";
+
+/* Google 로그인 버튼 스타일 커스터마이징 */
+#credential_picker_container,
+div[data-credential-picker-container],
+iframe[title*="Sign in with Google"] {
+  width: 343px !important;
+  min-width: 343px !important;
+  margin: 0 auto !important;
+}
+
+/* Google 로그인 버튼 iframe 컨테이너 */
+iframe[id^="gsi"] {
+  width: 343px !important;
+  min-width: 343px !important;
+  margin: 0 auto !important;
+  display: block !important;
+}
+
+/* Google 로그인 버튼 내부 스타일 조정 */
+.g_id_signin {
+  width: 343px !important;
+  margin: 0 auto !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.g_id_signin > div {
+  width: 343px !important;
+  max-width: 343px !important;
+  margin: 0 auto !important;
+}

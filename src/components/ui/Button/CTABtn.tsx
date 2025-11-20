@@ -12,7 +12,7 @@ export const CTABtn = ({
   ...props 
 }: CTABtnProps) => {
   const baseStyle = `
-    w-[343px] h-[48px] rounded-[8px] px-3 py-[10px]
+    w-full h-[48px] rounded-[8px] px-3 py-[10px]
     text-[16px] font-semibold leading-[135%] tracking-[-0.03em]
     transition-colors
   `;

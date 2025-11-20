@@ -1,6 +1,6 @@
 // src/pages/ClubAssessmentPage.tsx
 import { useState } from 'react';
-//import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import CTABtn from '../components/ui/Button/CTABtn';
 import Header from '../components/common/Header';
 
@@ -102,7 +102,7 @@ const ASSESSMENT_QUESTIONS = [
 ];
 
 const ClubAssessmentPage = () => {
-  //const navigate = useNavigate();
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [answers, setAnswers] = useState<
@@ -202,11 +202,10 @@ const ClubAssessmentPage = () => {
     if (isLastStep) {
       // 모든 답변이 완료되었으므로 결과 계산
       const results = determineResult();
-      const resultText =
-        results.length === 1
-          ? `당신에게 추천하는 동아리 분야는: ${results[0]}입니다!`
-          : `당신에게 추천하는 동아리 분야는: ${results.join(', ')}입니다!`;
-      alert(resultText);
+      // 첫 번째 결과를 사용 (여러 개면 첫 번째)
+      const resultCategory = results[0] || '스포츠';
+      // 결과 페이지로 이동 (카테고리 정보 전달)
+      navigate('/assessment/result', { state: { category: resultCategory } });
     } else {
       setCurrentStep((step) => step + 1);
       setSelectedAnswer(null); // 다음 질문을 위해 선택 초기화

@@ -42,10 +42,10 @@ const ClubAssessmentBottomSheet = ({ isOpen, onClose }: ClubAssessmentBottomShee
           <DeleteIcon className="w-6 h-6 text-gray-600" />
         </button>
         {/* 컨텐츠 */}
-        <div className="flex flex-col space-y-2 flex-grow">
+        <div className="flex flex-col space-y-2 flex-grow mt-4">
           {/* 질문 텍스트 */}
           <p 
-            className="text-[12px] font-medium leading-[140%] tracking-[-0.03em] text-gray-300"
+            className="text-[12px] font-medium leading-[140%] tracking-[-0.03em] text-gray-300 pl-2"
             style={{ fontFamily: 'Wanted Sans' }}
           >
             어떤 동아리를 가입할지 고민되신다면?
@@ -53,7 +53,7 @@ const ClubAssessmentBottomSheet = ({ isOpen, onClose }: ClubAssessmentBottomShee
 
           {/* 제목 */}
           <h2 
-            className="text-[18px] font-semibold leading-[135%] tracking-[-0.03em] text-gray-900"
+            className="text-[18px] font-semibold leading-[135%] tracking-[-0.03em] text-gray-900 pl-2 mb-4"
             style={{ fontFamily: 'Wanted Sans' }}
           >
             동아리 취향을 진단해 드려요!
@@ -61,7 +61,7 @@ const ClubAssessmentBottomSheet = ({ isOpen, onClose }: ClubAssessmentBottomShee
 
           {/* 설명 텍스트 */}
           <p 
-            className="text-[14px] font-medium leading-[135%] tracking-[-0.03em] text-gray-500 whitespace-pre-line"
+            className="text-[14px] font-medium leading-[135%] tracking-[-0.03em] text-gray-500 whitespace-pre-line pl-2"
             style={{ fontFamily: 'Wanted Sans' }}
           >
             {`5가지 질문을 통해 취향을 진단하고,

@@ -17,7 +17,8 @@ const ClubFilterPage = lazy(() => import('./pages/ClubFilterPage'));
 const MyPage = lazy(() => import('./pages/MyPage'));
 const ClubDetailPage = lazy(() => import('./pages/ClubDetailPage'));
 const RecruitmentDetailPage = lazy(() => import('./pages/RecruitDetailPage'));
-const ClubAssessmentPage = lazy(() => import('./pages/ClubAssessmentPage')); 
+const ClubAssessmentPage = lazy(() => import('./pages/ClubAssessmentPage'));
+const ClubAssessmentResultPage = lazy(() => import('./pages/ClubAssessmentResultPage')); 
 
 //--- 관리자 전용 페이지 ---
 const ClubEditPage = lazy(() => import('./pages/admin/ClubEditPage'));
@@ -67,6 +68,7 @@ function App() {
         />
 
         <Route path="/assessment" element={<ClubAssessmentPage />} />
+        <Route path="/assessment/result" element={<ClubAssessmentResultPage />} />
 
         
         {/* === 관리자 전용 라우트 (테스트를 위해 AdminRoute 임시 해제 상태 유지) === */}
