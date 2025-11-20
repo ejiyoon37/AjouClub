@@ -4,6 +4,7 @@ import { Routes, Route } from 'react-router-dom';
 
 import RouteChangeTracker from './components/common/RouteChangeTracker';
 import RequireAuth from './components/common/RequireAuth'; // RequireAuth import 확인
+import AdminRoute from './components/common/AdminRoute'; // AdminRoute import 추가
 
 //--- 일반 사용자 페이지 ---
 const Homepage = lazy(() => import('./pages/Homepage'));
@@ -68,21 +69,33 @@ function App() {
         <Route path="/assessment" element={<ClubAssessmentPage />} />
 
         
-        {/* === 관리자 전용 라우트 (테스트를 위해 AdminRoute 임시 해제 상태 유지) === */}
+        {/* === 관리자 전용 라우트 === */}
 
         <Route
           path="/admin/clubs/:clubId/edit"
-          element={<ClubEditPage />}
+          element={
+            <AdminRoute>
+              <ClubEditPage />
+            </AdminRoute>
+          }
         />
 
         <Route
           path="/admin/clubs/:clubId/recruitments/new"
-          element={<RecruitmentWritePage />}
+          element={
+            <AdminRoute>
+              <RecruitmentWritePage />
+            </AdminRoute>
+          }
         />
 
         <Route
           path="/admin/clubs/:clubId/intro/edit"
-          element={<ClubIntroEditPage />}
+          element={
+            <AdminRoute>
+              <ClubIntroEditPage />
+            </AdminRoute>
+          }
         />
       
       </Routes>

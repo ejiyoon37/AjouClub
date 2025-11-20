@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Modal from '../ui/Modal';
 import { XMarkIcon } from '@heroicons/react/24/outline'; 
-import PrimaryBtn from '../ui/Button/PrimaryBtn'; 
 
 interface ClubDescriptionProps {
   club: Club;
@@ -91,14 +90,14 @@ const ClubDescription = ({ club, activityImages, isAdmin = false }: ClubDescript
 
       {/* 관리자 전용 소개 수정 버튼 */}
       {isAdmin && (
-        <div className="mt-8">
-          <PrimaryBtn 
-             isActive={true}
+        <div className="mt-8 px-4 flex justify-center">
+          <button 
              onClick={() => navigate(`/admin/clubs/${club.clubId}/intro/edit`)}
-             className="w-full"
+             className="w-[343px] h-[40px] rounded-[6px] py-2 px-4 border border-[#E9EDF0] bg-white text-[#6E757D] text-[14px] font-medium leading-[135%] tracking-[-0.03em] transition-colors hover:opacity-80"
+             style={{ fontFamily: 'Wanted Sans' }}
           >
             소개 수정하기
-          </PrimaryBtn>
+          </button>
         </div>
       )}
 

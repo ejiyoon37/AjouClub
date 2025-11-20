@@ -54,8 +54,12 @@ const Header = ({ variant, title, onSave, isSaveDisabled = false }: HeaderProps)
             px-3 py-2 rounded-[8px] 
             text-[16px] font-medium leading-[135%] tracking-[-0.03em]
             transition-colors
-            ${isSaveDisabled ? 'text-gray-300 cursor-not-allowed' : 'text-[#0D0D0D] hover:bg-gray-50'}
+            ${isSaveDisabled 
+              ? 'text-gray-300 cursor-not-allowed' 
+              : 'text-[#3168FF] hover:opacity-80'
+            }
           `}
+          style={{ fontFamily: 'Wanted Sans' }}
         >
           저장
         </button>
