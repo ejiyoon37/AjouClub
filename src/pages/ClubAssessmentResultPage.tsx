@@ -11,21 +11,19 @@ import sportImage from '../assets/img/sport.png';
 import studyImage from '../assets/img/study.png';
 import volunteerImage from '../assets/img/volunteer.png';
 import religionImage from '../assets/img/religion.png';
-
-// 특수문자가 있는 파일명은 import.meta.url을 사용하여 동적 로드
-// Vite에서는 상대 경로로 접근 가능
-const entrepreneurshipImageUrl = new URL('../assets/img/Entrepreneurship .png', import.meta.url).href;
-const cultureArtsImageUrl = new URL('../assets/img/culture:arts.png', import.meta.url).href;
+import socialImage from '../assets/img/social.png';
+import entrepreneurshipImage from '../assets/img/entrepreneurship.png';
+import cultureArtsImage from '../assets/img/culture.png';
 
 // 카테고리별 이미지 매핑
 const CATEGORY_IMAGE_MAP: Record<Category, string> = {
   '스포츠': sportImage,
   '학술': studyImage,
   '봉사': volunteerImage,
-  '창업': entrepreneurshipImageUrl,
-  '문화/예술': cultureArtsImageUrl,
+  '창업': entrepreneurshipImage,
+  '문화/예술': cultureArtsImage,
   '종교': religionImage,
-  '사교': sportImage, // 사교는 이미지가 없으므로 기본 이미지 사용
+  '사교': socialImage, // 사교는 이미지가 없으므로 기본 이미지 사용
 };
 
 type Category = '스포츠' | '학술' | '종교' | '문화/예술' | '사교' | '봉사' | '창업';
