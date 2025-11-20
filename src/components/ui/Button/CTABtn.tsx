@@ -12,8 +12,8 @@ export const CTABtn = ({
   ...props 
 }: CTABtnProps) => {
   const baseStyle = `
-    w-full h-12 px-3 py-2.5 rounded-lg
-    font-sans font-semibold text-base leading-[1.35] tracking-[-0.03em]
+    w-[343px] h-[48px] rounded-[8px] px-3 py-[10px]
+    text-[16px] font-semibold leading-[135%] tracking-[-0.03em]
     transition-colors
   `;
 
@@ -24,6 +24,7 @@ export const CTABtn = ({
   return (
     <button
       className={`${baseStyle} ${activeStyle} ${className}`}
+      style={{ fontFamily: 'Wanted Sans' }}
       disabled={!isActive}
       {...props}
     >

@@ -1,8 +1,9 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 // 컴포넌트
 import Header from '../../components/common/Header';
+import { useClubDetail } from '../../Hooks/useClubDetails';
 // 아이콘 및 이미지
 import DefaultImage from '../../assets/img/Default_images.png';
 import InstaIcon from '../../assets/icon/icn_sns_insta.svg?react';
@@ -10,18 +11,39 @@ import WebIcon from '../../assets/icon/icn_sns_web.svg?react';
 
 
 const ClubEditPage = () => {
-  const { clubId: _clubId } = useParams<{ clubId: string }>(); // TODO: API 호출 시 사용
+  const { clubId } = useParams<{ clubId: string }>();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const numericClubId = clubId ? Number(clubId) : null;
+  const { data: club, isLoading } = useClubDetail(numericClubId || 0);
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [name, setName] = useState('');
-  const [clubType, setClubType] = useState<'중앙동아리' | '소학회' | null>('중앙동아리'); 
+  const [clubType, setClubType] = useState<'중앙동아리' | '소학회' | null>(null); 
   const [room, setRoom] = useState('');
   const [target, setTarget] = useState('');
   const [snsInsta, setSnsInsta] = useState('');
   const [snsWeb, setSnsWeb] = useState('');
+
+  // 동아리 데이터 로드 시 초기값 설정
+  useEffect(() => {
+    if (club) {
+      if (club.clubName) setName(club.clubName);
+      if (club.clubType === '중앙동아리' || club.clubType === '소학회') {
+        setClubType(club.clubType);
+      } else {
+        // '기타'인 경우 기본값 설정
+        setClubType('중앙동아리');
+      }
+      if (club.location) setRoom(club.location);
+      // recruitmentTarget은 API에서 직접 가져와야 할 수도 있음 (현재 Club 타입에 없음)
+      // 일단 null로 처리
+      if (club.instagramUrl) setSnsInsta(club.instagramUrl);
+      if (club.clubUrl) setSnsWeb(club.clubUrl);
+      if (club.profileImageUrl) setPreviewImage(club.profileImageUrl);
+    }
+  }, [club]);
 
   // 에러 상태
   const [errors, setErrors] = useState({
@@ -90,6 +112,22 @@ const ClubEditPage = () => {
       setErrors(prev => ({ ...prev, target: false }));
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">로딩 중...</div>
+      </div>
+    );
+  }
+
+  if (!club) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center text-red-500">동아리를 찾을 수 없습니다.</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white flex flex-col pb-10">
@@ -242,7 +280,7 @@ const ClubEditPage = () => {
                 type="text"
                 value={snsInsta}
                 onChange={(e) => setSnsInsta(e.target.value)}
-                placeholder="@인스타그램 아이디"
+                placeholder="인스타그램 링크"
                 className="w-full h-[48px] px-4 bg-gray-50 rounded-[10px] text-[16px] text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-200"
               />
             </div>
@@ -256,7 +294,7 @@ const ClubEditPage = () => {
                 type="text"
                 value={snsWeb}
                 onChange={(e) => setSnsWeb(e.target.value)}
-                placeholder="웹사이트 링크"
+                placeholder="기타 웹 링크"
                 className="w-full h-[48px] px-4 bg-gray-50 rounded-[10px] text-[16px] text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-200"
               />
             </div>

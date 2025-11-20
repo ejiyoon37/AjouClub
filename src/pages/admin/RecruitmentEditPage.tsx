@@ -1,22 +1,22 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 // 컴포넌트
 import Header from '../../components/common/Header';
 import CTABtn from '../../components/ui/Button/CTABtn';
-import { useClubDetail } from '../../Hooks/useClubDetails';
+import { useRecruitmentPost } from '../../Hooks/useRecruitmentPost';
 import CameraIcon from '../../assets/icon/icon_camera.svg?react';
 
-const RecruitmentWritePage = () => {
-  const { clubId } = useParams<{ clubId: string }>();
+const RecruitmentEditPage = () => {
+  const { recruitmentId } = useParams<{ recruitmentId: string }>();
   const navigate = useNavigate();
   const imageInputRef = useRef<HTMLInputElement>(null);
 
-  const numericClubId = clubId ? Number(clubId) : null;
-  const { data: club, isLoading } = useClubDetail(numericClubId || 0);
+  const numericRecruitmentId = recruitmentId ? Number(recruitmentId) : null;
+  const { data: recruitment, isLoading } = useRecruitmentPost(numericRecruitmentId || 0);
 
   // 동아리 이름
-  const clubName = club?.clubName || '';
+  const clubName = recruitment?.clubName || '';
 
   const [deadline, setDeadline] = useState('');
   const [isAlwaysRecruiting, setIsAlwaysRecruiting] = useState(false);
@@ -25,6 +25,29 @@ const RecruitmentWritePage = () => {
   const [applicationLink, setApplicationLink] = useState('');
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   const maxImages = 1; // 모집공고는 이미지 1개만
+
+  // 기존 데이터 로드
+  useEffect(() => {
+    if (recruitment) {
+      setTitle(recruitment.title || '');
+      setDescription(recruitment.description || '');
+      setApplicationLink(recruitment.url || '');
+      if (recruitment.images && recruitment.images.length > 0) {
+        setUploadedImages([recruitment.images[0]]); // 첫 번째 이미지만
+      }
+      if (recruitment.endDate) {
+        // 날짜 포맷 변환 (YYYY-MM-DD -> YYYY. MM. DD. (요일))
+        const date = new Date(recruitment.endDate);
+        const days = ['일', '월', '화', '수', '목', '금', '토'];
+        const formattedDate = `${date.getFullYear()}. ${String(date.getMonth() + 1).padStart(2, '0')}. ${String(date.getDate()).padStart(2, '0')}. (${days[date.getDay()]})`;
+        setDeadline(formattedDate);
+        setIsAlwaysRecruiting(false);
+      } else {
+        setIsAlwaysRecruiting(true);
+        setDeadline('');
+      }
+    }
+  }, [recruitment]);
 
   // 에러 상태
   const [errors, setErrors] = useState({
@@ -96,9 +119,9 @@ const RecruitmentWritePage = () => {
       return;
     }
 
-    // TODO: API 연동 (공고 생성 요청)
-    alert('모집 공고가 등록되었습니다.');
-    navigate(`/clubs/${clubId}`);
+    // TODO: API 연동 (공고 수정 요청)
+    alert('모집 공고가 수정되었습니다.');
+    navigate(`/recruitments/${recruitmentId}`);
   };
 
   if (isLoading) {
@@ -109,10 +132,10 @@ const RecruitmentWritePage = () => {
     );
   }
 
-  if (!club) {
+  if (!recruitment) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center text-red-500">동아리를 찾을 수 없습니다.</div>
+        <div className="text-center text-red-500">공고를 찾을 수 없습니다.</div>
       </div>
     );
   }
@@ -134,9 +157,9 @@ const RecruitmentWritePage = () => {
             </p>
           </div>
 
-          {/* 모집공고 작성하기 제목 */}
+          {/* 모집공고 수정하기 제목 */}
           <h1 className="text-[24px] font-semibold text-gray-900 leading-[135%] tracking-[-0.03em]">
-            모집공고 작성하기
+            모집공고 수정하기
           </h1>
         </div>
 
@@ -196,7 +219,7 @@ const RecruitmentWritePage = () => {
               type="text"
               value={title}
               onChange={handleTitleChange}
-              placeholder="이번 학기 동아리 부원을 모집해요!"
+              placeholder="25년도 2학기 동아리 부원을 모집해요!"
               className={`w-full h-[48px] px-4 bg-gray-50 rounded-[10px] text-[14px] text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-200 ${
                 errors.title ? 'border border-[#FE5454]' : ''
               }`}
@@ -296,11 +319,11 @@ const RecruitmentWritePage = () => {
       {/* 하단 버튼 */}
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[420px] px-4 py-3 bg-white border-t border-gray-100 flex justify-center">
         <CTABtn isActive={true} onClick={handleSubmit}>
-          공고 게시하기
+          공고 수정하기
         </CTABtn>
       </div>
     </div>
   );
 };
 
-export default RecruitmentWritePage;
+export default RecruitmentEditPage;

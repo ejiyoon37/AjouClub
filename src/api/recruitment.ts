@@ -13,3 +13,8 @@ export const removeFromFavorites = async (recruitmentId: number): Promise<void> 
   await axios.delete(`/api/recruitments/favorites/${recruitmentId}`);
   console.log(`🔴 API 즐겨찾기 삭제: ${recruitmentId}`);
 };
+
+export const deleteRecruitment = async (recruitmentId: number): Promise<void> => {
+  await axios.delete(`/api/recruitments/${recruitmentId}`);
+  console.log(`🗑️ API 공고 삭제: ${recruitmentId}`);
+};

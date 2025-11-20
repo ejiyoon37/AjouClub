@@ -12,16 +12,16 @@ const PrimaryBtn = ({
   ...props
 }: PrimaryBtnProps) => {
 
-  const baseStyle = 'px-4 py-2 rounded-md font-bold transition-colors';
-
+  const baseStyle = 'w-[343px] h-[40px] rounded-[6px] px-4 py-2 text-[14px] font-medium leading-[135%] tracking-[-0.03em] transition-colors border';
 
   const activeStyle = isActive
-    ? 'bg-gray-700 text-white border-transparent' // 활성화
-    : 'bg-white border border-gray-100 text-gray-700'; // 기본 상태
+    ? 'bg-white border-[#E9EDF0] text-gray-600' // 활성화
+    : 'bg-white border-[#E9EDF0] text-gray-600'; // 기본 상태
 
   return (
     <button
       className={`${baseStyle} ${activeStyle} ${className}`}
+      style={{ fontFamily: 'Wanted Sans' }}
       {...props}
     >
       {children}

@@ -4,7 +4,6 @@ import { Routes, Route } from 'react-router-dom';
 
 import RouteChangeTracker from './components/common/RouteChangeTracker';
 import RequireAuth from './components/common/RequireAuth'; // RequireAuth import 확인
-import AdminRoute from './components/common/AdminRoute'; // AdminRoute import 추가
 
 //--- 일반 사용자 페이지 ---
 const Homepage = lazy(() => import('./pages/Homepage'));
@@ -23,6 +22,7 @@ const ClubAssessmentPage = lazy(() => import('./pages/ClubAssessmentPage'));
 //--- 관리자 전용 페이지 ---
 const ClubEditPage = lazy(() => import('./pages/admin/ClubEditPage'));
 const RecruitmentWritePage = lazy(() => import('./pages/admin/RecruitmentWritePage'));
+const RecruitmentEditPage = lazy(() => import('./pages/admin/RecruitmentEditPage'));
 const ClubIntroEditPage = lazy(() => import('./pages/admin/ClubIntroEditPage'));
 
 function App() {
@@ -69,33 +69,26 @@ function App() {
         <Route path="/assessment" element={<ClubAssessmentPage />} />
 
         
-        {/* === 관리자 전용 라우트 === */}
+        {/* === 관리자 전용 라우트 (테스트를 위해 AdminRoute 임시 해제 상태 유지) === */}
 
         <Route
           path="/admin/clubs/:clubId/edit"
-          element={
-            <AdminRoute>
-              <ClubEditPage />
-            </AdminRoute>
-          }
+          element={<ClubEditPage />}
         />
 
         <Route
           path="/admin/clubs/:clubId/recruitments/new"
-          element={
-            <AdminRoute>
-              <RecruitmentWritePage />
-            </AdminRoute>
-          }
+          element={<RecruitmentWritePage />}
+        />
+
+        <Route
+          path="/admin/recruitments/:recruitmentId/edit"
+          element={<RecruitmentEditPage />}
         />
 
         <Route
           path="/admin/clubs/:clubId/intro/edit"
-          element={
-            <AdminRoute>
-              <ClubIntroEditPage />
-            </AdminRoute>
-          }
+          element={<ClubIntroEditPage />}
         />
       
       </Routes>

@@ -11,9 +11,10 @@ import RecruitmentDescription from '../components/recruit-detail/RecruitmentDesc
 import RecruitmentApplyBar from '../components/recruit-detail/RecruitmentApplyBar';
 
 import { useRecruitmentPost } from '../Hooks/useRecruitmentPost';
-import { addToFavorites, removeFromFavorites } from '../api/recruitment'; 
+import { addToFavorites, removeFromFavorites, deleteRecruitment } from '../api/recruitment'; 
 import { useAuthStore } from '../stores/useAuthStore';
 import { useMyPageData } from '../Hooks/useMypageData';
+import Modal from '../components/ui/Modal';
 
 const RecruitmentDetailPage = () => {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ const RecruitmentDetailPage = () => {
   const { recruitmentId } = useParams<{ recruitmentId: string }>();
   const numericId = recruitmentId ? Number(recruitmentId) : null;
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const user = useAuthStore((state) => state.user);
 
   const {
     data: recruitment,
@@ -35,6 +37,13 @@ const RecruitmentDetailPage = () => {
 
   const [isScrapped, setIsScrapped] = useState(false);
   const [scrapCount, setScrapCount] = useState(0);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  // 관리자 여부 확인 (해당 공고의 동아리를 관리하는지)
+  const isAdmin = useMemo(() => {
+    if (!recruitment || !user?.managedClubIds) return false;
+    return user.managedClubIds.includes(recruitment.clubId);
+  }, [recruitment, user]);
 
   const userScrapStatus = useMemo(() => {
     if (!isLoggedIn || !favorites || !recruitment) {
@@ -97,6 +106,30 @@ const RecruitmentDetailPage = () => {
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
+  const handleEdit = () => {
+    if (!recruitment) return;
+    navigate(`/admin/recruitments/${recruitment.recruitmentId}/edit`);
+  };
+
+  const handleDeleteClick = () => {
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!recruitment) return;
+    
+    try {
+      await deleteRecruitment(recruitment.recruitmentId);
+      queryClient.invalidateQueries({ queryKey: ['recruitmentPost', recruitment.recruitmentId] });
+      queryClient.invalidateQueries({ queryKey: ['recruitmentDetail', recruitment.clubId] });
+      // 동아리 개별홈으로 이동
+      navigate(`/clubs/${recruitment.clubId}`);
+    } catch (err) {
+      console.error('삭제 실패:', err);
+      alert('삭제에 실패했습니다.');
+    }
+  };
+
   const isLoading = isRecruitmentLoading || (isLoggedIn && isFavoritesLoading);
 
   if (isLoading) {
@@ -120,6 +153,9 @@ const RecruitmentDetailPage = () => {
         status={recruitment.status}
         dDay={recruitment.dDay}
         createdAt={recruitment.createdAt}
+        isAdmin={isAdmin}
+        onEdit={handleEdit}
+        onDelete={handleDeleteClick}
       />
 
       <RecruitmentImage imageUrl={recruitment.images[0] || undefined} />
@@ -133,6 +169,53 @@ const RecruitmentDetailPage = () => {
         onToggleScrap={handleToggleScrap}
         onApplyClick={handleApplyClick}
       />
+
+      {/* 삭제 확인 모달 */}
+      <Modal isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)}>
+        <div className="flex items-center justify-center min-h-screen px-4">
+          <div 
+            className="bg-white w-[274px] overflow-hidden rounded-[16px] flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+            style={{ fontFamily: 'Wanted Sans' }}
+          >
+            {/* 텍스트 영역 */}
+            <div className="w-[274px] min-h-[104px] pt-7 px-2 pb-7 gap-2 rounded-t-[16px] flex flex-col">
+              <div className="space-y-2">
+                <p 
+                  className="text-[16px] font-medium leading-[165%] tracking-[-0.03em] text-center text-[#3F454A]"
+                  style={{ fontFamily: 'Wanted Sans' }}
+                >
+                  삭제하면 되돌릴 수 없어요.
+                </p>
+                <p 
+                  className="text-[16px] font-medium leading-[165%] tracking-[-0.03em] text-center text-[#3F454A]"
+                  style={{ fontFamily: 'Wanted Sans' }}
+                >
+                  이 공고를 정말 삭제할까요?
+                </p>
+              </div>
+            </div>
+            
+            {/* 버튼 영역 */}
+            <div className="flex gap-0">
+              <button
+                onClick={() => setIsDeleteModalOpen(false)}
+                className="w-[137px] h-[48px] py-2 px-3 gap-2 bg-gray-50 rounded-bl-[16px] text-[16px] font-medium leading-[135%] tracking-[-0.03em] text-center text-[#A0AAB0] transition-colors hover:bg-gray-100"
+                style={{ fontFamily: 'Wanted Sans' }}
+              >
+                취소
+              </button>
+              <button
+                onClick={handleDeleteConfirm}
+                className="w-[137px] h-[48px] py-2 px-3 gap-2 bg-[#FE5454] rounded-br-[16px] text-[16px] font-semibold leading-[135%] tracking-[-0.03em] text-center text-white transition-colors hover:bg-[#E64444]"
+                style={{ fontFamily: 'Wanted Sans' }}
+              >
+                삭제하기
+              </button>
+            </div>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };
