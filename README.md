@@ -1,16 +1,6 @@
-# AjouClub Frontend
+# aClub _  Frontend
 
-아주대학교 동아리 정보 플랫폼 프론트엔드 프로젝트입니다.
-
-## 📋 목차
-
-- [프로젝트 소개](#프로젝트-소개)
-- [기술 스택](#기술-스택)
-- [시작하기](#시작하기)
-- [프로젝트 구조](#프로젝트-구조)
-- [주요 기능](#주요-기능)
-- [API 연동](#api-연동)
-- [빌드 및 배포](#빌드-및-배포)
+아주대학교 동아리 정보 플랫폼 aClub 입니다.
 
 ## 🎯 프로젝트 소개
 
@@ -18,12 +8,12 @@ AjouClub은 아주대학교 학생들이 다양한 동아리 정보를 쉽게 �
 
 ### 주요 특징
 
-- 🔍 동아리 및 모집 공고 검색 및 필터링
-- 📝 동아리 관리자가 모집 공고 작성 및 수정
-- 🎨 동아리 소개 및 활동 사진 관리
-- 🧩 동아리 취향 진단 기능
-- ❤️ 관심 모집 공고 즐겨찾기
-- 🔐 Google OAuth 로그인
+- 1️⃣ 동아리 및 모집 공고 검색 및 필터링
+- 2️⃣ 동아리 관리자가 모집 공고 작성 및 수정
+- 3️⃣ 동아리 소개 및 활동 사진 관리
+- 4️⃣ 동아리 취향 진단 기능
+- 5️⃣ 관심 모집 공고 즐겨찾기
+- 6️⃣ Google OAuth 로그인
 
 ## 🛠 기술 스택
 
@@ -237,7 +227,7 @@ src/
 - Refresh Token: HttpOnly 쿠키로 관리
 - 401 에러 발생 시 자동으로 토큰 갱신 시도
 
-## 🏗 빌드 및 배포
+## 빌드 및 배포
 
 ### 빌드 설정
 
@@ -288,22 +278,6 @@ export default defineConfig({
 - Tailwind CSS 유틸리티 클래스 사용
 - 커스텀 스타일은 `index.css`에 추가
 - 반응형 디자인: 모바일 우선 접근
-
-## 🤝 기여하기
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📄 라이선스
-
-이 프로젝트는 아주대학교 동아리 정보 플랫폼 프로젝트입니다.
-
-## 👥 팀
-
-아주대학교 AjouClub 개발팀
 
 ---
 
